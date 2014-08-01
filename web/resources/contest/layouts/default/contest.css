@@ -1,0 +1,94 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 30.7.2014, 15:11:14
+    Author     : Lukas
+*/
+
+#prizeImage {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    z-index: -5;
+}
+
+#registerForm {
+    width: 343px;
+    height: 236px;
+    position: absolute;
+    top: 263px;
+    left: 0px;
+    z-index: 10;
+}
+
+#pressLikeImage {
+    position: relative;
+    right: 0;
+    top: 280px;
+    float: right;
+}
+
+.formImage {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: -5;
+}
+
+.formTable {
+    width: 100%;
+    padding: 35px 0px 0px 72px;
+}
+
+#titleImage {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+
+#acceptRulesRow {
+    width: 100%;
+    padding: 10px 0px 0px 72px;
+}
+
+#submitRow {
+    width: 100%;
+    padding: 10px 0px 0px 72px;
+}
+
+.inputSubmit {
+    border: none;
+    cursor: pointer;
+    float: right;
+/*    bottom: 0px;
+    right: 0px;*/
+}
+
+#contestRulesCheckbox {
+}
+
+
+.inputText {
+    background: url("#{resource['contest/layouts/default/input-bg.png']}") no-repeat;
+    padding: 6px 10px;
+    width: 180px;
+    font-weight: bold;
+}
+
+.error {
+    border-style: solid;
+    border-color: red;
+    
+}
+
+.inputLabel {
+    width: 75px;
+    display: inline-block;
+    /*vertical-align: middle;*/
+    color: #575656;
+    font-weight: bold;
+    text-transform: uppercase;
+}

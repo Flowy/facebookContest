@@ -1,0 +1,60 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 30.7.2014, 8:30:45
+    Author     : Lukas
+*/
+
+html {
+    margin:0;
+    padding:0;
+    border:0;
+}
+body, div, span, object, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, code, del, dfn, em, img, q, dl, dt, dd, ol, ul, li, fieldset, form, label, legend,  caption, article, aside, dialog, figure, footer, header, hgroup, nav, section {
+    margin:0;
+    padding:0;
+    border:0;
+    font-size:100%;
+    font:inherit;
+    vertical-align:baseline;
+}
+
+body {
+    width: 810px;
+    height: 800px;
+    font-family: Arial, Helvetica, sans-serif;
+    background: none;
+    overflow: hidden;
+}
+
+#titleImage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -5;
+}
+
+#baseImage {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: -10;
+}
+
+#footer {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+}
+
+#footer ul {
+    list-style-type: none;
+}
+
+#footer ul li {
+    float: right;
+    margin: 10px;
+}
