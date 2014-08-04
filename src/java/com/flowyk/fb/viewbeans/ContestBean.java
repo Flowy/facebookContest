@@ -6,14 +6,13 @@
 package com.flowyk.fb.viewbeans;
 
 import com.flowyk.fb.entity.Contest;
-import com.flowyk.fb.oauth.FacebookLogin;
+import com.flowyk.fb.auth.FacebookLogin;
 import com.flowyk.fb.sigrequest.SignedRequest;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
-import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -29,7 +28,7 @@ import javax.persistence.PersistenceContext;
 public class ContestBean implements Serializable {
 
     private static final Logger LOG = Logger.getLogger(ContestBean.class.getName());
-    
+
     @Inject
     FacebookLogin login;
 
@@ -45,6 +44,11 @@ public class ContestBean implements Serializable {
     }
 
     // Actions -----------------------------------------------------------------------------------
+    /**
+     *
+     * @param list
+     * @return returns active contest or null if no active found
+     */
     private Contest selectActiveContest(List<Contest> list) {
         Collections.sort(list, Collections.reverseOrder());
         Contest selected = null;
@@ -58,36 +62,74 @@ public class ContestBean implements Serializable {
     }
 
     // Getters -----------------------------------------------------------------------------------
+    /**
+     *
+     * @return null if not active signed request or page does not have contest
+     */
     public Contest getActiveContest() {
-        if (active == null) {
-            active = getActiveContestForPage(login.getSignedRequest().getPageId());
-        }
-        return active;
-    }
-    
-    public Contest getActiveContestForPage(String page) {
-        if (active == null) {
+        if (active == null && login != null && login.getSignedRequest() != null) {
             List<Contest> list = (List<Contest>) em.createNamedQuery("Contest.findByPage")
-                    .setParameter("page", page).getResultList();
+                    .setParameter("page", login.getSignedRequest().getPageId()).getResultList();
             active = selectActiveContest(list);
         }
         return active;
     }
-    
-    public String getPage() {
+
+    /**
+     *
+     * @param page with starting slash
+     * @return
+     */
+    public String getPageUrl(String page) {
+        Contest contest = getActiveContest();
+        if (contest != null) {
+            return "/WEB-INF/contest/layouts/" + contest.getLayout().getName() + page;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     *
+     * @param resource with starting slash
+     * @return
+     */
+    public String getResourceUrl(String resource) {
+        Contest contest = getActiveContest();
+        if (contest != null) {
+            return "./contest/layouts/" + contest.getLayout().getName() + resource;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     *
+     * @param image with starting slash
+     * @return
+     */
+    public String getImageUrl(String image) {
+        if (login.getSignedRequest() != null) {
+            return "/images/" + login.getSignedRequest().getPageId() + image;
+        } else {
+            return null;
+        }
+    }
+
+    public String getContestPage() {
         SignedRequest req = login.getSignedRequest();
-        String result = null;
         if (req != null) {
+            String page;
             if (req.isPageLike()) {
-                result = "register";
+                page = "/register.xhtml";
             } else {
-                result = "presslike";
-            } 
-        //TODO: implement admin
+                page = "/presslike.xhtml";
+            }
+            return getPageUrl(page);
         } else {
             LOG.severe("I got to contest page without signed request!!!");
+            return null;
         }
-        return result;
     }
 
     // Setters -----------------------------------------------------------------------------------

@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.flowyk.fb.entity;
 
 import java.io.Serializable;
@@ -20,7 +19,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.validation.constraints.NotNull;
 
-
 /**
  *
  * @author Lukas
@@ -28,19 +26,21 @@ import javax.validation.constraints.NotNull;
 @Entity
 @NamedQuery(name = "Contest.findByPage", query = "FROM Contest c WHERE c.registeredPage = :page")
 public class Contest implements Serializable, Comparable<Contest> {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String registeredPage;
-    
+
     @OneToMany(mappedBy = "contest", cascade = {CascadeType.ALL})
     private List<RegisteredUser> registeredUsers;
 
     @OneToMany(mappedBy = "contest", cascade = {CascadeType.ALL})
     private List<Prize> prizes;
-    
+
     private String name;
+    private String iconUrl;
     private String description;
     @NotNull
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
@@ -50,10 +50,18 @@ public class Contest implements Serializable, Comparable<Contest> {
     private Date contestEnd;
     private String rulesUrl;
     private boolean disabled;
-    
+
     @ManyToOne(cascade = {CascadeType.ALL})
     @NotNull
-    private ContestLayout layout = new ContestLayout();
+    private ContestLayout layout;
+
+    public String getIconUrl() {
+        return iconUrl;
+    }
+
+    public void setIconUrl(String iconUrl) {
+        this.iconUrl = iconUrl;
+    }
 
     public ContestLayout getLayout() {
         return layout;
@@ -118,8 +126,7 @@ public class Contest implements Serializable, Comparable<Contest> {
     public void setPrizes(List<Prize> prizes) {
         this.prizes = prizes;
     }
-    
-    
+
     public Long getId() {
         return id;
     }
@@ -143,7 +150,7 @@ public class Contest implements Serializable, Comparable<Contest> {
     public void setRegisteredUsers(List<RegisteredUser> registeredUsers) {
         this.registeredUsers = registeredUsers;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -179,5 +186,5 @@ public class Contest implements Serializable, Comparable<Contest> {
         }
         return compareEnd != 0 ? compareEnd : compareStart;
     }
-    
+
 }

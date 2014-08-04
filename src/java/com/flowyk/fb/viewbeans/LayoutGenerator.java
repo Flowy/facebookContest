@@ -5,7 +5,7 @@
  */
 package com.flowyk.fb.viewbeans;
 
-import com.flowyk.fb.oauth.FacebookLogin;
+import com.flowyk.fb.auth.FacebookLogin;
 import com.flowyk.fb.sigrequest.SignedRequest;
 import java.io.IOException;
 import java.io.PrintWriter;

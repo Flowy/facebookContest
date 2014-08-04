@@ -4,6 +4,6 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="/WEB-INF/contest/common.xhtml">
     <ui:define name="body">
-        <ui:include src="/WEB-INF/contest/layouts/#{contestBean.activeContest.layout.name}/thanks.xhtml" />
+        <ui:include src="#{contestBean.getPageUrl('/thanks.xhtml')}" />
     </ui:define>
 </ui:composition>

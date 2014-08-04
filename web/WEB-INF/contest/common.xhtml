@@ -5,7 +5,7 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html">
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <h:outputStylesheet name="./contest/layouts/#{contestBean.activeContest.layout.name}/base.css"/>
+        <h:outputStylesheet name="#{contestBean.getResourceUrl('/base.css')}"/>
         <title>#{contestBean.activeContest.name}</title>
     </h:head>
     <h:body>

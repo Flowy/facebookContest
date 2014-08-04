@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.flowyk.fb.oauth;
+package com.flowyk.fb.auth;
 
 import com.flowyk.fb.sigrequest.SignedRequest;
 import com.restfb.DefaultFacebookClient;
@@ -155,13 +155,58 @@ public class FacebookLogin implements Serializable {
     }
 
     public String getShareLink() {
-        String pageLink = "https://www.facebook.com/" + getSignedRequest().getPageId();
-        return pageLink;
+        StringBuilder pageLink = new StringBuilder("https://www.facebook.com/");
+        pageLink.append(getSignedRequest().getPageId());
+        pageLink.append("/").append(API_KEY);
+        pageLink.append("&app_data=somedata");
+//        return pageLink.toString();
+        return "";
+    }
+
+    public String getShareScript() {
+//        StringBuilder sb = new StringBuilder("FB.ui({");
+//        sb.append("method: 'share_open_graph',");
+//        sb.append("action_type: 'flowykcontests:attend',");
+//        sb.append("action_properties: {");
+//        sb.append("");
+//        sb.append("app_id: ").append(API_KEY).append(",");
+//        sb.append("title: 'custom contest',");
+//        sb.append("image: 'https://fbstatic-a.akamaihd.net/images/devsite/attachment_blank.png',");
+//        sb.append("type: 'flowykcontests:contest'");
+//        sb.append("}");
+//        sb.append("}); return false;");
+
+//        StringBuilder sb = new StringBuilder("FB.ui({");
+//        sb.append("method: 'share_open_graph',");
+//        sb.append("action_type: 'flowykcontests:attend',");
+////        sb.append("action_type=share_open_graph, ");
+//        sb.append("action_properties: JSON.stringify({");
+//        sb.append("object: {");
+//        sb.append("fb:app_id: \"302184056577324\",");
+//        sb.append("}})");
+//        sb.append("}); return false;");
+//        StringBuilder sb = new StringBuilder("FB.api(");
+//        sb.append("'me/flowykcontests:attend',");
+//        sb.append("'post',{");
+//        sb.append("contest: 'http://samples.ogp.me/687381974650219'");
+//        sb.append("}, function(response) { }");
+//        sb.append("); return false;");
+
+//        StringBuilder sb = new StringBuilder("FB.ui({");
+//        sb.append("method: 'share',");
+//        sb.append("href: 'https://www.facebook.com/cmcdata/app_190769951095431'");
+////        sb.append("href: 'https://www.facebook.com/").append(signedRequest.getPageId()).append("/?sk=app_").append(API_KEY).append("'");
+//        sb.append("}); return false;");
+//        System.out.println(sb.toString());
+        return "return false;";
     }
 
     public String getAppId() {
         return API_KEY;
     }
 
+    public String getCallbackUrl() {
+        return CALLBACK_URL;
+    }
         // Setters -----------------------------------------------------------------------------------
 }

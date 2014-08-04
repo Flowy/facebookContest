@@ -5,16 +5,16 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:jsf="http://xmlns.jcp.org/jsf"
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
-    <div id="fb-root"></div>
+<!--    <div id="fb-root"></div>
     <script>(function(d, s, id) {
             var js, fjs = d.getElementsByTagName(s)[0];
             if (d.getElementById(id))
                 return;
             js = d.createElement(s);
             js.id = id;
-            js.src = &quot;//connect.facebook.net/sk_SK/sdk.js#xfbml=1&amp;appId=#{facebookLogin.appId}&amp;version=v2.0&quot;;
+            js.src = &quot;//connect.facebook.net/#{facebookLogin.signedRequest.locale}/sdk.js#xfbml=1&amp;appId=#{facebookLogin.appId}&amp;version=v2.0&quot;;
             fjs.parentNode.insertBefore(js, fjs);
-        }(document, 'script', 'facebook-jssdk'));</script>
+        }(document, 'script', 'facebook-jssdk'));</script>-->
     <h:graphicImage id="youAreInImage" url="/images/#{facebookLogin.signedRequest.pageId}/youarein.png" />
     <h:outputStylesheet name="./contest/layouts/#{contestBean.activeContest.layout.name}/thanks.css"/>
     <div id="thankYouFrame">
@@ -24,6 +24,6 @@
             <h:outputText value=" Každý tvoj priateľ, ktorý sa zúčastní tejto súťaže cez odkaz na tvojej stene Ti zvýši šancu na výhru o jeden lístok. Čím viac priateľov doporučís, tým je tvoja šanca vyššia!"
                           styleClass=""/>
         </div>
-        <h:outputLink onclick="FB.ui({method: 'share', href: '#{facebookLogin.shareLink}'});"><h:graphicImage url="/images/#{facebookLogin.signedRequest.pageId}/shareButton.png"/></h:outputLink>
+        <!--<h:outputLink onclick="#{facebookLogin.shareScript}"><h:graphicImage url="/images/#{facebookLogin.signedRequest.pageId}/shareButton.png"/></h:outputLink>-->
     </div>
 </ui:composition>

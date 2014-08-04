@@ -18,7 +18,7 @@ import javax.persistence.Id;
 public class ContestLayout implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
-    private String name = "default";
+    private String name;
 
     public ContestLayout() { }
     public ContestLayout(String name) { this.name = name; }

@@ -6,6 +6,8 @@
 
 package com.flowyk.fb.base;
 
+import com.flowyk.fb.entity.Contest;
+
 /**
  *
  * @author Lukas

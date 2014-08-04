@@ -9,9 +9,8 @@ import java.io.Serializable;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -24,24 +23,23 @@ import javax.validation.constraints.Size;
  * @author Lukas
  */
 @Entity
-@Table(
-        uniqueConstraints = {
-            @UniqueConstraint(columnNames = {"contest", "email"})
-        }
-)
+//@Table(
+//        uniqueConstraints = {
+//            @UniqueConstraint(name = "UniqueConstraint_contest_email", columnNames = {"contest", "email"})
+//        }
+//)
+@IdClass(RegisteredUserKey.class)
 public class RegisteredUser implements Serializable {
 
-    private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-    @Size(min = 5, max = 30)
-    private String name;    
-    @Pattern(regexp = "[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+"  //meno
-            + "(?:\\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*"  //subdomena
-            + "@(?:[a-zA-Z0-9]+\\.)+"  //domena
-            + "[a-zA-Z]{1,4}")  //root
     private String email;
+    
+    @Id
+    @ManyToOne(cascade = {CascadeType.ALL})
+    private Contest contest;
+    
+    @Size(min = 5, max = 30)
+    private String name;
     @Pattern(regexp = "[0-9 \\+]+")
     @Size(min = 6, max = 16)
     private String telephone;
@@ -52,13 +50,28 @@ public class RegisteredUser implements Serializable {
     private String country;
     private Integer ageMin;
     private Integer ageMax;
-    @ManyToOne(cascade = {CascadeType.ALL})
-    private Contest contest;
+    
     @ManyToOne(cascade = {CascadeType.ALL})
     private RegisteredUser referal;
     @OneToMany(mappedBy = "referal", cascade = {CascadeType.ALL})
     private List<RegisteredUser> referies;
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email.toLowerCase();
+    }
+    
+    public Contest getContest() {
+        return contest;
+    }
+
+    public void setContest(Contest contest) {
+        this.contest = contest;
+    }
+    
     public String getLocale() {
         return locale;
     }
@@ -106,38 +119,10 @@ public class RegisteredUser implements Serializable {
     public void setReferies(List<RegisteredUser> referies) {
         this.referies = referies;
     }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof RegisteredUser)) {
-            return false;
-        }
-        RegisteredUser other = (RegisteredUser) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
-    }
-
+    
     @Override
     public String toString() {
-        return "RegisteredUser[ id=" + id + ", name=" + name + ", email=" + email + " ]";
+        return "RegisteredUser[ name=" + name + ", contest=" + contest + ", email=" + email + " ]";
     }
 
     public String getName() {
@@ -146,14 +131,6 @@ public class RegisteredUser implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email.toLowerCase();
     }
 
     public String getTelephone() {
@@ -170,14 +147,6 @@ public class RegisteredUser implements Serializable {
 
     public void setTickets(int tickets) {
         this.tickets = tickets;
-    }
-
-    public Contest getContest() {
-        return contest;
-    }
-
-    public void setContest(Contest contest) {
-        this.contest = contest;
     }
 
 }
