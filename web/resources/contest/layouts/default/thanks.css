@@ -17,26 +17,30 @@ and open the template in the editor.
 
 #thankYouFrame {
     position: relative;
-    top: 250px;
+    top: 280px;
     width: 570px;
-    /*height: 60px;*/
     display: block;
-    background: lime;
     margin-left: auto;
     margin-right: auto;
     text-align: center;
 }
 
+#thankYouImage {
+    position: absolute;
+    top: 280px;
+    margin: auto;
+}
+
 #thankYouText {
     display: inline-block;
-    margin-top: 40px;
+    margin-top: 18px;
     width: 570px;
     height: 60px;
-    background: yellow;
     text-align: center;
 }
 #shareLink {
-    margin-top: 20px;
+    margin-top: 10px;
+    display: block;
     /*margin: 20px auto 0 auto;*/
 }
 

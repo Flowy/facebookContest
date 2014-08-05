@@ -9,8 +9,8 @@
         <title>#{contestBean.activeContest.name}</title>
     </h:head>
     <h:body>
-        <h:graphicImage id="baseImage" url="/images/#{facebookLogin.signedRequest.pageId}/base-bg.png" />
-        <h:graphicImage id="titleImage" url="/images/#{facebookLogin.signedRequest.pageId}/title.png" />
+        <h:graphicImage id="baseImage" url="#{contestBean.getImageUrl('/pozadie.png')}" />
+        <h:graphicImage id="titleImage" url="#{contestBean.getImageUrl('/nazov.png')}" />
 
         <ui:insert name="body">
 
@@ -18,10 +18,16 @@
 
         <ui:insert name="footer">
             <div id="footer">
-                <ul>
-                    <ui:include src="/WEB-INF/contest/copyright.xhtml" />
-                    <ui:include src="/WEB-INF/contest/admin.xhtml" rendered="#{facebookLogin.signedRequest.pageAdmin}" />
-                </ul>
+                <h:panelGroup styleClass="footerField">
+                    <h:outputLink value="#{request.contextPath}/contest-rules.xhtml?contest=#{contestBean.activeContest.id}" target="_blank">Pravidla sutaze</h:outputLink>
+                </h:panelGroup>
+                <h:panelGroup styleClass="footerField" rendered="#{facebookLogin.signedRequest.pageAdmin}">
+                        Admin page
+                        <h:outputLink value="#{facebookLogin.addPageTabLink}" target="">Add Page Tab</h:outputLink>
+                </h:panelGroup>
+                <h:panelGroup styleClass="footerField">
+                        copyright
+                </h:panelGroup>
             </div>
         </ui:insert>
 

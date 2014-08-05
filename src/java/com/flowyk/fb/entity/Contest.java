@@ -6,40 +6,56 @@
 package com.flowyk.fb.entity;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
  * @author Lukas
  */
 @Entity
-@NamedQuery(name = "Contest.findByPage", query = "FROM Contest c WHERE c.registeredPage = :page")
+@NamedQueries({
+    @NamedQuery(name = "Contest.findAll", query = "SELECT c FROM Contest c"),
+    @NamedQuery(name = "Contest.findById", query = "SELECT c FROM Contest c WHERE c.id = :id"),
+    @NamedQuery(name = "Contest.findByRegisteredPage", query = "SELECT c FROM Contest c WHERE c.registeredPage = :registeredPage"),
+    @NamedQuery(name = "Contest.findByName", query = "SELECT c FROM Contest c WHERE c.name = :name"),
+    @NamedQuery(name = "Contest.findByIconUrl", query = "SELECT c FROM Contest c WHERE c.iconUrl = :iconUrl"),
+    @NamedQuery(name = "Contest.findByDescription", query = "SELECT c FROM Contest c WHERE c.description = :description"),
+    @NamedQuery(name = "Contest.findByContestStart", query = "SELECT c FROM Contest c WHERE c.contestStart = :contestStart"),
+    @NamedQuery(name = "Contest.findByContestEnd", query = "SELECT c FROM Contest c WHERE c.contestEnd = :contestEnd"),
+    @NamedQuery(name = "Contest.findByDisabled", query = "SELECT c FROM Contest c WHERE c.disabled = :disabled"),
+    @NamedQuery(name = "Contest.findByPage", query = "FROM Contest c WHERE c.registeredPage = :page")})
 public class Contest implements Serializable, Comparable<Contest> {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @NotNull
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    @Size(max=20)
     private String registeredPage;
 
     @OneToMany(mappedBy = "contest", cascade = {CascadeType.ALL})
-    private List<RegisteredUser> registeredUsers;
+    private Collection<RegisteredUser> registeredUsers;
 
     @OneToMany(mappedBy = "contest", cascade = {CascadeType.ALL})
-    private List<Prize> prizes;
+    private Collection<Prize> prizes;
 
+    @Size(max=150)
     private String name;
+    @Size(max=150)
     private String iconUrl;
     private String description;
     @NotNull
@@ -48,11 +64,11 @@ public class Contest implements Serializable, Comparable<Contest> {
     @NotNull
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date contestEnd;
-    private String rulesUrl;
+    private String rules;
     private boolean disabled;
 
-    @ManyToOne(cascade = {CascadeType.ALL})
     @NotNull
+    @ManyToOne(optional = false, cascade = {CascadeType.ALL})
     private ContestLayout layout;
 
     public String getIconUrl() {
@@ -103,12 +119,12 @@ public class Contest implements Serializable, Comparable<Contest> {
         this.contestEnd = contestEnd;
     }
 
-    public String getRulesUrl() {
-        return rulesUrl;
+    public String getRules() {
+        return rules;
     }
 
-    public void setRulesUrl(String rulesUrl) {
-        this.rulesUrl = rulesUrl;
+    public void setRules(String rules) {
+        this.rules = rules;
     }
 
     public boolean isDisabled() {
@@ -119,11 +135,11 @@ public class Contest implements Serializable, Comparable<Contest> {
         this.disabled = disabled;
     }
 
-    public List<Prize> getPrizes() {
+    public Collection<Prize> getPrizes() {
         return prizes;
     }
 
-    public void setPrizes(List<Prize> prizes) {
+    public void setPrizes(Collection<Prize> prizes) {
         this.prizes = prizes;
     }
 
@@ -143,11 +159,11 @@ public class Contest implements Serializable, Comparable<Contest> {
         this.registeredPage = registeredPage;
     }
 
-    public List<RegisteredUser> getRegisteredUsers() {
+    public Collection<RegisteredUser> getRegisteredUsers() {
         return registeredUsers;
     }
 
-    public void setRegisteredUsers(List<RegisteredUser> registeredUsers) {
+    public void setRegisteredUsers(Collection<RegisteredUser> registeredUsers) {
         this.registeredUsers = registeredUsers;
     }
 
@@ -160,15 +176,11 @@ public class Contest implements Serializable, Comparable<Contest> {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Contest)) {
             return false;
         }
         Contest other = (Contest) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        return this.id.equals(other.id);
     }
 
     @Override
@@ -186,5 +198,4 @@ public class Contest implements Serializable, Comparable<Contest> {
         }
         return compareEnd != 0 ? compareEnd : compareStart;
     }
-
 }

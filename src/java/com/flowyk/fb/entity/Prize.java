@@ -8,34 +8,50 @@ package com.flowyk.fb.entity;
 
 import java.io.Serializable;
 import javax.persistence.CascadeType;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
  * @author Lukas
  */
 @Entity
+@NamedQueries({
+    @NamedQuery(name = "Prize.findAll", query = "SELECT p FROM Prize p"),
+    @NamedQuery(name = "Prize.findByName", query = "SELECT p FROM Prize p WHERE p.name = :name"),
+    @NamedQuery(name = "Prize.findByPosition", query = "SELECT p FROM Prize p WHERE p.prizePK.position = :position"),
+    @NamedQuery(name = "Prize.findByDescription", query = "SELECT p FROM Prize p WHERE p.description = :description"),
+    @NamedQuery(name = "Prize.findByDetailUrl", query = "SELECT p FROM Prize p WHERE p.detailsUrl = :detailUrl"),
+    @NamedQuery(name = "Prize.findByImageUrl", query = "SELECT p FROM Prize p WHERE p.imageUrl = :imageUrl"),
+    @NamedQuery(name = "Prize.findByContestId", query = "SELECT p FROM Prize p WHERE p.prizePK.contestId = :contestId")})
 public class Prize implements Serializable {
     private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @EmbeddedId
+    protected PrizePK prizePK;
     @NotNull
+    @Size(max=150)
     private String name;
-    @NotNull
-    private int position = 1;
     private String description;
-    private String url;
-    private String image;
+    private String detailsUrl;
+    private String imageUrl;
     
-    @ManyToOne(cascade = {CascadeType.ALL})
+    @JoinColumn(name = "contestId", referencedColumnName = "id", insertable = false, updatable = false)
+    @ManyToOne(optional = false, cascade = {CascadeType.ALL})
     private Contest contest;
 
+    @JoinColumns({
+        @JoinColumn(name = "winnerEmail", referencedColumnName = "email"),
+        @JoinColumn(name = "winnerContestId", referencedColumnName = "contestId")})
+    @ManyToOne
+    private RegisteredUser winner;
+    
     public Contest getContest() {
         return contest;
     }
@@ -45,28 +61,12 @@ public class Prize implements Serializable {
     }
 
     
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-    
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public int getPosition() {
-        return position;
-    }
-
-    public void setPosition(int position) {
-        this.position = position;
     }
 
     public String getDescription() {
@@ -77,26 +77,42 @@ public class Prize implements Serializable {
         this.description = description;
     }
 
-    public String getUrl() {
-        return url;
+    public String getDetailsUrl() {
+        return detailsUrl;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setDetailsUrl(String detailsUrl) {
+        this.detailsUrl = detailsUrl;
     }
 
-    public String getImage() {
-        return image;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public PrizePK getPrizePK() {
+        return prizePK;
+    }
+
+    public void setPrizePK(PrizePK prizePK) {
+        this.prizePK = prizePK;
+    }
+
+    public RegisteredUser getWinner() {
+        return winner;
+    }
+
+    public void setWinner(RegisteredUser winner) {
+        this.winner = winner;
     }
     
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (prizePK != null ? prizePK.hashCode() : 0);
         return hash;
     }
 
@@ -107,17 +123,12 @@ public class Prize implements Serializable {
             return false;
         }
         Prize other = (Prize) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        return (this.prizePK != null || other.prizePK == null) && (this.prizePK == null || this.prizePK.equals(other.prizePK));
     }
 
     @Override
     public String toString() {
-        return "com.flowyk.fb.Prize[ id=" + id + ", name=" + name + " ]";
+        return "com.flowyk.entity.Prize[ prizePK=" + prizePK + " ]";
     }
-
-    
     
 }

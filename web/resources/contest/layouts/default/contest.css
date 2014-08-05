@@ -16,12 +16,20 @@ and open the template in the editor.
 }
 
 #registerForm {
-    width: 343px;
-    height: 236px;
     position: absolute;
-    top: 263px;
+    top: 280px;
     left: 0px;
     z-index: 10;
+}
+
+#infoBox {
+    position: absolute;
+    top: 329px;
+    left: 345px;
+    width: 400px;
+    height: 154px;
+    padding: 0px 20px;
+    background: brown;
 }
 
 #pressLikeImage {
@@ -39,42 +47,50 @@ and open the template in the editor.
 }
 
 .formTable {
-    width: 100%;
-    padding: 35px 0px 0px 72px;
-}
-
-#titleImage {
-    position: absolute;
-    top: 0px;
-    left: 0px;
+    margin-left: 40px;
+    padding: 18px 0px 0px 0px;
 }
 
 #acceptRulesRow {
-    width: 100%;
-    padding: 10px 0px 0px 72px;
+    padding: 5px 0px 5px 20px;
+    margin-left: 40px;
 }
 
 #submitRow {
-    width: 100%;
-    padding: 10px 0px 0px 72px;
+    height: 50px;
+    margin-left: 40px;
+    padding: 0px 0px 0px 0px;
+}
+
+.returningLink {
+    font-weight: bold;
+    color: blue;
+    font-size: 11px;
+    display: block;
+    padding: 6px 120px 0px 0px;
+}
+
+#returningText {
+    display: inline-block;
+    font-size: 14px;
+    /*padding*/
+    margin: 35px 0px 0px 40px;
+    width: 300px;
+    /*background: yellowgreen;*/
 }
 
 .inputSubmit {
     border: none;
-    cursor: pointer;
-    float: right;
-/*    bottom: 0px;
-    right: 0px;*/
+    /*cursor: pointer;*/
+    position: absolute;
+    right: 0;
 }
-
-#contestRulesCheckbox {
-}
-
 
 .inputText {
     background: url("#{resource['contest/layouts/default/input-bg.png']}") no-repeat;
     padding: 6px 10px;
     width: 180px;
+    margin-right: 20px;
     font-weight: bold;
 }
 
@@ -87,7 +103,6 @@ and open the template in the editor.
 .inputLabel {
     width: 75px;
     display: inline-block;
-    /*vertical-align: middle;*/
     color: #575656;
     font-weight: bold;
     text-transform: uppercase;

@@ -8,13 +8,14 @@ package com.flowyk.fb.entity;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.CascadeType;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -23,20 +24,32 @@ import javax.validation.constraints.Size;
  * @author Lukas
  */
 @Entity
-//@Table(
-//        uniqueConstraints = {
-//            @UniqueConstraint(name = "UniqueConstraint_contest_email", columnNames = {"contest", "email"})
-//        }
-//)
-@IdClass(RegisteredUserKey.class)
+@NamedQueries({
+    @NamedQuery(name = "Registereduser.findAll", query = "SELECT r FROM RegisteredUser r"),
+    @NamedQuery(name = "Registereduser.findByEmail", query = "SELECT r FROM RegisteredUser r WHERE r.userPK.email = :email"),
+    @NamedQuery(name = "Registereduser.findByName", query = "SELECT r FROM RegisteredUser r WHERE r.name = :name"),
+    @NamedQuery(name = "Registereduser.findByTelephone", query = "SELECT r FROM RegisteredUser r WHERE r.telephone = :telephone"),
+    @NamedQuery(name = "Registereduser.findByTickets", query = "SELECT r FROM RegisteredUser r WHERE r.tickets = :tickets"),
+    @NamedQuery(name = "Registereduser.findByLocale", query = "SELECT r FROM RegisteredUser r WHERE r.locale = :locale"),
+    @NamedQuery(name = "Registereduser.findByCountry", query = "SELECT r FROM RegisteredUser r WHERE r.country = :country"),
+    @NamedQuery(name = "Registereduser.findByAgeMin", query = "SELECT r FROM RegisteredUser r WHERE r.ageMin = :ageMin"),
+    @NamedQuery(name = "Registereduser.findByAgeMax", query = "SELECT r FROM RegisteredUser r WHERE r.ageMax = :ageMax"),
+    @NamedQuery(name = "Registereduser.findByContestId", query = "SELECT r FROM RegisteredUser r WHERE r.userPK.contestId = :contestId")})
 public class RegisteredUser implements Serializable {
-
-    @Id
-    private String email;
+    private static final long serialVersionUID = 1L;
     
-    @Id
-    @ManyToOne(cascade = {CascadeType.ALL})
+    @EmbeddedId
+    protected RegisteredUserPK userPK;
+    
+    @JoinColumn(name = "contestId", referencedColumnName = "id", insertable = false, updatable = false)
+    @ManyToOne(optional = false, cascade = {CascadeType.ALL})
     private Contest contest;
+    
+//    @Pattern(regexp = "[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+"  //meno
+//            + "(?:\\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*"  //subdomena
+//            + "@(?:[a-zA-Z0-9]+\\.)+"  //domena
+//            + "[a-zA-Z]{1,4}")  //root
+//    private String email;
     
     @Size(min = 5, max = 30)
     private String name;
@@ -51,26 +64,28 @@ public class RegisteredUser implements Serializable {
     private Integer ageMin;
     private Integer ageMax;
     
-    @ManyToOne(cascade = {CascadeType.ALL})
+    @JoinColumns({
+        @JoinColumn(name = "referalEmail", referencedColumnName = "email"),
+        @JoinColumn(name = "referalContestId", referencedColumnName = "contestId")})
+    @ManyToOne(optional = false, cascade = {CascadeType.ALL})
     private RegisteredUser referal;
     @OneToMany(mappedBy = "referal", cascade = {CascadeType.ALL})
     private List<RegisteredUser> referies;
-
-    public String getEmail() {
-        return email;
+    
+    public RegisteredUser() {
+        
     }
-
-    public void setEmail(String email) {
-        this.email = email.toLowerCase();
+    public RegisteredUser(RegisteredUserPK pk) {
+        this.userPK = pk;
     }
     
     public Contest getContest() {
         return contest;
     }
-
-    public void setContest(Contest contest) {
-        this.contest = contest;
-    }
+//
+//    public void setContest(Contest contest) {
+//        this.contest = contest;
+//    }
     
     public String getLocale() {
         return locale;
@@ -119,11 +134,6 @@ public class RegisteredUser implements Serializable {
     public void setReferies(List<RegisteredUser> referies) {
         this.referies = referies;
     }
-    
-    @Override
-    public String toString() {
-        return "RegisteredUser[ name=" + name + ", contest=" + contest + ", email=" + email + " ]";
-    }
 
     public String getName() {
         return name;
@@ -141,12 +151,42 @@ public class RegisteredUser implements Serializable {
         this.telephone = telephone;
     }
 
-    public int getTickets() {
+    public Integer getTickets() {
         return tickets;
     }
 
-    public void setTickets(int tickets) {
+    public void setTickets(Integer tickets) {
         this.tickets = tickets;
     }
 
+    public RegisteredUserPK getUserPK() {
+        return userPK;
+    }
+
+    public void setUserPK(RegisteredUserPK userPK) {
+        this.userPK = userPK;
+    }
+    
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (userPK != null ? userPK.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof RegisteredUser)) {
+            return false;
+        }
+        RegisteredUser other = (RegisteredUser) object;
+        boolean equals = (this.userPK != null || other.userPK == null) && (this.userPK == null || this.userPK.equals(other.userPK));
+        return equals;
+    }
+
+    @Override
+    public String toString() {
+        return "com.flowyk.entity.Registereduser[ registereduserPK=" + userPK + " ]";
+    }
 }

@@ -45,7 +45,7 @@ public class FacebookLogin implements Serializable {
 
     private static final String API_KEY = "675005359221214";
     private static final String API_SECRET = "842b931caf789225b22182d92a670bf0";
-    private static final String CALLBACK_URL = "https://91.148.1.245:8181/FacebookSutaz-newwar/contest.xhtml";
+    private static final String CALLBACK_URL = "https://sutaz.flowyk.com:8181/FacebookSutaz-newwar/contest.xhtml";
 
     private final static OAuthService service;
     private final static String authUrl;
@@ -83,7 +83,7 @@ public class FacebookLogin implements Serializable {
         return authUrl;
     }
 
-    public String goAddPageTab() {
+    public String getAddPageTabLink() {
         return "https://www.facebook.com/dialog/pagetab?app_id=" + API_KEY + "&redirect_uri=" + CALLBACK_URL;
     }
 

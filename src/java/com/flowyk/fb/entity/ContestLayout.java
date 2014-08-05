@@ -9,15 +9,24 @@ package com.flowyk.fb.entity;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
  * @author Lukas
  */
 @Entity
+@NamedQueries({
+    @NamedQuery(name = "Contestlayout.findAll", query = "SELECT c FROM ContestLayout c"),
+    @NamedQuery(name = "Contestlayout.findByName", query = "SELECT c FROM ContestLayout c WHERE c.name = :name")})
 public class ContestLayout implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
+    @NotNull
+    @Size(min=4, max=20)
     private String name;
 
     public ContestLayout() { }
@@ -40,15 +49,11 @@ public class ContestLayout implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the name fields are not set
         if (!(object instanceof ContestLayout)) {
             return false;
         }
         ContestLayout other = (ContestLayout) object;
-        if ((this.name == null && other.name != null) || (this.name != null && !this.name.equals(other.name))) {
-            return false;
-        }
-        return true;
+        return this.name.equals(other.name);
     }
 
     @Override

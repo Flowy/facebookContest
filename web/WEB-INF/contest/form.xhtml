@@ -5,22 +5,22 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:p="http://primefaces.org/ui">
     <h:form id="registerForm">
-        <h:graphicImage styleClass="formImage" url="#{contestBean.getImageUrl('/form.png')}" />
+        <h:graphicImage styleClass="formImage" url="#{contestBean.getImageUrl('/text2.png')}" />
         <p:growl id="msgs" life="15000" showDetail="true" showSummary="false" />
         <h:panelGrid styleClass="formTable" columns="2">
 
             <h:outputLabel for="nameTextInput"
-                           value="!!!Meno" styleClass="inputLabel" />
+                           value="Meno" styleClass="inputLabel" />
             <h:inputText id="nameTextInput"
                          value="#{registerFormBean.user.name}" 
                          styleClass="inputText #{component.valid ? '' : 'error'}" />
-            <h:outputLabel for="emailTextInput" 
-                           value="!!!Email" styleClass="inputLabel" />
+            <h:outputLabel for="emailTextInput"
+                           value="Email" styleClass="inputLabel" />
             <h:inputText id="emailTextInput"
-                         value="#{registerFormBean.user.email}" 
+                         value="#{registerFormBean.user.userPK.email}" 
                          styleClass="inputText #{component.valid ? '' : 'error'}" />
             <h:outputLabel for="mobileTextInput" 
-                           value="!!!Mobil" styleClass="inputLabel" />
+                           value="Mobil" styleClass="inputLabel" />
             <h:inputText id="mobileTextInput" 
                          value="#{registerFormBean.user.telephone}" 
                          styleClass="inputText #{component.valid ? '' : 'error'}" />
@@ -29,15 +29,18 @@
         <div id="acceptRulesRow">
             <h:selectBooleanCheckbox id="contestRulesCheckbox" 
                                      value="#{registerFormBean.acceptedRules}"
-                                     converter="javax.faces.Boolean"
-                                     styleClass="#{component.valid ? '' : 'error'}"/>
-            <h:outputLabel for="contestRulesCheckbox">!!!Suhlasim s <h:outputLink value="#{contestBean.activeContest.rulesUrl}">pravidlami sutaze</h:outputLink></h:outputLabel>
+                                     converter="javax.faces.Boolean"/>
+            <h:outputLabel for="contestRulesCheckbox">Suhlasim s <h:outputLink value="#{request.contextPath}/contest-rules.xhtml?contest=#{contestBean.activeContest.id}" target="_blank">pravidlami sutaze</h:outputLink></h:outputLabel>
         </div>
         <div id="submitRow">
             <h:commandButton styleClass="inputSubmit"
                              alt="Submit"
                              action="#{registerFormBean.register()}"
-                             image="#{contestBean.getImageUrl('/submitButton.png')}" />
+                             image="#{contestBean.getImageUrl('/bt-odoslat.png')}" />
+            <h:commandLink styleClass="returningLink" immediate="true" action="#{contestBean.setReturning(true)}">Už som registrovaný<br />chcem ďalší lístok</h:commandLink>
         </div>
     </h:form>
+    <div id="infoBox">
+        
+    </div>
 </ui:composition>

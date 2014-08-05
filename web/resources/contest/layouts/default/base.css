@@ -46,15 +46,12 @@ body {
 
 #footer {
     position: absolute;
-    bottom: 0px;
+    bottom: 10px;
     right: 0px;
+    background-color: rgba(255, 255, 255, 0.7);
 }
 
-#footer ul {
-    list-style-type: none;
-}
-
-#footer ul li {
-    float: right;
-    margin: 10px;
+.footerField {
+    float: left;
+    margin: 5px 20px;
 }

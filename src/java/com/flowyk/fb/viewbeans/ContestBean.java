@@ -13,8 +13,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
-import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -24,7 +24,7 @@ import javax.persistence.PersistenceContext;
  * @author Lukas
  */
 @Named
-@ViewScoped
+@SessionScoped
 public class ContestBean implements Serializable {
 
     private static final Logger LOG = Logger.getLogger(ContestBean.class.getName());
@@ -35,6 +35,7 @@ public class ContestBean implements Serializable {
     @PersistenceContext(unitName = "fbContestDB")
     EntityManager em;
 
+    private Boolean returning = false;
     private Contest active = null;
 
     /**
@@ -121,7 +122,11 @@ public class ContestBean implements Serializable {
         if (req != null) {
             String page;
             if (req.isPageLike()) {
-                page = "/register.xhtml";
+                if (returning) {
+                    page = "/returning.xhtml";
+                } else {
+                    page = "/register.xhtml";
+                }
             } else {
                 page = "/presslike.xhtml";
             }
@@ -133,4 +138,7 @@ public class ContestBean implements Serializable {
     }
 
     // Setters -----------------------------------------------------------------------------------
+    public void setReturning(Boolean value) {
+        returning = value;
+    }
 }

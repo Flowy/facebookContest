@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui">
+    <h:form id="registerForm">
+        <h:graphicImage styleClass="formImage" url="#{contestBean.getImageUrl('/text2.png')}" />
+        <p:growl id="msgs" life="15000" showDetail="true" showSummary="false" />
+
+        <span id="returningText">Pokiaľ si už v súťaži prihlásený a uplynul zadaný čas, zadaj svoj email, získaj ďalší lístok a zvýš svoju šancu na výhru.</span>
+        <h:panelGrid styleClass="formTable" columns="2">
+            <h:outputLabel for="emailTextInput" 
+                           value="Email" styleClass="inputLabel" />
+            <h:inputText id="emailTextInput"
+                         value="#{registerFormBean.user.userPK.email}" 
+                         styleClass="inputText #{component.valid ? '' : 'error'}" />
+        </h:panelGrid>
+        <div id="submitRow">
+            <h:commandButton styleClass="inputSubmit"
+                             alt="Submit"
+                             action="#{registerFormBean.register()}"
+                             image="#{contestBean.getImageUrl('/bt-odoslat.png')}" />
+        </div>
+    </h:form>
+</ui:composition>
