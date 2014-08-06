@@ -34,7 +34,7 @@ public class DatabaseInit {
             c.setContestStart(new Date(System.currentTimeMillis() - 10*24*60*60*1000));
             c.setContestEnd(new Date(System.currentTimeMillis() + 10*24*60*60*1000));
             ContestLayout l = new ContestLayout("default");
-            c.setLayout(l);
+            c.setContestLayoutName(l);
             em.persist(c);
 //        }
     }

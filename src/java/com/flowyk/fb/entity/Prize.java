@@ -7,11 +7,9 @@
 package com.flowyk.fb.entity;
 
 import java.io.Serializable;
-import javax.persistence.CascadeType;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -27,70 +25,30 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Prize.findAll", query = "SELECT p FROM Prize p"),
     @NamedQuery(name = "Prize.findByName", query = "SELECT p FROM Prize p WHERE p.name = :name"),
     @NamedQuery(name = "Prize.findByPosition", query = "SELECT p FROM Prize p WHERE p.prizePK.position = :position"),
-    @NamedQuery(name = "Prize.findByDescription", query = "SELECT p FROM Prize p WHERE p.description = :description"),
-    @NamedQuery(name = "Prize.findByDetailUrl", query = "SELECT p FROM Prize p WHERE p.detailsUrl = :detailUrl"),
-    @NamedQuery(name = "Prize.findByImageUrl", query = "SELECT p FROM Prize p WHERE p.imageUrl = :imageUrl"),
     @NamedQuery(name = "Prize.findByContestId", query = "SELECT p FROM Prize p WHERE p.prizePK.contestId = :contestId")})
 public class Prize implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected PrizePK prizePK;
+    @Size(max = 250)
     @NotNull
-    @Size(max=150)
     private String name;
-    private String description;
-    private String detailsUrl;
-    private String imageUrl;
-    
     @JoinColumn(name = "contestId", referencedColumnName = "id", insertable = false, updatable = false)
-    @ManyToOne(optional = false, cascade = {CascadeType.ALL})
+    @ManyToOne(optional = false)
     private Contest contest;
-
-    @JoinColumns({
-        @JoinColumn(name = "winnerEmail", referencedColumnName = "email"),
-        @JoinColumn(name = "winnerContestId", referencedColumnName = "contestId")})
+    @JoinColumn(name = "winnerId", referencedColumnName = "id")
     @ManyToOne
-    private RegisteredUser winner;
-    
-    public Contest getContest() {
-        return contest;
+    private RegisteredUser winnerId;
+
+    public Prize() {
     }
 
-    public void setContest(Contest contest) {
-        this.contest = contest;
+    public Prize(PrizePK prizePK) {
+        this.prizePK = prizePK;
     }
 
-    
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getDetailsUrl() {
-        return detailsUrl;
-    }
-
-    public void setDetailsUrl(String detailsUrl) {
-        this.detailsUrl = detailsUrl;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public Prize(int position, int contestId) {
+        this.prizePK = new PrizePK(position, contestId);
     }
 
     public PrizePK getPrizePK() {
@@ -101,14 +59,30 @@ public class Prize implements Serializable {
         this.prizePK = prizePK;
     }
 
-    public RegisteredUser getWinner() {
-        return winner;
+    public String getName() {
+        return name;
     }
 
-    public void setWinner(RegisteredUser winner) {
-        this.winner = winner;
+    public void setName(String name) {
+        this.name = name;
     }
-    
+
+    public Contest getContest() {
+        return contest;
+    }
+
+    public void setContest(Contest contest) {
+        this.contest = contest;
+    }
+
+    public RegisteredUser getWinnerId() {
+        return winnerId;
+    }
+
+    public void setWinnerId(RegisteredUser winnerId) {
+        this.winnerId = winnerId;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -123,7 +97,10 @@ public class Prize implements Serializable {
             return false;
         }
         Prize other = (Prize) object;
-        return (this.prizePK != null || other.prizePK == null) && (this.prizePK == null || this.prizePK.equals(other.prizePK));
+        if ((this.prizePK == null && other.prizePK != null) || (this.prizePK != null && !this.prizePK.equals(other.prizePK))) {
+            return false;
+        }
+        return true;
     }
 
     @Override

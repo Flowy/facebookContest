@@ -7,6 +7,7 @@
 package com.flowyk.fb.entity;
 
 import java.io.Serializable;
+import javax.persistence.Basic;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
 
@@ -16,8 +17,10 @@ import javax.validation.constraints.NotNull;
  */
 @Embeddable
 public class PrizePK implements Serializable {
+    @Basic(optional = false)
     @NotNull
     private int position;
+    @Basic(optional = false)
     @NotNull
     private int contestId;
 

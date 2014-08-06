@@ -55,7 +55,7 @@ public class ContestBean implements Serializable {
         Contest selected = null;
         Date now = new Date();
         for (Contest x : list) {
-            if (!x.isDisabled() && x.getContestEnd().after(now)) {
+            if (!x.getDisabled() && x.getContestEnd().after(now)) {
                 selected = x;
             }
         }
@@ -84,7 +84,7 @@ public class ContestBean implements Serializable {
     public String getPageUrl(String page) {
         Contest contest = getActiveContest();
         if (contest != null) {
-            return "/WEB-INF/contest/layouts/" + contest.getLayout().getName() + page;
+            return "/WEB-INF/contest/layouts/" + contest.getContestLayoutName().getName() + page;
         } else {
             return null;
         }
@@ -98,7 +98,7 @@ public class ContestBean implements Serializable {
     public String getResourceUrl(String resource) {
         Contest contest = getActiveContest();
         if (contest != null) {
-            return "./contest/layouts/" + contest.getLayout().getName() + resource;
+            return "./contest/layouts/" + contest.getContestLayoutName().getName() + resource;
         } else {
             return null;
         }

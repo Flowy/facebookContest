@@ -3,20 +3,21 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package com.flowyk.fb.entity;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Collection;
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
@@ -26,7 +27,7 @@ import javax.validation.constraints.Size;
 @Entity
 @NamedQueries({
     @NamedQuery(name = "Registereduser.findAll", query = "SELECT r FROM RegisteredUser r"),
-    @NamedQuery(name = "Registereduser.findByEmail", query = "SELECT r FROM RegisteredUser r WHERE r.userPK.email = :email"),
+    @NamedQuery(name = "Registereduser.findByEmail", query = "SELECT r FROM RegisteredUser r WHERE r.email = :email"),
     @NamedQuery(name = "Registereduser.findByName", query = "SELECT r FROM RegisteredUser r WHERE r.name = :name"),
     @NamedQuery(name = "Registereduser.findByTelephone", query = "SELECT r FROM RegisteredUser r WHERE r.telephone = :telephone"),
     @NamedQuery(name = "Registereduser.findByTickets", query = "SELECT r FROM RegisteredUser r WHERE r.tickets = :tickets"),
@@ -34,27 +35,17 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Registereduser.findByCountry", query = "SELECT r FROM RegisteredUser r WHERE r.country = :country"),
     @NamedQuery(name = "Registereduser.findByAgeMin", query = "SELECT r FROM RegisteredUser r WHERE r.ageMin = :ageMin"),
     @NamedQuery(name = "Registereduser.findByAgeMax", query = "SELECT r FROM RegisteredUser r WHERE r.ageMax = :ageMax"),
-    @NamedQuery(name = "Registereduser.findByContestId", query = "SELECT r FROM RegisteredUser r WHERE r.userPK.contestId = :contestId")})
+    @NamedQuery(name = "Registereduser.findById", query = "SELECT r FROM RegisteredUser r WHERE r.id = :id")})
 public class RegisteredUser implements Serializable {
     private static final long serialVersionUID = 1L;
-    
-    @EmbeddedId
-    protected RegisteredUserPK userPK;
-    
-    @JoinColumn(name = "contestId", referencedColumnName = "id", insertable = false, updatable = false)
-    @ManyToOne(optional = false, cascade = {CascadeType.ALL})
-    private Contest contest;
-    
-//    @Pattern(regexp = "[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+"  //meno
-//            + "(?:\\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*"  //subdomena
-//            + "@(?:[a-zA-Z0-9]+\\.)+"  //domena
-//            + "[a-zA-Z]{1,4}")  //root
-//    private String email;
-    
-    @Size(min = 5, max = 30)
+    // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
+    private String email;
+    @Size(max = 30)
     private String name;
-    @Pattern(regexp = "[0-9 \\+]+")
-    @Size(min = 6, max = 16)
+    @Size(max = 16)
     private String telephone;
     private Integer tickets;
     @Size(max = 20)
@@ -63,30 +54,65 @@ public class RegisteredUser implements Serializable {
     private String country;
     private Integer ageMin;
     private Integer ageMax;
-    
-    @JoinColumns({
-        @JoinColumn(name = "referalEmail", referencedColumnName = "email"),
-        @JoinColumn(name = "referalContestId", referencedColumnName = "contestId")})
-    @ManyToOne(optional = false, cascade = {CascadeType.ALL})
-    private RegisteredUser referal;
-    @OneToMany(mappedBy = "referal", cascade = {CascadeType.ALL})
-    private List<RegisteredUser> referies;
-    
+    @Id
+    @Basic(optional = false)
+    @NotNull
+    private Integer id;
+    @JoinColumn(name = "contestId", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Contest contestId;
+    @OneToMany(mappedBy = "referalId")
+    private Collection<RegisteredUser> registereduserCollection;
+    @JoinColumn(name = "referalId", referencedColumnName = "id")
+    @ManyToOne
+    private RegisteredUser referalId;
+    @OneToMany(mappedBy = "winnerId")
+    private Collection<Prize> prizeCollection;
+
     public RegisteredUser() {
-        
     }
-    public RegisteredUser(RegisteredUserPK pk) {
-        this.userPK = pk;
+
+    public RegisteredUser(Integer id) {
+        this.id = id;
     }
-    
-    public Contest getContest() {
-        return contest;
+
+    public RegisteredUser(Integer id, String email) {
+        this.id = id;
+        this.email = email;
     }
-//
-//    public void setContest(Contest contest) {
-//        this.contest = contest;
-//    }
-    
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getTelephone() {
+        return telephone;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
+    }
+
+    public Integer getTickets() {
+        return tickets;
+    }
+
+    public void setTickets(Integer tickets) {
+        this.tickets = tickets;
+    }
+
     public String getLocale() {
         return locale;
     }
@@ -119,58 +145,50 @@ public class RegisteredUser implements Serializable {
         this.ageMax = ageMax;
     }
 
-    public RegisteredUser getReferal() {
-        return referal;
+    public Integer getId() {
+        return id;
     }
 
-    public void setReferal(RegisteredUser referal) {
-        this.referal = referal;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public List<RegisteredUser> getReferies() {
-        return referies;
+    public Contest getContestId() {
+        return contestId;
     }
 
-    public void setReferies(List<RegisteredUser> referies) {
-        this.referies = referies;
+    public void setContestId(Contest contestId) {
+        this.contestId = contestId;
     }
 
-    public String getName() {
-        return name;
+    public Collection<RegisteredUser> getRegistereduserCollection() {
+        return registereduserCollection;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setRegistereduserCollection(Collection<RegisteredUser> registereduserCollection) {
+        this.registereduserCollection = registereduserCollection;
     }
 
-    public String getTelephone() {
-        return telephone;
+    public RegisteredUser getReferalId() {
+        return referalId;
     }
 
-    public void setTelephone(String telephone) {
-        this.telephone = telephone;
+    public void setReferalId(RegisteredUser referalId) {
+        this.referalId = referalId;
     }
 
-    public Integer getTickets() {
-        return tickets;
+    public Collection<Prize> getPrizeCollection() {
+        return prizeCollection;
     }
 
-    public void setTickets(Integer tickets) {
-        this.tickets = tickets;
+    public void setPrizeCollection(Collection<Prize> prizeCollection) {
+        this.prizeCollection = prizeCollection;
     }
 
-    public RegisteredUserPK getUserPK() {
-        return userPK;
-    }
-
-    public void setUserPK(RegisteredUserPK userPK) {
-        this.userPK = userPK;
-    }
-    
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (userPK != null ? userPK.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -181,12 +199,12 @@ public class RegisteredUser implements Serializable {
             return false;
         }
         RegisteredUser other = (RegisteredUser) object;
-        boolean equals = (this.userPK != null || other.userPK == null) && (this.userPK == null || this.userPK.equals(other.userPK));
-        return equals;
+        return this.id.equals(other.id);
     }
 
     @Override
     public String toString() {
-        return "com.flowyk.entity.Registereduser[ registereduserPK=" + userPK + " ]";
+        return "com.flowyk.entity.Registereduser[ id=" + id + " ]";
     }
+    
 }

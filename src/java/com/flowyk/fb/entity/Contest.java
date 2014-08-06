@@ -3,21 +3,26 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package com.flowyk.fb.entity;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -32,59 +37,67 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Contest.findByRegisteredPage", query = "SELECT c FROM Contest c WHERE c.registeredPage = :registeredPage"),
     @NamedQuery(name = "Contest.findByName", query = "SELECT c FROM Contest c WHERE c.name = :name"),
     @NamedQuery(name = "Contest.findByIconUrl", query = "SELECT c FROM Contest c WHERE c.iconUrl = :iconUrl"),
-    @NamedQuery(name = "Contest.findByDescription", query = "SELECT c FROM Contest c WHERE c.description = :description"),
     @NamedQuery(name = "Contest.findByContestStart", query = "SELECT c FROM Contest c WHERE c.contestStart = :contestStart"),
     @NamedQuery(name = "Contest.findByContestEnd", query = "SELECT c FROM Contest c WHERE c.contestEnd = :contestEnd"),
     @NamedQuery(name = "Contest.findByDisabled", query = "SELECT c FROM Contest c WHERE c.disabled = :disabled"),
-    @NamedQuery(name = "Contest.findByPage", query = "FROM Contest c WHERE c.registeredPage = :page")})
-public class Contest implements Serializable, Comparable<Contest> {
-
+    @NamedQuery(name = "Contest.findByPopisSutaze", query = "SELECT c FROM Contest c WHERE c.popisSutaze = :popisSutaze"),
+    @NamedQuery(name = "Contest.findByExterneInfoUrl", query = "SELECT c FROM Contest c WHERE c.externeInfoUrl = :externeInfoUrl")})
+public class Contest implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @NotNull
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-    @Size(max=20)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    private Integer id;
+    @Size(max = 20)
     private String registeredPage;
-
-    @OneToMany(mappedBy = "contest", cascade = {CascadeType.ALL})
-    private Collection<RegisteredUser> registeredUsers;
-
-    @OneToMany(mappedBy = "contest", cascade = {CascadeType.ALL})
-    private Collection<Prize> prizes;
-
-    @Size(max=150)
+    @Size(max = 150)
     private String name;
-    @Size(max=150)
+    @Size(max = 250)
     private String iconUrl;
+    @Lob
+    @Size(max = 65535)
     private String description;
     @NotNull
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date contestStart;
     @NotNull
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date contestEnd;
-    private String rules;
-    private boolean disabled;
+    private Boolean disabled;
+    @Size(max = 150)
+    private String popisSutaze;
+    @Size(max = 250)
+    private String externeInfoUrl;
+    @JoinColumn(name = "contestLayoutName", referencedColumnName = "name")
+    @ManyToOne(optional = false, cascade={CascadeType.ALL})
+    private ContestLayout contestLayoutName;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "contestId")
+    private Collection<RegisteredUser> registereduserCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "contest")
+    private Collection<Prize> prizeCollection;
 
-    @NotNull
-    @ManyToOne(optional = false, cascade = {CascadeType.ALL})
-    private ContestLayout layout;
-
-    public String getIconUrl() {
-        return iconUrl;
+    public Contest() {
     }
 
-    public void setIconUrl(String iconUrl) {
-        this.iconUrl = iconUrl;
+    public Contest(Integer id) {
+        this.id = id;
     }
 
-    public ContestLayout getLayout() {
-        return layout;
+    public Integer getId() {
+        return id;
     }
 
-    public void setLayout(ContestLayout layout) {
-        this.layout = layout;
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getRegisteredPage() {
+        return registeredPage;
+    }
+
+    public void setRegisteredPage(String registeredPage) {
+        this.registeredPage = registeredPage;
     }
 
     public String getName() {
@@ -93,6 +106,14 @@ public class Contest implements Serializable, Comparable<Contest> {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getIconUrl() {
+        return iconUrl;
+    }
+
+    public void setIconUrl(String iconUrl) {
+        this.iconUrl = iconUrl;
     }
 
     public String getDescription() {
@@ -119,52 +140,52 @@ public class Contest implements Serializable, Comparable<Contest> {
         this.contestEnd = contestEnd;
     }
 
-    public String getRules() {
-        return rules;
-    }
-
-    public void setRules(String rules) {
-        this.rules = rules;
-    }
-
-    public boolean isDisabled() {
+    public Boolean getDisabled() {
         return disabled;
     }
 
-    public void setDisabled(boolean disabled) {
+    public void setDisabled(Boolean disabled) {
         this.disabled = disabled;
     }
 
-    public Collection<Prize> getPrizes() {
-        return prizes;
+    public String getPopisSutaze() {
+        return popisSutaze;
     }
 
-    public void setPrizes(Collection<Prize> prizes) {
-        this.prizes = prizes;
+    public void setPopisSutaze(String popisSutaze) {
+        this.popisSutaze = popisSutaze;
     }
 
-    public Long getId() {
-        return id;
+    public String getExterneInfoUrl() {
+        return externeInfoUrl;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setExterneInfoUrl(String externeInfoUrl) {
+        this.externeInfoUrl = externeInfoUrl;
     }
 
-    public String getRegisteredPage() {
-        return registeredPage;
+    public ContestLayout getContestLayoutName() {
+        return contestLayoutName;
     }
 
-    public void setRegisteredPage(String registeredPage) {
-        this.registeredPage = registeredPage;
+    public void setContestLayoutName(ContestLayout contestLayoutName) {
+        this.contestLayoutName = contestLayoutName;
     }
 
-    public Collection<RegisteredUser> getRegisteredUsers() {
-        return registeredUsers;
+    public Collection<RegisteredUser> getRegistereduserCollection() {
+        return registereduserCollection;
     }
 
-    public void setRegisteredUsers(Collection<RegisteredUser> registeredUsers) {
-        this.registeredUsers = registeredUsers;
+    public void setRegistereduserCollection(Collection<RegisteredUser> registereduserCollection) {
+        this.registereduserCollection = registereduserCollection;
+    }
+
+    public Collection<Prize> getPrizeCollection() {
+        return prizeCollection;
+    }
+
+    public void setPrizeCollection(Collection<Prize> prizeCollection) {
+        this.prizeCollection = prizeCollection;
     }
 
     @Override
@@ -176,6 +197,7 @@ public class Contest implements Serializable, Comparable<Contest> {
 
     @Override
     public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Contest)) {
             return false;
         }
@@ -185,17 +207,7 @@ public class Contest implements Serializable, Comparable<Contest> {
 
     @Override
     public String toString() {
-        return "com.flowyk.fb.entity.Contest[ id=" + id + " ]";
+        return "com.flowyk.entity.Contest[ id=" + id + " ]";
     }
-
-    @Override
-    public int compareTo(Contest o) {
-        int compareEnd;
-        int compareStart = 0;
-        compareEnd = this.contestEnd.compareTo(o.contestEnd);
-        if (compareEnd == 0) {
-            compareStart = this.contestStart.compareTo(o.contestStart);
-        }
-        return compareEnd != 0 ? compareEnd : compareStart;
-    }
+    
 }

@@ -7,7 +7,6 @@ package com.flowyk.fb.viewbeans;
 
 import com.flowyk.fb.entity.RegisteredUser;
 import com.flowyk.fb.auth.FacebookLogin;
-import com.flowyk.fb.entity.RegisteredUserPK;
 import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -59,9 +58,8 @@ public class RegisterFormBean implements Serializable {
 
     @PostConstruct
     public void init() {
-        RegisteredUserPK userPk = new RegisteredUserPK();
-        userPk.setContestId(contestBean.getActiveContest().getId());
-        user = new RegisteredUser(userPk);
+        user = new RegisteredUser();
+        user.setContestId(contestBean.getActiveContest());
         user.setLocale(login.getSignedRequest().getLocale());
         user.setCountry(login.getSignedRequest().getCountry());
         user.setAgeMax(login.getSignedRequest().getAgeMax());
