@@ -8,6 +8,7 @@ package com.flowyk.fb.entity;
 
 import java.io.Serializable;
 import javax.persistence.Basic;
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
 
@@ -19,9 +20,11 @@ import javax.validation.constraints.NotNull;
 public class PrizePK implements Serializable {
     @Basic(optional = false)
     @NotNull
+    @Column(name = "position")
     private int position;
     @Basic(optional = false)
     @NotNull
+    @Column(name = "contest_id")
     private int contestId;
 
     public PrizePK() {
@@ -58,7 +61,6 @@ public class PrizePK implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof PrizePK)) {
             return false;
         }
@@ -71,7 +73,7 @@ public class PrizePK implements Serializable {
 
     @Override
     public String toString() {
-        return "com.flowyk.entity.PrizePK[ position=" + position + ", contestId=" + contestId + " ]";
+        return "com.flowyk.fb.entity.PrizePK[ position=" + position + ", contestId=" + contestId + " ]";
     }
     
 }

@@ -58,7 +58,6 @@ public class LayoutGenerator extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/css;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
 //            out.println(getClassBg("registerForm"));
 //            out.println(getClassBg("inputText"));
 //            out.println(getClassBg("inputSubmit"));

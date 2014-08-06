@@ -21,10 +21,12 @@ public class SignedRequest implements Serializable {
     private String oauthToken;
     private long expires;
 
-    String locale;
-    String country;
-    int ageMin;
-    int ageMax;
+    private String ipAddress;
+    private String userAgent;
+    private String locale;
+    private String country;
+    private int ageMin;
+    private int ageMax;
     private String pageId;
     private boolean pageLike;
     private boolean pageAdmin;
@@ -87,6 +89,22 @@ public class SignedRequest implements Serializable {
         return ageMax;
     }
 
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
+    }
+
+    public String getUserAgent() {
+        return userAgent;
+    }
+
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
+    }
+    
     public static SignedRequest parseJson(JsonObject json) {
         if (json == null) {
             return null;

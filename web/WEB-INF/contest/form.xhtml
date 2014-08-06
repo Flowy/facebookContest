@@ -3,7 +3,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:p="http://primefaces.org/ui">
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:form id="registerForm">
         <h:graphicImage styleClass="formImage" url="#{contestBean.getImageUrl('/text2.png')}" />
         <p:growl id="msgs" life="15000" showDetail="true" showSummary="false" />
@@ -17,30 +18,38 @@
             <h:outputLabel for="emailTextInput"
                            value="Email" styleClass="inputLabel" />
             <h:inputText id="emailTextInput"
-                         value="#{registerFormBean.user.userPK.email}" 
-                         styleClass="inputText #{component.valid ? '' : 'error'}" />
+                         value="#{registerFormBean.user.email}" 
+                         styleClass="inputText #{component.valid ? '' : 'error'}"
+                         validatorMessage="Nesprávny formát emailovej adresy" />
             <h:outputLabel for="mobileTextInput" 
                            value="Mobil" styleClass="inputLabel" />
             <h:inputText id="mobileTextInput" 
                          value="#{registerFormBean.user.telephone}" 
-                         styleClass="inputText #{component.valid ? '' : 'error'}" />
+                         styleClass="inputText #{component.valid ? '' : 'error'}" 
+                         validatorMessage="Nesprávny formát telefónneho čísla (0911 222 333)" />
 
         </h:panelGrid>
         <div id="acceptRulesRow">
             <h:selectBooleanCheckbox id="contestRulesCheckbox" 
                                      value="#{registerFormBean.acceptedRules}"
-                                     converter="javax.faces.Boolean"/>
-            <h:outputLabel for="contestRulesCheckbox">Suhlasim s <h:outputLink value="#{request.contextPath}/contest-rules.xhtml?contest=#{contestBean.activeContest.id}" target="_blank">pravidlami sutaze</h:outputLink></h:outputLabel>
+                                     converter="javax.faces.Boolean"
+                                     validatorMessage="Pre pokračovanie musíte súhlasiť s podmienkami súťaže" />
+            <h:outputLabel for="contestRulesCheckbox">Suhlasim s 
+                <h:link value="pravidlami sutaze" target="_blank" outcome="contest-rules.xhtml">
+                    <f:param name="contest" value="#{contestBean.activeContest.id}" />
+                </h:link>
+            </h:outputLabel>
         </div>
         <div id="submitRow">
             <h:commandButton styleClass="inputSubmit"
                              alt="Submit"
                              action="#{registerFormBean.register()}"
                              image="#{contestBean.getImageUrl('/bt-odoslat.png')}" />
-            <h:commandLink styleClass="returningLink" immediate="true" action="#{contestBean.setReturning(true)}">Už som registrovaný<br />chcem ďalší lístok</h:commandLink>
+            <h:commandLink styleClass="returningLink" immediate="true" action="#{contestBean.setReturning(true)}">Už som registrovaný, chcem ďalší lístok
+            </h:commandLink>
         </div>
     </h:form>
     <div id="infoBox">
-        
+
     </div>
 </ui:composition>

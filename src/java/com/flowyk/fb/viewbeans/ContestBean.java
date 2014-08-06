@@ -69,8 +69,8 @@ public class ContestBean implements Serializable {
      */
     public Contest getActiveContest() {
         if (active == null && login != null && login.getSignedRequest() != null) {
-            List<Contest> list = (List<Contest>) em.createNamedQuery("Contest.findByPage")
-                    .setParameter("page", login.getSignedRequest().getPageId()).getResultList();
+            List<Contest> list = (List<Contest>) em.createNamedQuery("Contest.findByRegisteredPage")
+                    .setParameter("registeredPage", login.getSignedRequest().getPageId()).getResultList();
             active = selectActiveContest(list);
         }
         return active;
@@ -84,7 +84,7 @@ public class ContestBean implements Serializable {
     public String getPageUrl(String page) {
         Contest contest = getActiveContest();
         if (contest != null) {
-            return "/WEB-INF/contest/layouts/" + contest.getContestLayoutName().getName() + page;
+            return "/WEB-INF/contest/layouts/" + contest.getContestLayout().getName() + page;
         } else {
             return null;
         }
@@ -98,7 +98,7 @@ public class ContestBean implements Serializable {
     public String getResourceUrl(String resource) {
         Contest contest = getActiveContest();
         if (contest != null) {
-            return "./contest/layouts/" + contest.getContestLayoutName().getName() + resource;
+            return "./contest/layouts/" + contest.getContestLayout().getName() + resource;
         } else {
             return null;
         }
@@ -136,8 +136,12 @@ public class ContestBean implements Serializable {
             return null;
         }
     }
-
+    
+    public Boolean isReturning() {
+        return returning;
+    }
     // Setters -----------------------------------------------------------------------------------
+    
     public void setReturning(Boolean value) {
         returning = value;
     }

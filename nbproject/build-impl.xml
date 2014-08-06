@@ -1002,6 +1002,7 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${libs.Scribe__OAuth_.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${libs.Facebook_REST_API.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${libs.primefaces.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${libs.MySQLDriver.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${libs.Scribe__OAuth_.classpath}" todir="${build.web.dir}//"/>
         <copyfiles files="${libs.Facebook_REST_API.classpath}" todir="${build.web.dir}//"/>
         <copyfiles files="${libs.Apache_Commons.classpath}" todir="${build.web.dir}//"/>
@@ -1013,6 +1014,7 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${libs.Scribe__OAuth_.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${libs.Facebook_REST_API.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${libs.primefaces.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${libs.MySQLDriver.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${libs.Scribe__OAuth_.classpath}" todir="${build.web.dir}//"/>
         <copyfiles files="${libs.Facebook_REST_API.classpath}" todir="${build.web.dir}//"/>
         <copyfiles files="${libs.Apache_Commons.classpath}" todir="${build.web.dir}//"/>

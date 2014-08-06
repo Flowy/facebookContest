@@ -11,9 +11,9 @@ import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
@@ -21,6 +21,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
@@ -31,6 +32,7 @@ import javax.validation.constraints.Size;
  * @author Lukas
  */
 @Entity
+@Table(name = "contest")
 @NamedQueries({
     @NamedQuery(name = "Contest.findAll", query = "SELECT c FROM Contest c"),
     @NamedQuery(name = "Contest.findById", query = "SELECT c FROM Contest c WHERE c.id = :id"),
@@ -45,35 +47,52 @@ import javax.validation.constraints.Size;
 public class Contest implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
-    @NotNull
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
+    @NotNull
+    @GeneratedValue
+    @Column(name = "id")
     private Integer id;
     @Size(max = 20)
+    @Column(name = "registered_page")
     private String registeredPage;
     @Size(max = 150)
+    @Column(name = "name")
     private String name;
     @Size(max = 250)
+    @Column(name = "icon_url")
     private String iconUrl;
-    @Lob
-    @Size(max = 65535)
-    private String description;
+    @Basic(optional = false)
     @NotNull
+    @Column(name = "contest_start")
     @Temporal(TemporalType.TIMESTAMP)
     private Date contestStart;
+    @Basic(optional = false)
     @NotNull
+    @Column(name = "contest_end")
     @Temporal(TemporalType.TIMESTAMP)
     private Date contestEnd;
-    private Boolean disabled;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "disabled")
+    private boolean disabled;
     @Size(max = 150)
+    @Column(name = "popis_sutaze")
     private String popisSutaze;
     @Size(max = 250)
+    @Column(name = "externe_info_url")
     private String externeInfoUrl;
-    @JoinColumn(name = "contestLayoutName", referencedColumnName = "name")
-    @ManyToOne(optional = false, cascade={CascadeType.ALL})
-    private Contestlayout contestLayoutName;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "contestId")
-    private Collection<Registereduser> registereduserCollection;
+    @Lob
+    @Size(max = 65535)
+    @Column(name = "rules")
+    private String rules;
+    @Column(name = "time_between_tickets")
+    @Temporal(TemporalType.TIME)
+    private Date timeBetweenTickets;
+    @JoinColumn(name = "contest_layout_name", referencedColumnName = "name")
+    @ManyToOne(optional = false)
+    private ContestLayout contestLayout;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "contest")
+    private Collection<RegisteredUser> registeredUserCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "contest")
     private Collection<Prize> prizeCollection;
 
@@ -82,6 +101,13 @@ public class Contest implements Serializable {
 
     public Contest(Integer id) {
         this.id = id;
+    }
+
+    public Contest(Integer id, Date contestStart, Date contestEnd, boolean disabled) {
+        this.id = id;
+        this.contestStart = contestStart;
+        this.contestEnd = contestEnd;
+        this.disabled = disabled;
     }
 
     public Integer getId() {
@@ -116,14 +142,6 @@ public class Contest implements Serializable {
         this.iconUrl = iconUrl;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public Date getContestStart() {
         return contestStart;
     }
@@ -140,11 +158,11 @@ public class Contest implements Serializable {
         this.contestEnd = contestEnd;
     }
 
-    public Boolean getDisabled() {
+    public boolean getDisabled() {
         return disabled;
     }
 
-    public void setDisabled(Boolean disabled) {
+    public void setDisabled(boolean disabled) {
         this.disabled = disabled;
     }
 
@@ -164,20 +182,28 @@ public class Contest implements Serializable {
         this.externeInfoUrl = externeInfoUrl;
     }
 
-    public Contestlayout getContestLayoutName() {
-        return contestLayoutName;
+    public String getRules() {
+        return rules;
     }
 
-    public void setContestLayoutName(Contestlayout contestLayoutName) {
-        this.contestLayoutName = contestLayoutName;
+    public void setRules(String rules) {
+        this.rules = rules;
     }
 
-    public Collection<Registereduser> getRegistereduserCollection() {
-        return registereduserCollection;
+    public ContestLayout getContestLayout() {
+        return contestLayout;
     }
 
-    public void setRegistereduserCollection(Collection<Registereduser> registereduserCollection) {
-        this.registereduserCollection = registereduserCollection;
+    public void setContestLayout(ContestLayout contestLayout) {
+        this.contestLayout = contestLayout;
+    }
+
+    public Collection<RegisteredUser> getRegisteredUserCollection() {
+        return registeredUserCollection;
+    }
+
+    public void setRegisteredUserCollection(Collection<RegisteredUser> registeredUserCollection) {
+        this.registeredUserCollection = registeredUserCollection;
     }
 
     public Collection<Prize> getPrizeCollection() {
@@ -197,7 +223,6 @@ public class Contest implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Contest)) {
             return false;
         }
@@ -207,7 +232,15 @@ public class Contest implements Serializable {
 
     @Override
     public String toString() {
-        return "com.flowyk.entity.Contest[ id=" + id + " ]";
+        return "com.flowyk.fb.entity.Contest[ id=" + id + " ]";
+    }
+
+    public Date getTimeBetweenTickets() {
+        return timeBetweenTickets;
+    }
+
+    public void setTimeBetweenTickets(Date timeBetweenTickets) {
+        this.timeBetweenTickets = timeBetweenTickets;
     }
     
 }

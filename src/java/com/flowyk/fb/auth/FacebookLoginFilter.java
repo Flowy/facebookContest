@@ -5,7 +5,10 @@
  */
 package com.flowyk.fb.auth;
 
+import static com.flowyk.fb.base.Constants.*;
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.logging.Logger;
 import javax.inject.Inject;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -14,6 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -22,6 +26,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebFilter(filterName = "FBLoginFilter", urlPatterns = {"/contest.xhtml", "/contest-thanks.xhtml"})
 public class FacebookLoginFilter implements Filter {
+
+    private static final Logger LOG = Logger.getLogger(FacebookLoginFilter.class.getName());
 
     @Inject
     FacebookLogin login;
@@ -40,16 +46,30 @@ public class FacebookLoginFilter implements Filter {
             FilterChain chain)
             throws IOException, ServletException {
         HttpServletResponse res = (HttpServletResponse) response;
+        HttpServletRequest req = (HttpServletRequest) request;
 //        System.out.println("Parsing signature");
+
+        if (FINE_DEBUG) {
+            LOG.info(getHeaderText(request));
+        }
 
         String signedRequestString = request.getParameter("signed_request");
         if (signedRequestString != null) {
             login.parseSignedRequest(signedRequestString);
+            
+            String ipAddress = req.getHeader("X-FORWARDED-FOR");
+            if (ipAddress == null) {
+                request.getRemoteAddr();
+            }
+            login.getSignedRequest().setIpAddress(ipAddress);
+
+            String userAgent = req.getHeader("user-agent");
+            login.getSignedRequest().setUserAgent(userAgent);
+            
         }
         if (login.getSignedRequest() != null) {
 //            System.out.println("Found request: {" + login.getSignedRequest() + "}");
             chain.doFilter(request, response);
-//            System.out.println("Chain do filter successful");
         } else {
             res.sendError(HttpServletResponse.SC_FORBIDDEN, "Page accessible only through facebook");
         }
@@ -83,6 +103,19 @@ public class FacebookLoginFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) {
+    }
+
+    private String getHeaderText(ServletRequest request) {
+        HttpServletRequest req = (HttpServletRequest) request;
+        StringBuilder sb = new StringBuilder("HEADER:\n");
+        Enumeration<String> headers = req.getHeaderNames();
+        while (headers.hasMoreElements()) {
+            String key = headers.nextElement();
+            sb.append("\t").append(key).append(": ").append(req.getHeader(key)).append("\n");
+        }
+        sb.append("\tREMOTE ADDRESS: ").append(request.getRemoteAddr());
+        return sb.toString();
+
     }
 
 }
