@@ -71,9 +71,9 @@ public class Contest implements Serializable {
     private String externeInfoUrl;
     @JoinColumn(name = "contestLayoutName", referencedColumnName = "name")
     @ManyToOne(optional = false, cascade={CascadeType.ALL})
-    private ContestLayout contestLayoutName;
+    private Contestlayout contestLayoutName;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "contestId")
-    private Collection<RegisteredUser> registereduserCollection;
+    private Collection<Registereduser> registereduserCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "contest")
     private Collection<Prize> prizeCollection;
 
@@ -164,19 +164,19 @@ public class Contest implements Serializable {
         this.externeInfoUrl = externeInfoUrl;
     }
 
-    public ContestLayout getContestLayoutName() {
+    public Contestlayout getContestLayoutName() {
         return contestLayoutName;
     }
 
-    public void setContestLayoutName(ContestLayout contestLayoutName) {
+    public void setContestLayoutName(Contestlayout contestLayoutName) {
         this.contestLayoutName = contestLayoutName;
     }
 
-    public Collection<RegisteredUser> getRegistereduserCollection() {
+    public Collection<Registereduser> getRegistereduserCollection() {
         return registereduserCollection;
     }
 
-    public void setRegistereduserCollection(Collection<RegisteredUser> registereduserCollection) {
+    public void setRegistereduserCollection(Collection<Registereduser> registereduserCollection) {
         this.registereduserCollection = registereduserCollection;
     }
 

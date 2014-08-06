@@ -6,7 +6,7 @@
 package com.flowyk.fb.base;
 
 import com.flowyk.fb.entity.Contest;
-import com.flowyk.fb.entity.ContestLayout;
+import com.flowyk.fb.entity.Contestlayout;
 import java.util.Date;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
@@ -33,7 +33,7 @@ public class DatabaseInit {
             c.setRegisteredPage("663981640350558");
             c.setContestStart(new Date(System.currentTimeMillis() - 10*24*60*60*1000));
             c.setContestEnd(new Date(System.currentTimeMillis() + 10*24*60*60*1000));
-            ContestLayout l = new ContestLayout("default");
+            Contestlayout l = new Contestlayout("default");
             c.setContestLayoutName(l);
             em.persist(c);
 //        }

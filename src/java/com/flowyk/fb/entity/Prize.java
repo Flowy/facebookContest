@@ -38,7 +38,7 @@ public class Prize implements Serializable {
     private Contest contest;
     @JoinColumn(name = "winnerId", referencedColumnName = "id")
     @ManyToOne
-    private RegisteredUser winnerId;
+    private Registereduser winnerId;
 
     public Prize() {
     }
@@ -75,11 +75,11 @@ public class Prize implements Serializable {
         this.contest = contest;
     }
 
-    public RegisteredUser getWinnerId() {
+    public Registereduser getWinnerId() {
         return winnerId;
     }
 
-    public void setWinnerId(RegisteredUser winnerId) {
+    public void setWinnerId(Registereduser winnerId) {
         this.winnerId = winnerId;
     }
 
