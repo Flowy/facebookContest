@@ -5,7 +5,7 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:p="http://primefaces.org/ui">
     <h:form id="registerForm">
-        <h:graphicImage styleClass="formImage" url="#{contestBean.getImageUrl('/text2.png')}" />
+        <h:graphicImage styleClass="formImage" url="#{contestBean.getImageUrl('text2.png')}" />
         <p:growl id="msgs" life="15000" showDetail="true" showSummary="false" />
 
         <span id="returningText">Pokiaľ si už v súťaži prihlásený a uplynul zadaný čas, zadaj svoj email, získaj ďalší lístok a zvýš svoju šancu na výhru.</span>
@@ -20,7 +20,9 @@
             <h:commandButton styleClass="inputSubmit"
                              alt="Submit"
                              action="#{registerFormBean.registerNewTicket()}"
-                             image="#{contestBean.getImageUrl('/bt-odoslat.png')}" />
+                             image="#{contestBean.getImageUrl('bt-odoslat.png')}" />
+            <h:commandLink styleClass="returningLink" immediate="true" action="#{contestBean.setReturning(false)}">Zatiaľ nemám registráciu</h:commandLink>
         </div>
     </h:form>
+    <ui:include src="#{contestBean.getPageUrl('infobox.xhtml')}" />
 </ui:composition>

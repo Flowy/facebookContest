@@ -84,7 +84,7 @@ public class ContestBean implements Serializable {
     public String getPageUrl(String page) {
         Contest contest = getActiveContest();
         if (contest != null) {
-            return "/WEB-INF/contest/layouts/" + contest.getContestLayout().getName() + page;
+            return "/WEB-INF/contest/layouts/" + contest.getContestLayout().getName() + "/" + page;
         } else {
             return null;
         }
@@ -98,7 +98,7 @@ public class ContestBean implements Serializable {
     public String getResourceUrl(String resource) {
         Contest contest = getActiveContest();
         if (contest != null) {
-            return "./contest/layouts/" + contest.getContestLayout().getName() + resource;
+            return "./contest/layouts/" + contest.getContestLayout().getName() + "/" + resource;
         } else {
             return null;
         }
@@ -111,7 +111,7 @@ public class ContestBean implements Serializable {
      */
     public String getImageUrl(String image) {
         if (login.getSignedRequest() != null) {
-            return "/images/" + login.getSignedRequest().getPageId() + image;
+            return "/images/" + login.getSignedRequest().getPageId() + "/" + image;
         } else {
             return null;
         }

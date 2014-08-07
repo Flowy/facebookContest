@@ -17,6 +17,8 @@ and open the template in the editor.
 
 #registerForm {
     position: absolute;
+    width: 325px;
+    height: 222px;
     top: 280px;
     left: 0px;
     z-index: 10;
@@ -27,9 +29,30 @@ and open the template in the editor.
     top: 329px;
     left: 345px;
     width: 400px;
-    height: 154px;
+    height: 120px;
     padding: 0px 20px;
-    background: brown;
+    /*background: brown;*/
+    z-index: 10;
+}
+
+#infoBoxTitle {
+    display: table-cell;
+    vertical-align: bottom;
+    height: 92px;
+    padding: 5px 20px 5px 0px;
+    width: 100%;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#infoBoxLink {
+    display: inline-block;
+    height: 20px;
+    padding: 5px 0px;
+    width: 100%;
+    font-size: 14px;
+    color: #0066ff;
+    font-weight: bold;
 }
 
 #pressLikeImage {
@@ -52,14 +75,14 @@ and open the template in the editor.
 }
 
 #acceptRulesRow {
-    padding: 5px 0px 5px 20px;
+    padding: 3px 0px 3px 20px;
     margin-left: 40px;
 }
 
 #submitRow {
     height: 50px;
     margin-left: 40px;
-    padding: 0px 0px 0px 0px;
+    padding: 3px 0px 3px 0px;
 }
 
 .returningLink {

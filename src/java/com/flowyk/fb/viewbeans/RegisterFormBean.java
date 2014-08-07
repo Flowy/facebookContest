@@ -9,12 +9,14 @@ import com.flowyk.fb.auth.FacebookLogin;
 import com.flowyk.fb.entity.RegisteredUser;
 import com.flowyk.fb.entity.Registration;
 import java.io.Serializable;
-import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -82,19 +84,29 @@ public class RegisterFormBean implements Serializable {
         user.setAgeMin(login.getSignedRequest().getAgeMin());
         try {
             utx.begin();
-            em.persist(user);
-            createNewTicket(user);
+            Collection<RegisteredUser> userList = (Collection<RegisteredUser>) em.createNamedQuery("RegisteredUser.findByEmailAndContest")
+                    .setParameter("email", user.getEmail())
+                    .setParameter("contest", user.getContest())
+                    .getResultList();
+            if (userList.isEmpty()) {
+                em.persist(user);
+                createNewTicket(user);
+            } else {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Zadaný email už je zaregistrovaný", "Zadaný email už je zaregistrovaný"));
+                utx.commit();
+                contestBean.setReturning(Boolean.TRUE);
+                return null;
+            }
             utx.commit();
             return "registered";
         } catch (PersistenceException e) {
             Logger.getLogger(RegisterFormBean.class.getName()).log(Level.SEVERE, null, e);
-//            System.out.println("Catched nonexistent exception");
             return null;
         } catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException ex) {
             Logger.getLogger(RegisterFormBean.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
-        
+
     }
 
     /**
@@ -122,7 +134,8 @@ public class RegisterFormBean implements Serializable {
             utx.commit();
             return "registered";
         } catch (NoResultException e) {
-            //TODO: return faces exception message user not found
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Zadaný email ešte nieje v súťaži", "Zadaný email ešte nieje v súťaži"));
+            contestBean.setReturning(Boolean.FALSE);
             return null;
         } catch (PersistenceException ex) {
             Logger.getLogger(RegisterFormBean.class.getName()).log(Level.SEVERE, null, ex);

@@ -59,7 +59,7 @@ public class FacebookLoginFilter implements Filter {
             
             String ipAddress = req.getHeader("X-FORWARDED-FOR");
             if (ipAddress == null) {
-                request.getRemoteAddr();
+                ipAddress = request.getRemoteAddr();
             }
             login.getSignedRequest().setIpAddress(ipAddress);
 

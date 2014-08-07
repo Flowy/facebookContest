@@ -6,7 +6,7 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:form id="registerForm">
-        <h:graphicImage styleClass="formImage" url="#{contestBean.getImageUrl('/text2.png')}" />
+        <h:graphicImage styleClass="formImage" url="#{contestBean.getImageUrl('text2.png')}" />
         <p:growl id="msgs" life="15000" showDetail="true" showSummary="false" />
         <h:panelGrid styleClass="formTable" columns="2">
 
@@ -44,12 +44,9 @@
             <h:commandButton styleClass="inputSubmit"
                              alt="Submit"
                              action="#{registerFormBean.register()}"
-                             image="#{contestBean.getImageUrl('/bt-odoslat.png')}" />
-            <h:commandLink styleClass="returningLink" immediate="true" action="#{contestBean.setReturning(true)}">Už som registrovaný, chcem ďalší lístok
-            </h:commandLink>
+                             image="#{contestBean.getImageUrl('bt-odoslat.png')}" />
+            <h:commandLink styleClass="returningLink" immediate="true" action="#{contestBean.setReturning(true)}">Už som registrovaný, chcem ďalší lístok</h:commandLink>
         </div>
     </h:form>
-    <div id="infoBox">
-
-    </div>
+    <ui:include src="#{contestBean.getPageUrl('infobox.xhtml')}" />
 </ui:composition>
