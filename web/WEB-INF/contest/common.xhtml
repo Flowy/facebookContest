@@ -5,34 +5,18 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html">
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <h:outputStylesheet name="#{contestBean.getResourceUrl('base.css')}" />
-        <title>#{contestBean.activeContest.name}</title>
+        <title>Contests</title>
     </h:head>
     <h:body>
-        <h:graphicImage id="baseImage" url="#{contestBean.getImageUrl('pozadie.png')}" />
-        <h:graphicImage id="titleImage" url="#{contestBean.getImageUrl('nazov.png')}" />
 
-        <ui:insert name="body">
+        <ui:insert name="body" />
 
-        </ui:insert>
-
-        <ui:insert name="footer">
-            <div id="footer">
-                <h:panelGroup styleClass="footerField">
-                    <h:outputLink value="#{request.contextPath}/contest-rules.xhtml?contest=#{contestBean.activeContest.id}" target="_blank">Pravidla sutaze</h:outputLink>
-                </h:panelGroup>
-                <h:panelGroup styleClass="footerField" rendered="#{facebookLogin.signedRequest.pageAdmin}">
-                    <h:link outcome="admin" value="Admin" />
-                </h:panelGroup>
-                <h:panelGroup styleClass="footerField" rendered="#{facebookLogin.signedRequest.pageAdmin}">
-                    <h:link outcome="contest" value="Contest" />
-                </h:panelGroup>
-                <h:panelGroup styleClass="footerField">
-                    copyright
-                </h:panelGroup>
-            </div>
-        </ui:insert>
-
+        <div id="footer">
+            <ui:insert name="footer" />
+            <h:panelGroup styleClass="footerField">
+                copyright
+            </h:panelGroup>
+        </div>
     </h:body>
 </html>
 

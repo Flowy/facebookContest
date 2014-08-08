@@ -45,6 +45,19 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Contest.findByPopisSutaze", query = "SELECT c FROM Contest c WHERE c.popisSutaze = :popisSutaze"),
     @NamedQuery(name = "Contest.findByExterneInfoUrl", query = "SELECT c FROM Contest c WHERE c.externeInfoUrl = :externeInfoUrl")})
 public class Contest implements Serializable {
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 250)
+    @Column(name = "share_img_url")
+    private String shareImgUrl;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 250)
+    @Column(name = "externeInfoUrl")
+    private String externeInfoUrl;
+    @JoinColumn(name = "registered_page_id", referencedColumnName = "page_id")
+    @ManyToOne(optional = false)
+    private RegisteredPage registeredPage;
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -52,9 +65,6 @@ public class Contest implements Serializable {
     @GeneratedValue
     @Column(name = "id")
     private Integer id;
-    @Size(max = 20)
-    @Column(name = "registered_page")
-    private String registeredPage;
     @NotNull
     @Size(max = 150)
     @Column(name = "name")
@@ -79,9 +89,6 @@ public class Contest implements Serializable {
     @Size(max = 150)
     @Column(name = "popis_sutaze")
     private String popisSutaze;
-    @Size(max = 250)
-    @Column(name = "externe_info_url")
-    private String externeInfoUrl;
     @Lob
     @Size(max = 65535)
     @Column(name = "rules")
@@ -117,14 +124,6 @@ public class Contest implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public String getRegisteredPage() {
-        return registeredPage;
-    }
-
-    public void setRegisteredPage(String registeredPage) {
-        this.registeredPage = registeredPage;
     }
 
     public String getName() {
@@ -242,6 +241,22 @@ public class Contest implements Serializable {
 
     public void setTimeBetweenTickets(Date timeBetweenTickets) {
         this.timeBetweenTickets = timeBetweenTickets;
+    }
+
+    public String getShareImgUrl() {
+        return shareImgUrl;
+    }
+
+    public void setShareImgUrl(String shareImgUrl) {
+        this.shareImgUrl = shareImgUrl;
+    }
+
+    public RegisteredPage getRegisteredPage() {
+        return registeredPage;
+    }
+
+    public void setRegisteredPage(RegisteredPage registeredPage) {
+        this.registeredPage = registeredPage;
     }
     
 }

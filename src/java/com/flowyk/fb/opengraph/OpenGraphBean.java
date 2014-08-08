@@ -108,7 +108,7 @@ public class OpenGraphBean {
             appData.setReference(user.getId());
             StringBuilder sb;
             sb = new StringBuilder("https://www.facebook.com/")
-                    .append(user.getContest().getRegisteredPage())
+                    .append(user.getContest().getRegisteredPage().getPageId())
                     .append("?v=app_")
                     .append(API_KEY)
                     .append("&app_data=")

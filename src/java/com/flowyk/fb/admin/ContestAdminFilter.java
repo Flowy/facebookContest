@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.flowyk.fb.auth;
+package com.flowyk.fb.admin;
 
+import com.flowyk.fb.auth.FacebookLogin;
 import java.io.IOException;
 import javax.inject.Inject;
 import javax.servlet.Filter;
@@ -47,7 +48,7 @@ public class ContestAdminFilter implements Filter {
         if (signedRequestString != null) {
             login.parseSignedRequest(signedRequestString);
         }
-        if (login.getSignedRequest().isPageAdmin()) {
+        if (login.getSignedRequest() != null && login.getSignedRequest().isPageAdmin()) {
             chain.doFilter(request, response);
         } else {
             ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "Page accessible only for page admins on facebook");

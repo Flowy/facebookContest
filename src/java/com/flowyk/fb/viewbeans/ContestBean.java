@@ -7,10 +7,12 @@ package com.flowyk.fb.viewbeans;
 
 import com.flowyk.fb.entity.Contest;
 import com.flowyk.fb.auth.FacebookLogin;
+import com.flowyk.fb.entity.RegisteredPage;
 import com.flowyk.fb.entity.RegisteredUser;
 import com.flowyk.fb.entity.Registration;
 import com.flowyk.fb.sigrequest.SignedRequest;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -53,7 +55,7 @@ public class ContestBean implements Serializable {
 
     @PersistenceContext(unitName = "fbContestDB")
     EntityManager em;
-    
+
     @Resource
     private UserTransaction utx;
 
@@ -62,15 +64,16 @@ public class ContestBean implements Serializable {
 
     @NotNull
     private RegisteredUser activeUser;
-    
+
     @Pattern(regexp = "[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+" //meno
             + "(?:\\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*" //subdomena
             + "@(?:[a-zA-Z0-9]+\\.)+" //domena
             + "[a-zA-Z]{1,4}")  //root
     private String returningEmail;
-    
+
     @AssertTrue
     private Boolean acceptedRules = false;
+
     /**
      * Creates a new instance of ContestBean
      */
@@ -81,7 +84,9 @@ public class ContestBean implements Serializable {
     public void init() {
         activeUser = new RegisteredUser();
     }
+
     // Actions -----------------------------------------------------------------------------------
+
     /**
      *
      * @param list
@@ -99,7 +104,7 @@ public class ContestBean implements Serializable {
         return selected;
     }
 
-        public String register() {
+    public String register() {
         activeUser.setContest(getActiveContest());
         activeUser.setLocale(login.getSignedRequest().getLocale());
         activeUser.setCountry(login.getSignedRequest().getCountry());
@@ -125,8 +130,7 @@ public class ContestBean implements Serializable {
         } catch (PersistenceException e) {
             Logger.getLogger(ContestBean.class.getName()).log(Level.SEVERE, null, e);
             return null;
-        } 
-        catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException ex) {
+        } catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException ex) {
             Logger.getLogger(ContestBean.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
@@ -163,8 +167,7 @@ public class ContestBean implements Serializable {
         } catch (PersistenceException ex) {
             Logger.getLogger(ContestBean.class.getName()).log(Level.SEVERE, null, ex);
             return null;
-        } 
-        catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException ex) {
+        } catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException ex) {
             Logger.getLogger(ContestBean.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
@@ -177,9 +180,11 @@ public class ContestBean implements Serializable {
      */
     public Contest getActiveContest() {
         if (active == null && login != null && login.getSignedRequest() != null) {
-            List<Contest> list = (List<Contest>) em.createNamedQuery("Contest.findByRegisteredPage")
-                    .setParameter("registeredPage", login.getSignedRequest().getPageId()).getResultList();
-            active = selectActiveContest(list);
+            RegisteredPage page = em.find(RegisteredPage.class, login.getSignedRequest().getPageId());
+            if (page != null ) {
+                List<Contest> list = new ArrayList(page.getContestCollection());
+                active = selectActiveContest(list);
+            }
         }
         return active;
     }
@@ -225,7 +230,7 @@ public class ContestBean implements Serializable {
         }
     }
 
-    public String getContestPage() {
+    public String getContestSubpage() {
         SignedRequest req = login.getSignedRequest();
         if (req != null) {
             String page;
@@ -245,6 +250,17 @@ public class ContestBean implements Serializable {
         }
     }
 
+    public boolean isPageAllowed() {
+        String pageId = login.getSignedRequest().getPageId();
+        if (pageId != null) {
+            RegisteredPage page = em.find(RegisteredPage.class, pageId);
+            if (page != null && page.getActive()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public Boolean isReturning() {
         return returning;
     }
@@ -258,13 +274,6 @@ public class ContestBean implements Serializable {
 //        sb.append("&redirect_uri=").append(link);
 //        return sb.toString();
 //    }
-
-//    FB.ui({
-//method: 'share_open_graph',
-//action_type: 'flowykcontests:attend',
-//action_properties: JSON.stringify({
-//object: 'https://sutaz.flowyk.com:8181/facebookContest/og.xhtml?id=301',
-//}) });
     public String getShareScript() {
         StringBuilder sb = new StringBuilder("FB.ui({");
         sb.append("method: 'share_open_graph',");
@@ -275,7 +284,6 @@ public class ContestBean implements Serializable {
         return sb.toString();
     }
 
-    
     public RegisteredUser getUser() {
         return activeUser;
     }
@@ -287,12 +295,12 @@ public class ContestBean implements Serializable {
     public String getReturningEmail() {
         return returningEmail;
     }
-    
+
     // Setters -----------------------------------------------------------------------------------
     public void setReturning(Boolean value) {
         returning = value;
     }
-    
+
     public void setAcceptedRules(Boolean value) {
         acceptedRules = value;
     }

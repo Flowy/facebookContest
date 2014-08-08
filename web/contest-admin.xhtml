@@ -7,6 +7,17 @@
     <ui:define name="body">
         <h:outputStylesheet name="#{contestBean.getResourceUrl('contest.css')}" />
         <h:graphicImage id="prizeImage" url="#{contestBean.getImageUrl('cena.png')}" />
-        <ui:include src="#{contestBean.contestPage}" />
+
+        <h:form id="uploadForm" enctype="multipart/form-data">
+            <h:messages />
+            <h:inputFile id="file" value="#{contestAdminBean.file}"
+                         validator="#{contestAdminBean.validateFile}" />
+            <h:commandButton value="Upload"
+                             action="#{contestAdminBean.upload}"/>
+            <h:inputTextarea readonly="true" value="#{contestAdminBean.fileContent}"
+                             rows="10" cols="100" />
+        </h:form>
+
+
     </ui:define>
 </ui:composition>

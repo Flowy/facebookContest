@@ -7,12 +7,12 @@ package com.flowyk.fb.base;
 
 import com.flowyk.fb.entity.Contest;
 import com.flowyk.fb.entity.ContestLayout;
+import com.flowyk.fb.entity.RegisteredPage;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
-import javax.ejb.Startup;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.ConstraintViolation;
@@ -36,13 +36,17 @@ public class DatabaseInit {
 
 //        if (em.createNamedQuery("Contest.findByPage").setParameter("page", "663981640350558").getResultList().isEmpty()) {
         Contest c = new Contest();
-        c.setRegisteredPage("663981640350558");
+        RegisteredPage p = new RegisteredPage();
+        p.setPageId("663981640350558");
+        p.setActive(true);
+        c.setRegisteredPage(p);
         c.setContestStart(new Date(System.currentTimeMillis() - 10 * 24 * 60 * 60 * 1000));
         c.setContestEnd(new Date(System.currentTimeMillis() + 10 * 24 * 60 * 60 * 1000));
         c.setDisabled(Boolean.FALSE);
         ContestLayout l = new ContestLayout("default");
         c.setContestLayout(l);
         try {
+            em.persist(p);
             em.persist(l);
             em.persist(c);
         } catch (ConstraintViolationException e) {

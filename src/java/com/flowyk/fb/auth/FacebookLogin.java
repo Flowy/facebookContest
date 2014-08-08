@@ -55,10 +55,6 @@ public class FacebookLogin implements Serializable {
 
     // Actions -----------------------------------------------------------------------------------
 
-    public String getAddPageTabLink() {
-        return "https://www.facebook.com/dialog/pagetab?app_id=" + API_KEY + "&redirect_uri=" + CALLBACK_URL;
-    }
-
     /**
      * decodes signed request from facebook and sets token
      *
