@@ -29,7 +29,7 @@ public class RulesBean implements Serializable {
     // Getters -----------------------------------------------------------------------------------
     
     public String getRulesText() {
-        return "pravidla";
+        return "Ziadne pravidla";
     }
 
     // Setters -----------------------------------------------------------------------------------

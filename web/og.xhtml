@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <f:passThroughAttribute name="prefix" value="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# flowykcontests: http://ogp.me/ns/fb/flowykcontests#" />
+        <title>#{openGraphBean.title}</title>
+        <meta property="og:title" content="#{openGraphBean.title}" />
+        <meta property="og:type" content="flowykcontests:contest" />
+        <meta property="og:image" content="#{openGraphBean.image}" />
+        <meta property="og:url" content="#{request.requestURL}?#{request.queryString}" />
+        <meta property="og:description" content="#{openGraphBean.description}" />
+        <meta property="og:site_name" content="Site name" />
+        <meta property="fb:app_id" content="#{facebookLogin.appId}" />
+        <meta property="og:locale" content="sk_SK" />
+        <meta property="flowykcontests:contest_end" content="#{openGraphBean.contestEnd}" />
+    </h:head>
+    <h:body>
+    </h:body>
+</html>
+

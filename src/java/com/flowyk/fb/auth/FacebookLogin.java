@@ -6,8 +6,6 @@
 package com.flowyk.fb.auth;
 
 import com.flowyk.fb.sigrequest.SignedRequest;
-import com.restfb.DefaultFacebookClient;
-import com.restfb.FacebookClient;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
@@ -23,13 +21,6 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.stream.JsonParsingException;
-import org.scribe.builder.ServiceBuilder;
-import org.scribe.builder.api.FacebookApi;
-import org.scribe.exceptions.OAuthException;
-import org.scribe.model.OAuthConstants;
-import org.scribe.model.Token;
-import org.scribe.model.Verifier;
-import org.scribe.oauth.OAuthService;
 import static com.flowyk.fb.base.Constants.*;
 import javax.enterprise.context.SessionScoped;
 
@@ -43,24 +34,12 @@ public class FacebookLogin implements Serializable {
 
     private static final Logger LOG = Logger.getLogger(FacebookLogin.class.getName());
 
-    private static final String API_KEY = "675005359221214";
     private static final String API_SECRET = "842b931caf789225b22182d92a670bf0";
-    private static final String CALLBACK_URL = "https://sutaz.flowyk.com:8181/FacebookSutaz-newwar/contest.xhtml";
 
-    private final static OAuthService service;
-    private final static String authUrl;
     private static final Mac sha256_HMAC;
     private static final SecretKeySpec hmacKey;
 
     static {
-        service = new ServiceBuilder()
-                .provider(FacebookApi.class)
-                .apiKey(API_KEY)
-                .apiSecret(API_SECRET)
-                .callback(CALLBACK_URL)
-                .build();
-        authUrl = service.getAuthorizationUrl(OAuthConstants.EMPTY_TOKEN);
-
         hmacKey = new SecretKeySpec(API_SECRET.getBytes(), "HmacSHA256");
         Mac dummy;
         try {
@@ -72,23 +51,12 @@ public class FacebookLogin implements Serializable {
         sha256_HMAC = dummy;
     }
 
-    private String code;
-    private Token accessToken = null;
-    private FacebookClient fbClient;
-
     private SignedRequest signedRequest = null;
 
     // Actions -----------------------------------------------------------------------------------
-    public String goAuthenticate() {
-        return authUrl;
-    }
 
     public String getAddPageTabLink() {
         return "https://www.facebook.com/dialog/pagetab?app_id=" + API_KEY + "&redirect_uri=" + CALLBACK_URL;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     /**
@@ -112,7 +80,7 @@ public class FacebookLogin implements Serializable {
         }
         if (signatureOk) {
             String decodedPayload = new String(decoder.decode(payload), StandardCharsets.UTF_8);
-            if (FINE_DEBUG) {
+            if (DEBUG) {
                 LOG.log(Level.INFO, "Decoded payload: {0}", decodedPayload);
             }
             try (JsonReader jsonReader = Json.createReader(new StringReader(decodedPayload))) {
@@ -125,80 +93,9 @@ public class FacebookLogin implements Serializable {
     }
 
     // Getters -----------------------------------------------------------------------------------
-    public boolean checkLogin() {
-        if (code != null) {
-            Verifier v = new Verifier(code);
-            try {
-                accessToken = service.getAccessToken(OAuthConstants.EMPTY_TOKEN, v);
-                return true;
-            } catch (OAuthException e) {
-                System.out.println("OAUTH EXCEPTION " + e.getMessage());
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    public FacebookClient getFacebookClient() {
-        if (fbClient != null) {
-            return fbClient;
-        } else if (accessToken != null) {
-            return new DefaultFacebookClient(accessToken.getToken(), accessToken.getSecret());
-        } else {
-            throw new IllegalStateException("Not logged in");
-        }
-    }
 
     public SignedRequest getSignedRequest() {
         return signedRequest;
-    }
-
-    public String getShareLink() {
-        StringBuilder pageLink = new StringBuilder("https://www.facebook.com/");
-        pageLink.append(getSignedRequest().getPageId());
-        pageLink.append("/").append(API_KEY);
-        pageLink.append("&app_data=somedata");
-//        return pageLink.toString();
-        return "";
-    }
-
-    public String getShareScript() {
-//        StringBuilder sb = new StringBuilder("FB.ui({");
-//        sb.append("method: 'share_open_graph',");
-//        sb.append("action_type: 'flowykcontests:attend',");
-//        sb.append("action_properties: {");
-//        sb.append("");
-//        sb.append("app_id: ").append(API_KEY).append(",");
-//        sb.append("title: 'custom contest',");
-//        sb.append("image: 'https://fbstatic-a.akamaihd.net/images/devsite/attachment_blank.png',");
-//        sb.append("type: 'flowykcontests:contest'");
-//        sb.append("}");
-//        sb.append("}); return false;");
-
-//        StringBuilder sb = new StringBuilder("FB.ui({");
-//        sb.append("method: 'share_open_graph',");
-//        sb.append("action_type: 'flowykcontests:attend',");
-////        sb.append("action_type=share_open_graph, ");
-//        sb.append("action_properties: JSON.stringify({");
-//        sb.append("object: {");
-//        sb.append("fb:app_id: \"302184056577324\",");
-//        sb.append("}})");
-//        sb.append("}); return false;");
-//        StringBuilder sb = new StringBuilder("FB.api(");
-//        sb.append("'me/flowykcontests:attend',");
-//        sb.append("'post',{");
-//        sb.append("contest: 'http://samples.ogp.me/687381974650219'");
-//        sb.append("}, function(response) { }");
-//        sb.append("); return false;");
-
-//        StringBuilder sb = new StringBuilder("FB.ui({");
-//        sb.append("method: 'share',");
-//        sb.append("href: 'https://www.facebook.com/cmcdata/app_190769951095431'");
-////        sb.append("href: 'https://www.facebook.com/").append(signedRequest.getPageId()).append("/?sk=app_").append(API_KEY).append("'");
-//        sb.append("}); return false;");
-//        System.out.println(sb.toString());
-        return "return false;";
     }
 
     public String getAppId() {

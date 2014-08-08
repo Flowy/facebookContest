@@ -8,6 +8,8 @@ package com.flowyk.fb.base;
 import com.flowyk.fb.entity.Contest;
 import com.flowyk.fb.entity.ContestLayout;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -21,8 +23,10 @@ import javax.validation.ConstraintViolationException;
  * @author Lukas
  */
 @Singleton
-@Startup
+//@Startup
 public class DatabaseInit {
+    
+    private static final Logger LOG = Logger.getLogger(DatabaseInit.class.getName());
 
     @PersistenceContext(unitName = "fbContestDB")
     EntityManager em;
@@ -48,7 +52,7 @@ public class DatabaseInit {
             }
             System.out.println(sb.toString());
         } catch (Exception e) {
-            System.out.println(e);
+            LOG.log(Level.WARNING, "Exception while database init", e);
         }
 //        }
     }

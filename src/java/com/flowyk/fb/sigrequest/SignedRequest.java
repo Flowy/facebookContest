@@ -6,6 +6,8 @@
 package com.flowyk.fb.sigrequest;
 
 import java.io.Serializable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.json.JsonObject;
 
 /**
@@ -13,6 +15,7 @@ import javax.json.JsonObject;
  * @author Lukas
  */
 public class SignedRequest implements Serializable {
+    private static final Logger LOG = Logger.getLogger(SignedRequest.class.getName());
 
     private String code;
     private String algorithm;
@@ -131,8 +134,12 @@ public class SignedRequest implements Serializable {
                 result.ageMax = age.getInt("max", 0);
             }
         }
-        result.appData = AppData.parseJson(json.getJsonObject("app_data"));
-        System.out.println("New Signed Request: " + json.toString());
+        String appDataString = json.getString("app_data", null);
+        try {
+            result.appData = AppData.parseJson(json.getJsonObject(appDataString));
+        } catch (ClassCastException e) {
+            LOG.log(Level.WARNING, "Can't parse app data parameter: " + appDataString, e);
+        }
 
 //        JsonNumber issuedTemp = json.getJsonNumber("issued_at");
 //        if (issuedTemp != null) {

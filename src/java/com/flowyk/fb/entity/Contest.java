@@ -55,6 +55,7 @@ public class Contest implements Serializable {
     @Size(max = 20)
     @Column(name = "registered_page")
     private String registeredPage;
+    @NotNull
     @Size(max = 150)
     @Column(name = "name")
     private String name;

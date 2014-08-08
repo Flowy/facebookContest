@@ -47,7 +47,6 @@ public class FacebookLoginFilter implements Filter {
             throws IOException, ServletException {
         HttpServletResponse res = (HttpServletResponse) response;
         HttpServletRequest req = (HttpServletRequest) request;
-//        System.out.println("Parsing signature");
 
         if (FINE_DEBUG) {
             LOG.info(getHeaderText(request));
@@ -68,7 +67,6 @@ public class FacebookLoginFilter implements Filter {
             
         }
         if (login.getSignedRequest() != null) {
-//            System.out.println("Found request: {" + login.getSignedRequest() + "}");
             chain.doFilter(request, response);
         } else {
             res.sendError(HttpServletResponse.SC_FORBIDDEN, "Page accessible only through facebook");

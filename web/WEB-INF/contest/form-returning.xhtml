@@ -13,13 +13,13 @@
             <h:outputLabel for="emailTextInput" 
                            value="Email" styleClass="inputLabel" />
             <h:inputText id="emailTextInput"
-                         value="#{registerFormBean.returningEmail}" 
+                         value="#{contestBean.returningEmail}" 
                          styleClass="inputText #{component.valid ? '' : 'error'}" />
         </h:panelGrid>
         <div id="submitRow">
             <h:commandButton styleClass="inputSubmit"
                              alt="Submit"
-                             action="#{registerFormBean.registerNewTicket()}"
+                             action="#{contestBean.registerNewTicket()}"
                              image="#{contestBean.getImageUrl('bt-odoslat.png')}" />
             <h:commandLink styleClass="returningLink" immediate="true" action="#{contestBean.setReturning(false)}">Zatiaľ nemám registráciu</h:commandLink>
         </div>

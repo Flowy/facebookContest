@@ -13,4 +13,7 @@ package com.flowyk.fb.base;
 public class Constants {
     public static final boolean FINE_DEBUG = false;
     public static final boolean DEBUG = true;
+    
+    public static final String API_KEY = "675005359221214";
+    public static final String CALLBACK_URL = "https://sutaz.flowyk.com:8181/FacebookSutaz-newwar/contest.xhtml";
 }
