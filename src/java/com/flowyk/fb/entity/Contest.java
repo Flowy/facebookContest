@@ -57,6 +57,7 @@ public class Contest implements Serializable {
     private String externeInfoUrl;
     @JoinColumn(name = "registered_page_id", referencedColumnName = "page_id")
     @ManyToOne(optional = false)
+    @NotNull
     private RegisteredPage registeredPage;
     private static final long serialVersionUID = 1L;
     @Id

@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.flowyk.fb.sigrequest;
+package com.flowyk.fb.model.signedrequest;
 
 import java.io.Serializable;
 import javax.json.Json;
@@ -19,13 +19,12 @@ public class AppData implements Serializable {
     
     private int reference;
     
-    public static AppData parseJson(JsonObject json) {
+    public void parseJson(JsonObject json) {
         if (json == null) {
-            return null;
+            return;
         }
         AppData result = new AppData();
         result.reference = json.getInt("reference", 0);
-        return result;
     }
 
     public JsonObject getAsJson() {

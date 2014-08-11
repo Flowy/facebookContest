@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.flowyk.fb.admin;
+package com.flowyk.fb.controller;
 
-import com.flowyk.fb.auth.FacebookLogin;
+import com.flowyk.fb.model.signedrequest.SignedRequest;
 import java.io.IOException;
 import javax.inject.Inject;
 import javax.servlet.Filter;
@@ -21,12 +21,12 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Lukas
  */
-@WebFilter(filterName = "ContestAdminFilter", urlPatterns = {"/contest-admin.xhtml"})
+@WebFilter(filterName = "ContestAdminFilter", urlPatterns = {"/contest/admin.xhtml"})
 public class ContestAdminFilter implements Filter {
-
+    
     @Inject
-    FacebookLogin login;
-
+    private SignedRequest signedRequest;
+    
     public ContestAdminFilter() {
     }
 
@@ -44,11 +44,7 @@ public class ContestAdminFilter implements Filter {
             FilterChain chain)
             throws IOException, ServletException {
 
-        String signedRequestString = request.getParameter("signed_request");
-        if (signedRequestString != null) {
-            login.parseSignedRequest(signedRequestString);
-        }
-        if (login.getSignedRequest() != null && login.getSignedRequest().isPageAdmin()) {
+        if (signedRequest.getPage().isAdmin()) {
             chain.doFilter(request, response);
         } else {
             ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "Page accessible only for page admins on facebook");

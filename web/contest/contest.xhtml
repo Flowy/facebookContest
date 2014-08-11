@@ -13,16 +13,4 @@
         </h:form>
     </ui:define>
 
-    <ui:define name="footer">
-        <h:panelGroup styleClass="footerField">
-            <h:outputLink value="#{request.contextPath}/contest-rules.xhtml?contest=#{contestBean.activeContest.id}" target="_blank">Pravidla sutaze</h:outputLink>
-        </h:panelGroup>
-        <h:panelGroup styleClass="footerField" rendered="#{facebookLogin.signedRequest.pageAdmin}">
-            <h:link outcome="admin" value="Admin" />
-        </h:panelGroup>
-        <h:panelGroup styleClass="footerField" rendered="#{facebookLogin.signedRequest.pageAdmin}">
-            <h:link outcome="contest" value="Contest" />
-        </h:panelGroup>
-    </ui:define>
-
 </ui:composition>

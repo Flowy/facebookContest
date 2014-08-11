@@ -2,8 +2,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
+        <h:outputStylesheet name="#{contestBean.getResourceUrl('base.css')}" />
+        <h:outputStylesheet name="#{contestBean.getResourceUrl('contest.css')}" />
+        <h:graphicImage id="baseImage" url="#{contestBean.getImageUrl('pozadie.png')}" />
+        <h:graphicImage id="titleImage" url="#{contestBean.getImageUrl('nazov.png')}" />
+
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>Contests</title>
     </h:head>
@@ -12,7 +18,14 @@
         <ui:insert name="body" />
 
         <div id="footer">
-            <ui:insert name="footer" />
+            <h:panelGroup styleClass="footerField" rendered="#{signedRequest.page.admin}">
+                <h:link outcome="admin" value="Admin" />
+            </h:panelGroup>
+            <h:panelGroup styleClass="footerField">
+                <h:link value="Pravidlá súťaže" target="_blank" outcome="contest-rules">
+                    <f:param name="contest" value="#{contestBean.activeContest.id}" />
+                </h:link>
+            </h:panelGroup>
             <h:panelGroup styleClass="footerField">
                 copyright
             </h:panelGroup>

@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.flowyk.fb.opengraph;
+package com.flowyk.fb.model.opengraph;
 
 import com.flowyk.fb.entity.RegisteredUser;
-import com.flowyk.fb.sigrequest.AppData;
+import com.flowyk.fb.model.signedrequest.AppData;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;

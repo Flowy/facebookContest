@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.flowyk.fb.viewbeans;
+package com.flowyk.fb.model;
 
 import java.io.Serializable;
 import javax.enterprise.context.SessionScoped;

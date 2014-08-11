@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.flowyk.fb.opengraph;
+package com.flowyk.fb.controller;
 
+import com.flowyk.fb.model.opengraph.OpenGraphBean;
 import java.io.IOException;
 import java.util.Enumeration;
 import javax.inject.Inject;

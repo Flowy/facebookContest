@@ -4,20 +4,33 @@
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
     <navigation-rule>
-        <from-view-id>/contest.xhtml</from-view-id>
         <navigation-case>
-            <from-outcome>registered</from-outcome>
-            <to-view-id>/contest-thanks.xhtml</to-view-id>
+            <from-outcome>presslike</from-outcome>
+            <to-view-id>/contest/presslike.xhtml</to-view-id>
         </navigation-case>
-    </navigation-rule>
-    <navigation-rule>
+        <navigation-case>
+            <from-outcome>register</from-outcome>
+            <to-view-id>/contest/register.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>thanks</from-outcome>
+            <to-view-id>/contest/thanks.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>unactive</from-outcome>
+            <to-view-id>/contest/page-unactive.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>returning</from-outcome>
+            <to-view-id>/contest/returning.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>contest-rules</from-outcome>
+            <to-view-id>/contest-rules.xhtml</to-view-id>
+        </navigation-case>
         <navigation-case>
             <from-outcome>admin</from-outcome>
-            <to-view-id>/contest-admin.xhtml</to-view-id>
-        </navigation-case>
-        <navigation-case>
-            <from-outcome>contest</from-outcome>
-            <to-view-id>/contest.xhtml</to-view-id>
+            <to-view-id>/contest/admin.xhtml</to-view-id>
         </navigation-case>
     </navigation-rule>
 </faces-config>

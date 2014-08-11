@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.flowyk.fb.canvas;
+package com.flowyk.fb.model.canvas;
 
 import static com.flowyk.fb.base.Constants.API_KEY;
 import java.io.Serializable;

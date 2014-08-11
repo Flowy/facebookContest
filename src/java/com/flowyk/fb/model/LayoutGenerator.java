@@ -3,13 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.flowyk.fb.viewbeans;
+package com.flowyk.fb.model;
 
-import com.flowyk.fb.auth.FacebookLogin;
-import com.flowyk.fb.sigrequest.SignedRequest;
+import com.flowyk.fb.model.signedrequest.SignedRequest;
 import java.io.IOException;
 import java.io.PrintWriter;
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -25,20 +23,18 @@ import javax.servlet.http.HttpServletResponse;
 public class LayoutGenerator extends HttpServlet {
 
     @Inject
-    FacebookLogin login;
+    private SignedRequest signedRequest;
 
     private String getClassBg(String cssClass) {
         String result = null;
         if (cssClass != null) {
             String projectId = null;
-            if (login != null) {
-                SignedRequest sigReq = login.getSignedRequest();
-                if (sigReq != null) {
-                    projectId = sigReq.getPageId();
-                }
+            SignedRequest sigReq = signedRequest;
+            if (sigReq != null) {
+                projectId = sigReq.getPage().getId();
             }
             result = String.format(
-                    ".%1$s { background: url('%3$s/images/%2$s/%1$s-bg.png') no-repeat; } ", 
+                    ".%1$s { background: url('%3$s/images/%2$s/%1$s-bg.png') no-repeat; } ",
                     cssClass, projectId, getServletContext().getContextPath());
         }
         return result;

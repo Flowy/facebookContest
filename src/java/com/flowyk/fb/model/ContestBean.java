@@ -3,16 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.flowyk.fb.viewbeans;
+package com.flowyk.fb.model;
 
 import com.flowyk.fb.entity.Contest;
-import com.flowyk.fb.auth.FacebookLogin;
 import com.flowyk.fb.entity.RegisteredPage;
 import com.flowyk.fb.entity.RegisteredUser;
 import com.flowyk.fb.entity.Registration;
-import com.flowyk.fb.sigrequest.SignedRequest;
+import com.flowyk.fb.exception.FBPageNotActiveException;
+import com.flowyk.fb.exception.NoActiveContestException;
+import com.flowyk.fb.exception.PageIdNotFoundException;
+import com.flowyk.fb.model.signedrequest.SignedRequest;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -51,16 +52,15 @@ public class ContestBean implements Serializable {
     private static final Logger LOG = Logger.getLogger(ContestBean.class.getName());
 
     @Inject
-    FacebookLogin login;
+    private SignedRequest signedRequest;
 
     @PersistenceContext(unitName = "fbContestDB")
-    EntityManager em;
+    private EntityManager em;
 
     @Resource
     private UserTransaction utx;
 
     private Boolean returning = false;
-    private Contest active = null;
 
     @NotNull
     private RegisteredUser activeUser;
@@ -86,30 +86,17 @@ public class ContestBean implements Serializable {
     }
 
     // Actions -----------------------------------------------------------------------------------
-
-    /**
-     *
-     * @param list
-     * @return returns active contest or null if no active found
-     */
-    private Contest selectActiveContest(List<Contest> list) {
-        Collections.sort(list, Collections.reverseOrder());
-        Contest selected = null;
-        Date now = new Date();
-        for (Contest x : list) {
-            if (!x.getDisabled() && x.getContestEnd().after(now)) {
-                selected = x;
-            }
-        }
-        return selected;
+    public String goReturning() {
+        this.returning = Boolean.TRUE;
+        return "returning";
     }
-
+    
     public String register() {
         activeUser.setContest(getActiveContest());
-        activeUser.setLocale(login.getSignedRequest().getLocale());
-        activeUser.setCountry(login.getSignedRequest().getCountry());
-        activeUser.setAgeMax(login.getSignedRequest().getAgeMax());
-        activeUser.setAgeMin(login.getSignedRequest().getAgeMin());
+        activeUser.setLocale(signedRequest.getUser().getLocale());
+        activeUser.setCountry(signedRequest.getUser().getCountry());
+        activeUser.setAgeMax(signedRequest.getUser().getAgeMax());
+        activeUser.setAgeMin(signedRequest.getUser().getAgeMin());
         try {
             utx.begin();
             Collection<RegisteredUser> userList = (Collection<RegisteredUser>) em.createNamedQuery("RegisteredUser.findByEmailAndContest")
@@ -126,7 +113,8 @@ public class ContestBean implements Serializable {
                 return null;
             }
             utx.commit();
-            return "registered";
+            this.returning = Boolean.TRUE;
+            return "thanks";
         } catch (PersistenceException e) {
             Logger.getLogger(ContestBean.class.getName()).log(Level.SEVERE, null, e);
             return null;
@@ -143,8 +131,8 @@ public class ContestBean implements Serializable {
         Registration ticket = new Registration();
         ticket.setRegisteredUser(forUser);
         ticket.setTimeRegistered(new Date());
-        ticket.setIpAddress(login.getSignedRequest().getIpAddress());
-        ticket.setUserAgent(login.getSignedRequest().getUserAgent());
+        ticket.setIpAddress(signedRequest.getIpAddress());
+        ticket.setUserAgent(signedRequest.getUserAgent());
         em.persist(ticket);
     }
 
@@ -159,7 +147,7 @@ public class ContestBean implements Serializable {
             //TODO: check if time after time interval for returning
             createNewTicket(returningUser);
             utx.commit();
-            return "registered";
+            return "thanks";
         } catch (NoResultException e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Zadaný email ešte nieje v súťaži", "Zadaný email ešte nieje v súťaži"));
             setReturning(Boolean.FALSE);
@@ -174,47 +162,60 @@ public class ContestBean implements Serializable {
     }
 
     // Getters -----------------------------------------------------------------------------------
-    /**
-     *
-     * @return null if not active signed request or page does not have contest
-     */
-    public Contest getActiveContest() {
-        if (active == null && login != null && login.getSignedRequest() != null) {
-            RegisteredPage page = em.find(RegisteredPage.class, login.getSignedRequest().getPageId());
-            if (page != null ) {
-                List<Contest> list = new ArrayList(page.getContestCollection());
-                active = selectActiveContest(list);
+    private Contest selectActiveContest(List<Contest> list) {
+        Collections.sort(list, Collections.reverseOrder());
+        Contest selected = null;
+        Date now = new Date();
+        for (Contest x : list) {
+            if (!x.getDisabled() && x.getContestEnd().after(now)) {
+                selected = x;
             }
         }
-        return active;
+        if (selected != null) {
+            return selected;
+        } else {
+            throw new NoActiveContestException();
+        }
     }
 
     /**
      *
-     * @param page with starting slash
+     * @return active contest for actual page from signed request
+     * @throws PageIdNotFoundException if page not found in signed request
+     */
+    public Contest getActiveContest() {
+        if (signedRequest.getPage().getId() != null) {
+            RegisteredPage page = em.find(RegisteredPage.class, signedRequest.getPage().getId());
+            if (page != null) {
+                List<Contest> list = em.createNamedQuery("Contest.findByRegisteredPage").setParameter("registeredPage", page).getResultList();
+//                List<Contest> list = new ArrayList(page.getContestCollection());
+                return selectActiveContest(list);
+            } else {
+                throw new FBPageNotActiveException("Page id: " + signedRequest.getPage().getId());
+            }
+        } else {
+            throw new PageIdNotFoundException();
+        }
+    }
+
+    /**
+     *
+     * @param page
      * @return
      */
     public String getPageUrl(String page) {
         Contest contest = getActiveContest();
-        if (contest != null) {
-            return "/WEB-INF/contest/layouts/" + contest.getContestLayout().getName() + "/" + page;
-        } else {
-            return null;
-        }
+        return "/WEB-INF/contest/layouts/" + contest.getContestLayout().getName() + "/" + page;
     }
 
     /**
      *
-     * @param resource with starting slash
+     * @param resource
      * @return
      */
     public String getResourceUrl(String resource) {
         Contest contest = getActiveContest();
-        if (contest != null) {
-            return "./contest/layouts/" + contest.getContestLayout().getName() + "/" + resource;
-        } else {
-            return null;
-        }
+        return "./contest/layouts/" + contest.getContestLayout().getName() + "/" + resource;
     }
 
     /**
@@ -223,35 +224,29 @@ public class ContestBean implements Serializable {
      * @return
      */
     public String getImageUrl(String image) {
-        if (login.getSignedRequest() != null) {
-            return "/images/" + login.getSignedRequest().getPageId() + "/" + image;
+        if (signedRequest.getPage().getId() != null) {
+            return "/images/" + signedRequest.getPage().getId() + "/" + image;
         } else {
-            return null;
+            throw new PageIdNotFoundException();
         }
     }
 
     public String getContestSubpage() {
-        SignedRequest req = login.getSignedRequest();
-        if (req != null) {
-            String page;
-            if (req.isPageLike()) {
-                if (returning) {
-                    page = "/returning.xhtml";
-                } else {
-                    page = "/register.xhtml";
-                }
+        String page;
+        if (signedRequest.getPage().isLiked()) {
+            if (returning) {
+                page = "/returning.xhtml";
             } else {
-                page = "/presslike.xhtml";
+                page = "/register.xhtml";
             }
-            return getPageUrl(page);
         } else {
-            LOG.severe("I got to contest page without signed request!!!");
-            return null;
+            page = "/presslike.xhtml";
         }
+        return getPageUrl(page);
     }
 
     public boolean isPageAllowed() {
-        String pageId = login.getSignedRequest().getPageId();
+        String pageId = signedRequest.getPage().getId();
         if (pageId != null) {
             RegisteredPage page = em.find(RegisteredPage.class, pageId);
             if (page != null && page.getActive()) {
@@ -264,23 +259,14 @@ public class ContestBean implements Serializable {
     public Boolean isReturning() {
         return returning;
     }
-
-//    public String getShareLink() {
-//        String link = "https://sutaz.flowyk.com:8181/facebookContest/og.xhtml?id=151";
-//        StringBuilder sb = new StringBuilder("https://www.facebook.com/dialog/share?");
-//        sb.append("app_id=").append(login.getAppId());
-//        sb.append("&display=popup");
-//        sb.append("&href=").append(link);
-//        sb.append("&redirect_uri=").append(link);
-//        return sb.toString();
-//    }
+    
     public String getShareScript() {
         StringBuilder sb = new StringBuilder("FB.ui({");
         sb.append("method: 'share_open_graph',");
         sb.append("action_type: 'flowykcontests:attend',");
-        sb.append("action_properties: JSON.stringify({");
+        sb.append("action_properties: {");
         sb.append("contest: 'https://sutaz.flowyk.com:8181/facebookContest/og.xhtml?id=").append(activeUser.getId()).append("'");
-        sb.append("}) }); return false;");
+        sb.append("} }); return false;");
         return sb.toString();
     }
 
