@@ -5,7 +5,7 @@
  */
 package com.flowyk.fb.controller;
 
-import com.flowyk.fb.model.signedrequest.SignedRequest;
+import com.flowyk.fb.model.ContestBean;
 import java.io.IOException;
 import javax.inject.Inject;
 import javax.servlet.Filter;
@@ -15,21 +15,19 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
  *
  * @author Lukas
  */
-@WebFilter(filterName = "ContestAdminFilter", urlPatterns = {"/contest/admin.xhtml"})
-public class ContestAdminFilter implements Filter {
-    
-    @Inject
-    private SignedRequest signedRequest;
-    
-    public ContestAdminFilter() {
-    }
+@WebFilter(filterName = "ContestPageActiveFilter")
+public class ContestPageActiveFilter implements Filter {
 
+    @Inject
+    ContestBean contestBean;
+    
     /**
      *
      * @param request The servlet request we are processing
@@ -44,13 +42,15 @@ public class ContestAdminFilter implements Filter {
             FilterChain chain)
             throws IOException, ServletException {
 
-        if (signedRequest.getPage().isAdmin()) {
+        if (contestBean.isPageActive()) {
             chain.doFilter(request, response);
         } else {
-            ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "Page accessible only for page admins on facebook");
+            HttpServletRequest req = (HttpServletRequest) request;
+            HttpServletResponse res = (HttpServletResponse) response;
+            res.sendRedirect(req.getContextPath() + "/contest/page-unactive.xhtml");
         }
     }
-
+    
     @Override
     public void destroy() {
     }

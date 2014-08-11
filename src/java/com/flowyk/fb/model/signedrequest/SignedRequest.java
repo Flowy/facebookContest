@@ -24,14 +24,12 @@ public class SignedRequest implements Serializable {
 
     private String ipAddress;
     private String userAgent;
+    
+    private boolean signed;
 
-    private Page page = new Page();
-    private User user = new User();
-    private AppData appData = new AppData();
-
-    public AppData getAppData() {
-        return appData;
-    }
+    private final Page page = new Page();
+    private final User user = new User();
+    private final AppData appData = new AppData();
 
     public String getIpAddress() {
         return ipAddress;
@@ -49,22 +47,26 @@ public class SignedRequest implements Serializable {
         this.userAgent = userAgent;
     }
 
-    public Page getPage() {
-        return page;
+    public boolean isSigned() {
+        return signed;
     }
 
-    public void setPage(Page page) {
-        this.page = page;
+    public void setSigned(boolean signed) {
+        this.signed = signed;
+    }
+    
+    public Page getPage() {
+        return page;
     }
 
     public User getUser() {
         return user;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public AppData getAppData() {
+        return appData;
     }
-
+    
     public void parseJsonObject(JsonObject json) {
         if (json == null) {
             return;

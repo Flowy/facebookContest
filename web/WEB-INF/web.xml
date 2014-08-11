@@ -14,11 +14,37 @@
     </context-param>
     <filter-mapping>
         <filter-name>SignedRequestFilter</filter-name>
-        <url-pattern />
+        <url-pattern>/contest/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
-        <filter-name>ContestAdminFilter</filter-name>
-        <url-pattern />
+        <filter-name>ContestPageAdminFilter</filter-name>
+        <url-pattern>/contest/admin.xhtml</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>ContestPageLikedFilter</filter-name>
+        <url-pattern>/contest/register.xhtml</url-pattern>
+        <url-pattern>/contest/returning.xhtml</url-pattern>
+        <url-pattern>/contest/thanks.xhtml</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>ContestPageActiveFilter</filter-name>
+        <url-pattern>/contest/admin.xhtml</url-pattern>
+        <url-pattern>/contest/presslike.xhtml</url-pattern>
+        <url-pattern>/contest/register.xhtml</url-pattern>
+        <url-pattern>/contest/returning.xhtml</url-pattern>
+        <url-pattern>/contest/thanks.xhtml</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>ContestActiveFilter</filter-name>
+        <url-pattern>/contest/admin.xhtml</url-pattern>
+        <url-pattern>/contest/presslike.xhtml</url-pattern>
+        <url-pattern>/contest/register.xhtml</url-pattern>
+        <url-pattern>/contest/returning.xhtml</url-pattern>
+        <url-pattern>/contest/thanks.xhtml</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>ContestFilter</filter-name>
+        <url-pattern>/contest/contest.xhtml</url-pattern>
     </filter-mapping>
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>

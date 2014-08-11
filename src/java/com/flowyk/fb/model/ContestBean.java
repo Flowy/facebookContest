@@ -245,7 +245,7 @@ public class ContestBean implements Serializable {
         return getPageUrl(page);
     }
 
-    public boolean isPageAllowed() {
+    public boolean isPageActive() {
         String pageId = signedRequest.getPage().getId();
         if (pageId != null) {
             RegisteredPage page = em.find(RegisteredPage.class, pageId);
@@ -265,7 +265,7 @@ public class ContestBean implements Serializable {
         sb.append("method: 'share_open_graph',");
         sb.append("action_type: 'flowykcontests:attend',");
         sb.append("action_properties: {");
-        sb.append("contest: 'https://sutaz.flowyk.com:8181/facebookContest/og.xhtml?id=").append(activeUser.getId()).append("'");
+        sb.append("contest: 'https://sutaz.flowyk.com:8181/facebookContest/contest/contest.xhtml?reference=").append(activeUser.getId()).append("'");
         sb.append("} }); return false;");
         return sb.toString();
     }

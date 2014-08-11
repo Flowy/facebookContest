@@ -5,9 +5,8 @@
  */
 package com.flowyk.fb.controller;
 
-import com.flowyk.fb.model.opengraph.OpenGraphBean;
+import com.flowyk.fb.model.signedrequest.SignedRequest;
 import java.io.IOException;
-import java.util.Enumeration;
 import javax.inject.Inject;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -16,22 +15,21 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
  *
  * @author Lukas
  */
-@WebFilter(filterName = "OpenGraphFilter", urlPatterns = {"/og.xhtml"})
-public class OpenGraphFilter implements Filter {
-
-    public OpenGraphFilter() {
+@WebFilter(filterName = "ContestPageAdminFilter")
+public class ContestPageAdminFilter implements Filter {
+    
+    @Inject
+    private SignedRequest signedRequest;
+    
+    public ContestPageAdminFilter() {
     }
 
-    @Inject
-    OpenGraphBean bean;
-    
     /**
      *
      * @param request The servlet request we are processing
@@ -45,16 +43,11 @@ public class OpenGraphFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain)
             throws IOException, ServletException {
-        HttpServletRequest req = (HttpServletRequest) request;
-        String userAgent = req.getHeader("user-agent");
-        if (userAgent != null && userAgent.contains("facebookexternalhit")) {
-            //facebook bot - allow to watch for open graph page
+
+        if (signedRequest.getPage().isAdmin()) {
             chain.doFilter(request, response);
         } else {
-            bean.init(req.getParameter("id"));
-            HttpServletResponse res = (HttpServletResponse) response;
-            res.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-            res.setHeader("Location", bean.getFBAddress());
+            ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "Page accessible only for page admins on facebook");
         }
     }
 
@@ -64,6 +57,6 @@ public class OpenGraphFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) {
-    }
 
+    }
 }

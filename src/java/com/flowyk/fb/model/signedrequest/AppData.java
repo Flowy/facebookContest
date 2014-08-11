@@ -9,7 +9,6 @@ package com.flowyk.fb.model.signedrequest;
 import java.io.Serializable;
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 
 /**
  *
@@ -23,8 +22,7 @@ public class AppData implements Serializable {
         if (json == null) {
             return;
         }
-        AppData result = new AppData();
-        result.reference = json.getInt("reference", 0);
+        this.reference = json.getInt("reference", 0);
     }
 
     public JsonObject getAsJson() {

@@ -5,14 +5,12 @@
  */
 package com.flowyk.fb.controller;
 
+import com.flowyk.fb.base.Constants;
 import com.flowyk.fb.model.signedrequest.SignedRequest;
-import static com.flowyk.fb.base.Constants.*;
 import com.flowyk.fb.base.LoginUtil;
-import com.flowyk.fb.model.ContestBean;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.logging.Logger;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.json.JsonObject;
 import javax.servlet.Filter;
@@ -28,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author Lukas
  */
-@WebFilter(filterName = "SignedRequestFilter", urlPatterns = {"/contest/*"})
+@WebFilter(filterName = "SignedRequestFilter")
 public class SignedRequestFilter implements Filter {
 
     private static final Logger LOG = Logger.getLogger(SignedRequestFilter.class.getName());
@@ -40,13 +38,11 @@ public class SignedRequestFilter implements Filter {
 //    private static final String registerPath = "/contest/register.xhtml";
 //    private static final String unactivePath = "/contest/page-unactive.xhtml";
 //    private static final String contestPath = "/contest/contest.xhtml";
-    
     @Inject
     private SignedRequest signedRequest;
 
 //    @Inject
 //    private ContestBean contestBean;
-
     /**
      *
      * @param request The servlet request we are processing
@@ -60,38 +56,12 @@ public class SignedRequestFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain)
             throws IOException, ServletException {
-        if (FINE_DEBUG) {
+        if (Constants.FINE_DEBUG) {
             LOG.info(getHeaderText(request));
         }
-        
-        parseSignedRequest(request);
-        
-//        HttpServletRequest req = (HttpServletRequest) request;
-        
-        
-        
-//        System.out.println(req.getServletPath());
-        
-        chain.doFilter(request, response);
 
-////        System.out.println("Filter got request from: " + req.getRequestURL() + "\nparameters: " + req.getQueryString());
-//        String code = request.getParameter("code");
-//        if (code != null) {
-//            login.setCode(code);
-//        }
-//        
-////        String contestUrl = req.getContextPath() + "/faces/contest.xhtml";
-//        String errorUrl = req.getContextPath() + "/faces/error.xhtml";
-//
-////        if (req.getRequestURI().equals(contestUrl)) {
-//        if (login.checkLogin()) {
-//            chain.doFilter(request, response);
-//        } else {
-//            res.sendRedirect(errorUrl);
-//        }
-////        } else {
-////            chain.doFilter(request, response);
-////        }
+        parseSignedRequest(request);
+        chain.doFilter(request, response);
     }
 
     private String getHeaderText(ServletRequest request) {
@@ -109,10 +79,11 @@ public class SignedRequestFilter implements Filter {
 
     private void parseSignedRequest(ServletRequest request) {
         HttpServletRequest req = (HttpServletRequest) request;
+
         String signedRequestString = request.getParameter("signed_request");
         if (signedRequestString != null) {
             JsonObject jObject = LoginUtil.parseSignedRequest(signedRequestString);
-            System.out.println("Json request: " + jObject.toString());
+            signedRequest.setSigned(true);
             signedRequest.parseJsonObject(jObject);
 
             String ipAddress = req.getHeader("X-FORWARDED-FOR");
@@ -123,6 +94,16 @@ public class SignedRequestFilter implements Filter {
 
             String userAgent = req.getHeader("user-agent");
             signedRequest.setUserAgent(userAgent);
+        } else {
+            String reference = request.getParameter("reference");
+            if (reference != null) {
+                try {
+                    Integer refInt = Integer.parseInt(reference);
+                    signedRequest.getAppData().setReference(refInt);
+                } catch (NumberFormatException e) {
+                    LOG.warning("Can't parse reference to: " + reference);
+                }
+            }
         }
     }
 

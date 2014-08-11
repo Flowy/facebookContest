@@ -5,8 +5,10 @@
  */
 package com.flowyk.fb.model.opengraph;
 
+import com.flowyk.fb.base.Constants;
 import com.flowyk.fb.entity.RegisteredUser;
 import com.flowyk.fb.model.signedrequest.AppData;
+import com.flowyk.fb.model.signedrequest.SignedRequest;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,10 +18,10 @@ import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import static com.flowyk.fb.base.Constants.API_KEY;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
+import javax.inject.Inject;
 
 /**
  *
@@ -32,36 +34,17 @@ public class OpenGraphBean {
     private RegisteredUser user;
     private static final Logger LOG = Logger.getLogger(OpenGraphBean.class.getName());
 
+    @Inject
+    SignedRequest signedRequest;
+
     @PersistenceContext
     EntityManager em;
 
-    /**
-     * Creates a new instance of OpenGraphBean
-     */
-    public OpenGraphBean() {
-    }
-
     @PostConstruct
     public void init() {
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        if (facesContext != null) {
-            Map<String, String> parameterMap = (Map<String, String>) facesContext.getExternalContext().getRequestParameterMap();
-            String userIdString = parameterMap.get("id");
-            init(userIdString);
-        } else {
-            user = null;
-        }
-    }
-
-    public void init(String userIdString) {
-
-        try {
-            Integer userId = Integer.valueOf(userIdString);
-            user = em.find(RegisteredUser.class, userId);
-        } catch (NumberFormatException e) {
-            LOG.log(Level.WARNING, "Can't parse user ID to Integer; ID: {0}", userIdString);
-            user = null;
-        }
+        int id = signedRequest.getAppData().getReference();
+        user = em.find(RegisteredUser.class, id);
+        System.out.println("OpenGraphBean Found user: " + user + " for reference id: " + id);
     }
 
     // Actions -----------------------------------------------------------------------------------
@@ -89,7 +72,7 @@ public class OpenGraphBean {
             return null;
         }
     }
-    
+
     public String getContestEnd() {
         if (user != null) {
             TimeZone tz = TimeZone.getDefault();
@@ -102,6 +85,19 @@ public class OpenGraphBean {
         }
     }
 
+    public String getCanonicalUrl() {
+        if (user != null) {
+            StringBuilder sb;
+            sb = new StringBuilder("https://www.facebook.com/")
+                    .append(user.getContest().getRegisteredPage().getPageId())
+                    .append("?sk=app_")
+                    .append(Constants.API_KEY);
+            return sb.toString();
+        } else {
+            return "https://apps.facebook.com/flowykcontests";
+        }
+    }
+
     public String getFBAddress() {
         if (user != null) {
             AppData appData = new AppData();
@@ -109,16 +105,15 @@ public class OpenGraphBean {
             StringBuilder sb;
             sb = new StringBuilder("https://www.facebook.com/")
                     .append(user.getContest().getRegisteredPage().getPageId())
-                    .append("?v=app_")
-                    .append(API_KEY)
+                    .append("?sk=app_")
+                    .append(Constants.API_KEY)
                     .append("&app_data=")
                     .append(appData.getAsJson().toString());
             return sb.toString();
         } else {
-            return "https://www.facebook.com";
+            return "https://apps.facebook.com/flowykcontests";
         }
     }
 
-    
     // Setters -----------------------------------------------------------------------------------
 }

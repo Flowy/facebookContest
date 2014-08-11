@@ -30,9 +30,10 @@ public class ContestAdminBean implements Serializable {
     private String fileContent;
 
     // Actions -----------------------------------------------------------------------------------
-     public void validateFile(FacesContext ctx, UIComponent comp, Object value) {
+
+    public void validateFile(FacesContext ctx, UIComponent comp, Object value) {
         List<FacesMessage> msgs = new ArrayList<>();
-        Part tempFile = (Part)value;
+        Part tempFile = (Part) value;
         msgs.add(new FacesMessage("file submitted name: " + tempFile.getSubmittedFileName()));
         msgs.add(new FacesMessage("content type: " + tempFile.getContentType()));
         if (tempFile.getSize() > 1024) {
@@ -48,15 +49,15 @@ public class ContestAdminBean implements Serializable {
             throw new ValidatorException(msgs);
         }
     }
-     
+
     public void upload() {
         try {
             fileContent = new Scanner(file.getInputStream())
                     .useDelimiter("\\A").next();
         } catch (IOException e) {
             FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                                                "error uploading file",
-                                                null);
+                    "error uploading file",
+                    null);
             FacesContext.getCurrentInstance().addMessage(null, msg);
         }
     }
@@ -65,17 +66,16 @@ public class ContestAdminBean implements Serializable {
     public Part getFile() {
         return file;
     }
-    
+
     public String getFileContent() {
         return fileContent;
     }
 
     // Setters -----------------------------------------------------------------------------------
-    
     public void setFile(Part file) {
         this.file = file;
     }
-    
+
     public void setFileContent(String content) {
         this.fileContent = content;
     }

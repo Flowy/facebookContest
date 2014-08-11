@@ -12,7 +12,7 @@
                     return;
                 js = d.createElement(s);
                 js.id = id;
-                js.src = &quot;//connect.facebook.net/#{facebookLogin.signedRequest.locale}/sdk.js#xfbml=1&amp;appId=#{facebookLogin.appId}&amp;version=v2.0&quot;;
+                js.src = &quot;//connect.facebook.net/#{signedRequest.user.locale}/sdk.js#xfbml=1&amp;appId=#{constants.API_KEY}&amp;version=v2.0&quot;;
                 fjs.parentNode.insertBefore(js, fjs);
             }(document, 'script', 'facebook-jssdk'));</script>
     <h:graphicImage id="youAreInImage" url="#{contestBean.getImageUrl('nazov2.png')}" />
