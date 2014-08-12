@@ -17,25 +17,8 @@
                     <file>${libs.MySQLDriver.classpath}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
-                <library dirs="200">
-                    <file>${libs.CommuniGate__email_server_.classpath}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
-                </library>
             </web-module-libraries>
-            <web-module-additional-libraries>
-                <library dirs="200">
-                    <file>${libs.Scribe__OAuth_.classpath}</file>
-                    <path-in-war>/</path-in-war>
-                </library>
-                <library dirs="200">
-                    <file>${libs.Facebook_REST_API.classpath}</file>
-                    <path-in-war>/</path-in-war>
-                </library>
-                <library dirs="200">
-                    <file>${libs.Apache_Commons.classpath}</file>
-                    <path-in-war>/</path-in-war>
-                </library>
-            </web-module-additional-libraries>
+            <web-module-additional-libraries/>
             <source-roots>
                 <root id="src.dir"/>
             </source-roots>
