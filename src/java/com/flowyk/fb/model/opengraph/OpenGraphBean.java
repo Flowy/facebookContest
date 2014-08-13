@@ -10,7 +10,7 @@ import com.flowyk.fb.entity.Contest;
 import com.flowyk.fb.entity.RegisteredUser;
 import com.flowyk.fb.entity.facade.ContestFacade;
 import com.flowyk.fb.entity.facade.RegisteredUserFacade;
-import com.flowyk.fb.model.signedrequest.AppData;
+import com.flowyk.fb.model.ShareUrlBean;
 import com.flowyk.fb.model.signedrequest.SignedRequest;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -39,6 +39,9 @@ public class OpenGraphBean {
     @Inject
     SignedRequest signedRequest;
 
+    @Inject
+    ShareUrlBean shareUrlBean;
+    
     @EJB
     RegisteredUserFacade registeredUserFacade;
 
@@ -53,7 +56,7 @@ public class OpenGraphBean {
             if (user != null) {
                 contest = user.getContest();
             }
-            if (Constants.DEBUG) {
+            if (Constants.FINE_DEBUG) {
                 LOG.log(Level.INFO, "Found user: {0} for reference id: {1}", new Object[]{user, userId});
             }
         }
@@ -116,20 +119,7 @@ public class OpenGraphBean {
     }
 
     public String getFBShareUrl() {
-        if (user != null) {
-            AppData appData = new AppData();
-            appData.setReference(user.getId());
-            StringBuilder sb;
-            sb = new StringBuilder("https://www.facebook.com/")
-                    .append(user.getContest().getRegisteredPage().getPageId())
-                    .append("?sk=app_")
-                    .append(Constants.API_KEY)
-                    .append("&app_data=")
-                    .append(appData.getAsJson().toString());
-            return sb.toString();
-        } else {
-            return "https://apps.facebook.com/flowykcontests";
-        }
+        return shareUrlBean.getFBShareUrl(user);
     }
 
     // Setters -----------------------------------------------------------------------------------

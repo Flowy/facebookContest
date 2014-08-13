@@ -6,6 +6,7 @@
 package com.flowyk.fb.email;
 
 import com.flowyk.fb.entity.Registration;
+import com.flowyk.fb.model.ShareUrlBean;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.logging.Level;
@@ -13,6 +14,7 @@ import java.util.logging.Logger;
 import javax.annotation.Resource;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -33,6 +35,9 @@ public class NoReplyEmailSession {
 
     private static final Logger LOG = Logger.getLogger(NoReplyEmailSession.class.getName());
 
+    @Inject
+    ShareUrlBean shareUrl;
+    
     @Resource(lookup = "noReplyCmcMail")
     private Session mailSession;
 
@@ -75,7 +80,7 @@ public class NoReplyEmailSession {
         MimeMessage message = new MimeMessage(mailSession);
         try {
             String title = "Zapojil si sa do súťaže";
-            String link = "link";
+            String link = shareUrl.getFBShareUrl(reg.getRegisteredUser());
             String regComplete = "Tvoja registrácia prebehla úspešne.";
             String comeAgain = String.format("Aby toho nebolo málo, máme pre teba prichystaný ďalší lístok. Stačí ak navštíviš našu facebookovú súťaž opäť %1$s a zadáš svoju emailovú adresu.", "date");
             String shareTheLink = "Svoju šancu na výhru môžes zvýšiť ak sa zaregistruje niekto ďalší cez tento link:";

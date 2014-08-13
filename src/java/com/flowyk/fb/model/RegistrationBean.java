@@ -67,7 +67,12 @@ public class RegistrationBean implements Serializable {
         if (userList.isEmpty()) {
             registeredUserFacade.create(activeUser);
             signedRequest.getUser().setId(activeUser.getId());
-            Registration ticket = contestBean.createNewTicket(activeUser, Constants.FIRST_REGISTRATION_TICKETS, null);
+            int refId = signedRequest.getAppData().getReference();
+            RegisteredUser referal = null;
+            if (refId != 0) {
+                referal = registeredUserFacade.find(refId);
+            }
+            Registration ticket = contestBean.createNewTicket(activeUser, Constants.FIRST_REGISTRATION_TICKETS, referal);
             email.sendRegistrationCompleteEmail(ticket);
 
             contestBean.setReturning(Boolean.TRUE);
