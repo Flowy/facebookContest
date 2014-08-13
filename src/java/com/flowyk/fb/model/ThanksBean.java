@@ -6,36 +6,33 @@
 
 package com.flowyk.fb.model;
 
+import com.flowyk.fb.base.Constants;
+import com.flowyk.fb.model.signedrequest.SignedRequest;
+import java.io.Serializable;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
 
 /**
  *
  * @author Lukas
  */
 @Named(value = "thanksBean")
-@ViewScoped
-public class ThanksBean {
+@RequestScoped
+public class ThanksBean implements Serializable {
 
-    private String userId;
+    @Inject
+    private SignedRequest signedRequest;
     
     public String getShareScript() {
+        Integer userId = signedRequest.getUser().getId();
         StringBuilder sb = new StringBuilder("FB.ui({");
         sb.append("method: 'share_open_graph',");
         sb.append("action_type: 'flowykcontests:attend',");
-        sb.append("action_properties: {");
-        sb.append("contest: 'https://sutaz.flowyk.com:8181/facebookContest/contest/contest.xhtml?reference=").append(userId).append("'");
+        sb.append("action_properties: {")
+                .append("contest: '").append(Constants.SITE_URL).append("/contest/contest.xhtml?reference=").append(userId).append("'");
         sb.append("} }); return false;");
         return sb.toString();
     }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-    
     
 }

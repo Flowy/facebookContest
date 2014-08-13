@@ -10,6 +10,7 @@ import com.flowyk.fb.model.signedrequest.SignedRequest;
 import com.flowyk.fb.base.LoginUtil;
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.inject.Inject;
 import javax.json.JsonObject;
@@ -59,7 +60,6 @@ public class SignedRequestFilter implements Filter {
         if (Constants.FINE_DEBUG) {
             LOG.info(getHeaderText(request));
         }
-
         parseSignedRequest(request);
         chain.doFilter(request, response);
     }
@@ -95,13 +95,23 @@ public class SignedRequestFilter implements Filter {
             String userAgent = req.getHeader("user-agent");
             signedRequest.setUserAgent(userAgent);
         } else {
+            String contest = request.getParameter("contest");
+            if (contest != null && !contest.equals("null")) {
+                try {
+                    Integer contestInt = Integer.parseInt(contest);
+                    signedRequest.setContestId(contestInt);
+                } catch (NumberFormatException e) {
+                    LOG.log(Level.WARNING, "Can't parse contest to: {0}", contest);
+                }
+            }
+            
             String reference = request.getParameter("reference");
-            if (reference != null) {
+            if (reference != null && !reference.equals("null")) {
                 try {
                     Integer refInt = Integer.parseInt(reference);
                     signedRequest.getAppData().setReference(refInt);
                 } catch (NumberFormatException e) {
-                    LOG.warning("Can't parse reference to: " + reference);
+                    LOG.log(Level.WARNING, "Can't parse reference to: {0}", reference);
                 }
             }
         }

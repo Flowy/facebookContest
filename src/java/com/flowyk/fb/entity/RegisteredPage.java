@@ -13,6 +13,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -120,6 +121,7 @@ public class RegisteredPage implements Serializable {
     }
 
     public void setContestCollection(Collection<Contest> contestCollection) {
+        System.out.println("RegisteredPage: setting new collection: " + contestCollection != null ? contestCollection.toString() : "");
         this.contestCollection = contestCollection;
     }
 

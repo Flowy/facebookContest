@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.flowyk.fb.exception;
+package com.flowyk.fb.exceptions;
 
 /**
  *

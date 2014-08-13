@@ -20,7 +20,12 @@ public class Constants {
     public static final boolean DEBUG = true;
 
     public static final String API_KEY = "675005359221214";
-    public static final String CALLBACK_URL = "https://sutaz.flowyk.com:8181/FacebookSutaz-newwar/contest.xhtml";
+    public static final String SITE_URL = "https://sutaz.flowyk.com:8181/facebookContest";
+//    public static final String CALLBACK_URL = "https://sutaz.flowyk.com:8181/FacebookSutaz-newwar/contest.xhtml";
+    
+    //ticket weight after first registration
+    public static final int FIRST_REGISTRATION_TICKETS = 2;
+    public static final int RETURNING_TICKETS = 2;
 
     public boolean isFINE_DEBUG() {
         return FINE_DEBUG;
@@ -34,9 +39,9 @@ public class Constants {
         return API_KEY;
     }
 
-    public String getCALLBACK_URL() {
-        return CALLBACK_URL;
-    }
+//    public String getCALLBACK_URL() {
+//        return CALLBACK_URL;
+//    }
     
     
 }

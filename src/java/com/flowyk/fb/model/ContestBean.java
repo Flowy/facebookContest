@@ -9,22 +9,24 @@ import com.flowyk.fb.entity.Contest;
 import com.flowyk.fb.entity.RegisteredPage;
 import com.flowyk.fb.entity.RegisteredUser;
 import com.flowyk.fb.entity.Registration;
-import com.flowyk.fb.exception.FBPageNotActiveException;
-import com.flowyk.fb.exception.NoActiveContestException;
-import com.flowyk.fb.exception.PageIdNotFoundException;
+import com.flowyk.fb.entity.facade.ContestFacade;
+import com.flowyk.fb.entity.facade.RegisteredPageFacade;
+import com.flowyk.fb.entity.facade.RegistrationFacade;
+import com.flowyk.fb.exceptions.FBPageNotActiveException;
+import com.flowyk.fb.exceptions.NoActiveContestException;
+import com.flowyk.fb.exceptions.PageIdNotFoundException;
 import com.flowyk.fb.model.signedrequest.SignedRequest;
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.logging.Logger;
-import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.UserTransaction;
 
 /**
  *
@@ -39,13 +41,16 @@ public class ContestBean implements Serializable {
     @Inject
     private SignedRequest signedRequest;
 
-    @PersistenceContext(unitName = "fbContestDB")
-    private EntityManager em;
+    @EJB
+    private RegistrationFacade registrationFacade;
+    
+    @EJB
+    private ContestFacade contestFacade;
 
-    @Resource
-    private UserTransaction utx;
+    @EJB
+    private RegisteredPageFacade registeredPage;
 
-    private Boolean returning = false;
+    private boolean returning = false;
 
 
     // Actions -----------------------------------------------------------------------------------
@@ -53,13 +58,16 @@ public class ContestBean implements Serializable {
     /**
      * expects open transaction and persisted user
      */
-    void createNewTicket(RegisteredUser forUser) {
+    Registration createNewTicket(RegisteredUser forUser, int weight, RegisteredUser referal) {
         Registration ticket = new Registration();
         ticket.setRegisteredUser(forUser);
-        ticket.setTimeRegistered(new Date());
+        ticket.setTimeRegistered(Calendar.getInstance(TimeZone.getTimeZone("GMT")));
         ticket.setIpAddress(signedRequest.getIpAddress());
         ticket.setUserAgent(signedRequest.getUserAgent());
-        em.persist(ticket);
+        ticket.setReferal(referal);
+        ticket.setWeight(weight);
+        registrationFacade.create(ticket);
+        return ticket;
     }
 
     // Getters -----------------------------------------------------------------------------------
@@ -85,12 +93,14 @@ public class ContestBean implements Serializable {
      * @throws PageIdNotFoundException if page not found in signed request
      */
     public Contest getActiveContest() {
+        
         if (signedRequest.getPage().getId() != null) {
-            RegisteredPage page = em.find(RegisteredPage.class, signedRequest.getPage().getId());
+            RegisteredPage page = registeredPage.find(signedRequest.getPage().getId());
             if (page != null) {
-                List<Contest> list = em.createNamedQuery("Contest.findByRegisteredPage").setParameter("registeredPage", page).getResultList();
+//                System.out.println("Found page for: " + signedRequest.getPage().getId() + ", contests count: " + page.getContestCollection().size());
+                List<Contest> contestList = contestFacade.findByPage(page);
 //                List<Contest> list = new ArrayList(page.getContestCollection());
-                return selectActiveContest(list);
+                return selectActiveContest(contestList);
             } else {
                 throw new FBPageNotActiveException("Page id: " + signedRequest.getPage().getId());
             }
@@ -135,7 +145,7 @@ public class ContestBean implements Serializable {
     public boolean isPageActive() {
         String pageId = signedRequest.getPage().getId();
         if (pageId != null) {
-            RegisteredPage page = em.find(RegisteredPage.class, pageId);
+            RegisteredPage page = registeredPage.find(pageId);
             if (page != null && page.getActive()) {
                 return true;
             }
@@ -143,13 +153,13 @@ public class ContestBean implements Serializable {
         return false;
     }
 
-    public Boolean isReturning() {
+    public boolean getReturning() {
         return returning;
     }
 
     // Setters -----------------------------------------------------------------------------------
     
-    public void setReturning(Boolean value) {
+    public void setReturning(boolean value) {
         this.returning = value;
     }
 }

@@ -6,21 +6,21 @@
 package com.flowyk.fb.model.opengraph;
 
 import com.flowyk.fb.base.Constants;
+import com.flowyk.fb.entity.Contest;
 import com.flowyk.fb.entity.RegisteredUser;
+import com.flowyk.fb.entity.facade.ContestFacade;
+import com.flowyk.fb.entity.facade.RegisteredUserFacade;
 import com.flowyk.fb.model.signedrequest.AppData;
 import com.flowyk.fb.model.signedrequest.SignedRequest;
-import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
-import javax.faces.context.FacesContext;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
+import java.util.logging.Level;
+import javax.ejb.EJB;
 import javax.inject.Inject;
 
 /**
@@ -31,54 +31,71 @@ import javax.inject.Inject;
 @RequestScoped
 public class OpenGraphBean {
 
-    private RegisteredUser user;
     private static final Logger LOG = Logger.getLogger(OpenGraphBean.class.getName());
+
+    private RegisteredUser user = null;
+    private Contest contest = null;
 
     @Inject
     SignedRequest signedRequest;
 
-    @PersistenceContext
-    EntityManager em;
+    @EJB
+    RegisteredUserFacade registeredUserFacade;
+
+    @EJB
+    ContestFacade contestFacade;
 
     @PostConstruct
     public void init() {
-        int id = signedRequest.getAppData().getReference();
-        user = em.find(RegisteredUser.class, id);
-        System.out.println("OpenGraphBean Found user: " + user + " for reference id: " + id);
+        int userId = signedRequest.getAppData().getReference();
+        if (userId != 0) {
+            user = registeredUserFacade.find(userId);
+            if (user != null) {
+                contest = user.getContest();
+            }
+            if (Constants.DEBUG) {
+                LOG.log(Level.INFO, "Found user: {0} for reference id: {1}", new Object[]{user, userId});
+            }
+        }
+
+        Integer contestId = signedRequest.getContestId();
+        if (contestId != null) {
+            contest = contestFacade.find(contestId);
+        }
     }
 
     // Actions -----------------------------------------------------------------------------------
     // Getters -----------------------------------------------------------------------------------
     public String getTitle() {
-        if (user != null) {
-            return user.getContest().getName();
+        if (contest != null) {
+            return contest.getName();
         } else {
-            return "Contests";
+            return "Contest";
         }
     }
 
     public String getImage() {
-        if (user != null) {
-            return user.getContest().getIconUrl();
+        if (contest != null) {
+            return contest.getShareImgUrl();
         } else {
-            return null;
+            return Constants.SITE_URL + "/images/default_share_img.png";
         }
     }
 
     public String getDescription() {
-        if (user != null) {
-            return user.getContest().getPopisSutaze();
+        if (contest != null) {
+            return contest.getPopisSutaze();
         } else {
             return null;
         }
     }
 
     public String getContestEnd() {
-        if (user != null) {
+        if (contest != null) {
             TimeZone tz = TimeZone.getDefault();
             DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
             df.setTimeZone(tz);
-            String date = df.format(user.getContest().getContestEnd());
+            String date = df.format(contest.getContestEnd());
             return date;
         } else {
             return null;
@@ -86,10 +103,10 @@ public class OpenGraphBean {
     }
 
     public String getCanonicalUrl() {
-        if (user != null) {
+        if (contest != null) {
             StringBuilder sb;
             sb = new StringBuilder("https://www.facebook.com/")
-                    .append(user.getContest().getRegisteredPage().getPageId())
+                    .append(contest.getRegisteredPage().getPageId())
                     .append("?sk=app_")
                     .append(Constants.API_KEY);
             return sb.toString();
@@ -98,7 +115,7 @@ public class OpenGraphBean {
         }
     }
 
-    public String getFBAddress() {
+    public String getFBShareUrl() {
         if (user != null) {
             AppData appData = new AppData();
             appData.setReference(user.getId());

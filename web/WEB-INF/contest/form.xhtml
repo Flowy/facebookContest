@@ -13,25 +13,25 @@
             <h:outputLabel for="nameTextInput"
                            value="Meno" styleClass="inputLabel" />
             <h:inputText id="nameTextInput"
-                         value="#{contestBean.user.name}" 
+                         value="#{registrationBean.activeUser.name}" 
                          styleClass="inputText #{component.valid ? '' : 'error'}" />
             <h:outputLabel for="emailTextInput"
                            value="Email" styleClass="inputLabel" />
             <h:inputText id="emailTextInput"
-                         value="#{contestBean.user.email}" 
+                         value="#{registrationBean.activeUser.email}" 
                          styleClass="inputText #{component.valid ? '' : 'error'}"
                          validatorMessage="Nesprávny formát emailovej adresy" />
             <h:outputLabel for="mobileTextInput" 
                            value="Mobil" styleClass="inputLabel" />
             <h:inputText id="mobileTextInput" 
-                         value="#{contestBean.user.telephone}" 
+                         value="#{registrationBean.activeUser.telephone}" 
                          styleClass="inputText #{component.valid ? '' : 'error'}" 
                          validatorMessage="Nesprávny formát telefónneho čísla (0911 222 333)" />
 
         </h:panelGrid>
         <div id="acceptRulesRow">
             <h:selectBooleanCheckbox id="contestRulesCheckbox" 
-                                     value="#{contestBean.acceptedRules}"
+                                     value="#{registrationBean.acceptedRules}"
                                      converter="javax.faces.Boolean"
                                      validatorMessage="Pre pokračovanie musíte súhlasiť s podmienkami súťaže" />
             <h:outputLabel for="contestRulesCheckbox">Suhlasim s 
@@ -43,9 +43,13 @@
         <div id="submitRow">
             <h:commandButton styleClass="inputSubmit"
                              alt="Submit"
-                             action="#{contestBean.register()}"
-                             image="#{contestBean.getImageUrl('bt-odoslat.png')}" />
-            <h:commandLink styleClass="returningLink" immediate="true" action="#{contestBean.setReturning(true)}">Už som registrovaný, chcem ďalší lístok</h:commandLink>
+                             action="#{registrationBean.register}"
+                             image="#{contestBean.getImageUrl('bt-odoslat.png')}">
+            </h:commandButton>
+            <h:commandLink styleClass="returningLink" immediate="true" action="returning">
+                <f:setPropertyActionListener target="#{contestBean.returning}" value="true" />
+                Už som registrovaný, chcem ďalší lístok
+            </h:commandLink>
         </div>
     </h:form>
     <ui:include src="#{contestBean.getPageUrl('infobox.xhtml')}" />

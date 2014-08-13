@@ -7,6 +7,7 @@
 package com.flowyk.fb.entity;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -45,16 +46,25 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Contest.findByPopisSutaze", query = "SELECT c FROM Contest c WHERE c.popisSutaze = :popisSutaze"),
     @NamedQuery(name = "Contest.findByExterneInfoUrl", query = "SELECT c FROM Contest c WHERE c.externeInfoUrl = :externeInfoUrl")})
 public class Contest implements Serializable {
+    
+    @Basic(optional = false)
+    @NotNull
+    @Temporal(TemporalType.TIME)
+    @Column(name = "time_between_tickets")
+    private Calendar timeBetweenTickets;
+    @Size(max = 150)
+    @Column(name = "description")
+    private String description;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 250)
+    @Column(name = "externe_info_url")
+    private String externeInfoUrl;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 250)
     @Column(name = "share_img_url")
     private String shareImgUrl;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 250)
-    @Column(name = "externeInfoUrl")
-    private String externeInfoUrl;
     @JoinColumn(name = "registered_page_id", referencedColumnName = "page_id")
     @ManyToOne(optional = false)
     @NotNull
@@ -94,9 +104,6 @@ public class Contest implements Serializable {
     @Size(max = 65535)
     @Column(name = "rules")
     private String rules;
-    @Column(name = "time_between_tickets")
-    @Temporal(TemporalType.TIME)
-    private Date timeBetweenTickets;
     @JoinColumn(name = "contest_layout_name", referencedColumnName = "name")
     @ManyToOne(optional = false)
     private ContestLayout contestLayout;
@@ -236,11 +243,11 @@ public class Contest implements Serializable {
         return "com.flowyk.fb.entity.Contest[ id=" + id + " ]";
     }
 
-    public Date getTimeBetweenTickets() {
+    public Calendar getTimeBetweenTickets() {
         return timeBetweenTickets;
     }
 
-    public void setTimeBetweenTickets(Date timeBetweenTickets) {
+    public void setTimeBetweenTickets(Calendar timeBetweenTickets) {
         this.timeBetweenTickets = timeBetweenTickets;
     }
 
@@ -258,6 +265,14 @@ public class Contest implements Serializable {
 
     public void setRegisteredPage(RegisteredPage registeredPage) {
         this.registeredPage = registeredPage;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
     
 }

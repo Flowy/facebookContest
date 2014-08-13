@@ -13,11 +13,20 @@ import javax.json.JsonObject;
  */
 public class User {
 
+    private Integer id;
     private String locale;
     private String country;
     private int ageMin;
     private int ageMax;
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+    
     public String getLocale() {
         return locale;
     }

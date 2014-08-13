@@ -5,7 +5,7 @@
  */
 package com.flowyk.fb.base;
 
-import com.flowyk.fb.exception.SignedRequestNotSignedException;
+import com.flowyk.fb.exceptions.SignedRequestNotSignedException;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;

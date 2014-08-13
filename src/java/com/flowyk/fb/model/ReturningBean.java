@@ -3,21 +3,24 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.flowyk.fb.model;
 
+import com.flowyk.fb.base.Constants;
 import com.flowyk.fb.entity.RegisteredUser;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.flowyk.fb.entity.facade.RegisteredUserFacade;
+import com.flowyk.fb.entity.facade.RegistrationFacade;
+import com.flowyk.fb.model.signedrequest.SignedRequest;
+import java.io.Serializable;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.TimeZone;
+import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceException;
 import javax.validation.constraints.Pattern;
 
 /**
@@ -26,44 +29,62 @@ import javax.validation.constraints.Pattern;
  */
 @Named(value = "returningBean")
 @ViewScoped
-public class ReturningBean {
+public class ReturningBean implements Serializable {
 
-    @PersistenceContext
-    private EntityManager em;
-    
     @Inject
-    ContestBean contestBean;
+    private SignedRequest signedRequest;
     
+    @EJB
+    private RegisteredUserFacade registeredUserFacade;
+
+    @EJB
+    private RegistrationFacade registrationFacade;
+
+    @Inject
+    private ContestBean contestBean;
+
     @Pattern(regexp = "[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+" //meno
             + "(?:\\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*" //subdomena
             + "@(?:[a-zA-Z0-9]+\\.)+" //domena
             + "[a-zA-Z]{1,4}")  //root
     private String returningEmail;
-    
+
     public String registerNewTicket() {
-        try {
-//            utx.begin();
-            //if not exists returns exception
-            RegisteredUser returningUser = (RegisteredUser) em.createNamedQuery("RegisteredUser.findByEmailAndContest")
-                    .setParameter("email", returningEmail)
-                    .setParameter("contest", contestBean.getActiveContest())
-                    .getSingleResult();
-            //TODO: check if time after time interval for returning
-            contestBean.createNewTicket(returningUser);
-//            utx.commit();
-            return "thanks";
-        } catch (NoResultException e) {
+
+        List<RegisteredUser> userList = registeredUserFacade.findByContestAndEmail(contestBean.getActiveContest(), returningEmail);
+
+        if (userList.isEmpty()) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Zadaný email ešte nieje v súťaži", "Zadaný email ešte nieje v súťaži"));
             contestBean.setReturning(Boolean.FALSE);
             return null;
-        } catch (PersistenceException ex) {
-            Logger.getLogger(ContestBean.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        } 
-//        catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException ex) {
-//            Logger.getLogger(ContestBean.class.getName()).log(Level.SEVERE, null, ex);
-//            return null;
-//        }
+        } else {
+            RegisteredUser user = userList.iterator().next();
+            signedRequest.getUser().setId(user.getId());
+            
+            Calendar lastTicket = registrationFacade.getLastTicketTime(user);
+            long lastTicketMillis = lastTicket.getTimeInMillis();
+
+            long delayMillis = user.getContest().getTimeBetweenTickets().getTimeInMillis();
+
+            Calendar nearestTicket = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+            nearestTicket.setTimeInMillis(lastTicketMillis + delayMillis);
+
+            if (Calendar.getInstance().after(nearestTicket)) {
+                contestBean.createNewTicket(user, Constants.RETURNING_TICKETS, null);
+                return "thanks";
+            } else {
+                //needed delay for new ticket not passed
+                String msg = "Zatiaľ neuplinul potrebný čas pre znovuregistráciu, najbližšie sa môžte registrovať: {1}".replace("{1}", nearestTicket.toString());
+                FacesContext.getCurrentInstance().addMessage(
+                        null,
+                        new FacesMessage(
+                                FacesMessage.SEVERITY_ERROR,
+                                msg, msg
+                        )
+                );
+                return null;
+            }
+        }
     }
 
     public String getReturningEmail() {
@@ -73,5 +94,5 @@ public class ReturningBean {
     public void setReturningEmail(String returningEmail) {
         this.returningEmail = returningEmail;
     }
-    
+
 }

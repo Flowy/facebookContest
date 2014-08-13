@@ -7,6 +7,7 @@
 package com.flowyk.fb.entity;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -38,6 +39,22 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Registration.findByRegisteredUser", query = "SELECT r FROM Registration r WHERE r.registeredUser = :registeredUser")
 })
 public class Registration implements Serializable, Comparable<Registration> {
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "time_registered")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Calendar timeRegistered;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "weight")
+    private int weight;
+    @NotNull
+    @JoinColumn(name = "registered_user_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private RegisteredUser registeredUser;
+    @JoinColumn(name = "referal_id", referencedColumnName = "id")
+    @ManyToOne
+    private RegisteredUser referal;
     private static final long serialVersionUID = 1L;
     @Id
     @NotNull
@@ -45,20 +62,12 @@ public class Registration implements Serializable, Comparable<Registration> {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    @NotNull
-    @Column(name = "time_registered")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date timeRegistered;
     @Size(max = 30)
     @Column(name = "ip_address")
     private String ipAddress;
     @Size(max = 400)
     @Column(name = "user_agent")
     private String userAgent;
-    @NotNull
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private RegisteredUser registeredUser;
 
     public Registration() {
     }
@@ -75,11 +84,11 @@ public class Registration implements Serializable, Comparable<Registration> {
         this.id = id;
     }
 
-    public Date getTimeRegistered() {
+    public Calendar getTimeRegistered() {
         return timeRegistered;
     }
 
-    public void setTimeRegistered(Date timeRegistered) {
+    public void setTimeRegistered(Calendar timeRegistered) {
         this.timeRegistered = timeRegistered;
     }
 
@@ -132,6 +141,22 @@ public class Registration implements Serializable, Comparable<Registration> {
     @Override
     public int compareTo(Registration o) {
         return this.timeRegistered.compareTo(o.timeRegistered);
+    }
+
+    public int getWeight() {
+        return weight;
+    }
+
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
+
+    public RegisteredUser getReferal() {
+        return referal;
+    }
+
+    public void setReferal(RegisteredUser referal) {
+        this.referal = referal;
     }
     
 }

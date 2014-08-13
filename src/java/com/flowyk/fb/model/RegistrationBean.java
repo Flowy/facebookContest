@@ -3,22 +3,22 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.flowyk.fb.model;
 
+import com.flowyk.fb.base.Constants;
+import com.flowyk.fb.email.NoReplyEmailSession;
 import com.flowyk.fb.entity.RegisteredUser;
+import com.flowyk.fb.entity.Registration;
+import com.flowyk.fb.entity.facade.RegisteredUserFacade;
 import com.flowyk.fb.model.signedrequest.SignedRequest;
-import java.util.Collection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.Serializable;
+import java.util.List;
+import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceException;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 
@@ -28,77 +28,67 @@ import javax.validation.constraints.NotNull;
  */
 @Named(value = "registrationBean")
 @ViewScoped
-public class RegistrationBean {
+public class RegistrationBean implements Serializable {
 
-    
-    @PersistenceContext
-    private EntityManager em;
-    
+    @EJB
+    private RegisteredUserFacade registeredUserFacade;
+
     @NotNull
     private final RegisteredUser activeUser;
-    
+
     @AssertTrue
-    private Boolean acceptedRules = false;
-    
+    private boolean acceptedRules = false;
+
     @Inject
-    ContestBean contestBean;
-    
+    private ContestBean contestBean;
+
     @Inject
-    SignedRequest signedRequest;
-    
+    private SignedRequest signedRequest;
+
+    @Inject
+    NoReplyEmailSession email;
+
     /**
      * Creates a new instance of RegistrationBean
      */
     public RegistrationBean() {
         activeUser = new RegisteredUser();
     }
-    
-    
+
     public String register() {
         activeUser.setContest(contestBean.getActiveContest());
         activeUser.setLocale(signedRequest.getUser().getLocale());
         activeUser.setCountry(signedRequest.getUser().getCountry());
         activeUser.setAgeMax(signedRequest.getUser().getAgeMax());
         activeUser.setAgeMin(signedRequest.getUser().getAgeMin());
-        try {
-//            utx.begin();
-            Collection<RegisteredUser> userList = (Collection<RegisteredUser>) em.createNamedQuery("RegisteredUser.findByEmailAndContest")
-                    .setParameter("email", activeUser.getEmail())
-                    .setParameter("contest", activeUser.getContest())
-                    .getResultList();
-            if (userList.isEmpty()) {
-                em.persist(activeUser);
-                contestBean.createNewTicket(activeUser);
-            } else {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Zadaný email už je zaregistrovaný", "Zadaný email už je zaregistrovaný"));
-//                utx.commit();
-                contestBean.setReturning(Boolean.TRUE);
-                return null;
-            }
-//            utx.commit();
+
+        List<RegisteredUser> userList = registeredUserFacade.findByContestAndEmail(activeUser.getContest(), activeUser.getEmail());
+
+        if (userList.isEmpty()) {
+            registeredUserFacade.create(activeUser);
+            signedRequest.getUser().setId(activeUser.getId());
+            Registration ticket = contestBean.createNewTicket(activeUser, Constants.FIRST_REGISTRATION_TICKETS, null);
+            email.sendRegistrationCompleteEmail(ticket);
+
             contestBean.setReturning(Boolean.TRUE);
             return "thanks";
-        } catch (PersistenceException e) {
-            Logger.getLogger(ContestBean.class.getName()).log(Level.SEVERE, null, e);
-            return null;
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Zadaný email už je zaregistrovaný", "Zadaný email už je zaregistrovaný"));
+            contestBean.setReturning(Boolean.TRUE);
+            return "returning";
         }
-//        catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException ex) {
-//            Logger.getLogger(ContestBean.class.getName()).log(Level.SEVERE, null, ex);
-//            return null;
-//        }
     }
 
     public RegisteredUser getActiveUser() {
         return activeUser;
     }
 
-    public Boolean isAcceptedRules() {
+    public boolean getAcceptedRules() {
         return acceptedRules;
     }
 
-    public void setAcceptedRules(Boolean acceptedRules) {
+    public void setAcceptedRules(boolean acceptedRules) {
         this.acceptedRules = acceptedRules;
     }
 
-    
 }

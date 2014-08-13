@@ -5,6 +5,7 @@
  */
 package com.flowyk.fb.controller;
 
+import com.flowyk.fb.model.ContestBean;
 import com.flowyk.fb.model.opengraph.OpenGraphBean;
 import com.flowyk.fb.model.signedrequest.SignedRequest;
 import java.io.IOException;
@@ -31,7 +32,10 @@ public class ContestFilter implements Filter {
 
     @Inject
     OpenGraphBean openGraphBean;
-    
+
+    @Inject
+    ContestBean contestBean;
+
     /**
      *
      * @param request The servlet request we are processing
@@ -55,12 +59,16 @@ public class ContestFilter implements Filter {
             if (signedRequest.isSigned()) {
                 if (signedRequest.getPage().isLiked()) {
                     //TODO: redirect to fb page if not on already (signed request should not be session scoped)
-                    res.sendRedirect(req.getContextPath() + "/contest/register.xhtml");
+                    if (contestBean.getReturning()) {
+                        res.sendRedirect(req.getContextPath() + "/contest/returning.xhtml");
+                    } else {
+                        res.sendRedirect(req.getContextPath() + "/contest/register.xhtml");
+                    }
                 } else {
                     res.sendRedirect(req.getContextPath() + "/contest/presslike.xhtml");
                 }
             } else {
-                res.sendRedirect(openGraphBean.getFBAddress());
+                res.sendRedirect(openGraphBean.getFBShareUrl());
             }
         }
     }

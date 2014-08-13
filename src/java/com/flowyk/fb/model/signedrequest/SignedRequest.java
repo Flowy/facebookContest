@@ -24,6 +24,7 @@ public class SignedRequest implements Serializable {
 
     private String ipAddress;
     private String userAgent;
+    private Integer contestId = null;
     
     private boolean signed;
 
@@ -31,6 +32,14 @@ public class SignedRequest implements Serializable {
     private final User user = new User();
     private final AppData appData = new AppData();
 
+    public Integer getContestId() {
+        return contestId;
+    }
+
+    public void setContestId(Integer contestId) {
+        this.contestId = contestId;
+    }
+    
     public String getIpAddress() {
         return ipAddress;
     }

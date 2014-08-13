@@ -45,6 +45,10 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "RegisteredUser.findByAgeMin", query = "SELECT r FROM RegisteredUser r WHERE r.ageMin = :ageMin"),
     @NamedQuery(name = "RegisteredUser.findByAgeMax", query = "SELECT r FROM RegisteredUser r WHERE r.ageMax = :ageMax")})
 public class RegisteredUser implements Serializable {
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "allowed_for_win")
+    private boolean allowedForWin;
     @Column(name = "tickets")
     private Integer tickets;
     @Column(name = "age_min")
@@ -246,6 +250,14 @@ public class RegisteredUser implements Serializable {
 
     public void setTickets(Integer tickets) {
         this.tickets = tickets;
+    }
+
+    public boolean getAllowedForWin() {
+        return allowedForWin;
+    }
+
+    public void setAllowedForWin(boolean allowedForWin) {
+        this.allowedForWin = allowedForWin;
     }
     
 }

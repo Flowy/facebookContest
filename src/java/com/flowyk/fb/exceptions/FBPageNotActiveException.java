@@ -4,29 +4,28 @@
  * and open the template in the editor.
  */
 
-package com.flowyk.fb.exception;
+package com.flowyk.fb.exceptions;
 
 /**
  *
  * @author Lukas
  */
-public class PageIdNotFoundException extends RuntimeException {
+public class FBPageNotActiveException extends RuntimeException {
 
     /**
-     * Creates a new instance of <code>PageIdNotFoundException</code> without
+     * Creates a new instance of <code>FBPageNotActiveException</code> without
      * detail message.
      */
-    public PageIdNotFoundException() {
-        super();
+    public FBPageNotActiveException() {
     }
 
     /**
-     * Constructs an instance of <code>PageIdNotFoundException</code> with the
+     * Constructs an instance of <code>FBPageNotActiveException</code> with the
      * specified detail message.
      *
      * @param msg the detail message.
      */
-    public PageIdNotFoundException(String msg) {
+    public FBPageNotActiveException(String msg) {
         super(msg);
     }
 }
