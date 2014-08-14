@@ -21,13 +21,13 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Lukas
  */
-@WebFilter(filterName = "ContestPageAdminFilter")
-public class ContestPageAdminFilter implements Filter {
+@WebFilter(filterName = "AdminFilter")
+public class PageAdminFilter implements Filter {
     
     @Inject
     private SignedRequest signedRequest;
     
-    public ContestPageAdminFilter() {
+    public PageAdminFilter() {
     }
 
     /**

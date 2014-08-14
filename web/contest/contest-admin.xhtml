@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <h:outputStylesheet name="./contest/admin.css" />
+
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Admin page</title>
+    </h:head>
+    <body>
+        <h:form id="uploadForm" enctype="multipart/form-data">
+            <h:panelGrid columns="3">
+
+                <h:outputLabel for="bt-odoslat" value="bt-odoslat.png" styleClass="" />
+                <h:inputFile id="bt-odoslat" value="#{contestAdminBean.images['bt-odoslat']}">
+                    <f:validator validatorId="imageUploadValidator" />
+                </h:inputFile>
+                <h:message for="bt-odoslat" />
+
+                <h:outputLabel for="bt-zdielat" value="bt-zdielat.png" styleClass="" />
+                <h:inputFile id="bt-zdielat" value="#{contestAdminBean.images['bt-zdielat']}">
+                    <f:validator validatorId="imageUploadValidator" />
+                </h:inputFile>
+                <h:message for="bt-zdielat" />
+
+                <h:outputLabel for="cena" value="cena.png" styleClass="" />
+                <h:inputFile id="cena" value="#{contestAdminBean.images['cena']}">
+                    <f:validator validatorId="imageUploadValidator" />
+                </h:inputFile>
+                <h:message for="cena" />
+
+                <h:outputLabel for="nazov" value="nazov.png" styleClass="" />
+                <h:inputFile id="nazov" value="#{contestAdminBean.images['nazov']}">
+                    <f:validator validatorId="imageUploadValidator" />
+                </h:inputFile>
+                <h:message for="nazov" />
+
+                <h:outputLabel for="nazov2" value="nazov2.png" styleClass="" />
+                <h:inputFile id="nazov2" value="#{contestAdminBean.images['nazov2']}">
+                    <f:validator validatorId="imageUploadValidator" />
+                </h:inputFile>
+                <h:message for="nazov2" />
+
+                <h:outputLabel for="pozadie" value="pozadie.png" styleClass="" />
+                <h:inputFile id="pozadie" value="#{contestAdminBean.images['pozadie']}">
+                    <f:validator validatorId="imageUploadValidator" />
+                </h:inputFile>
+                <h:message for="pozadie" />
+
+                <h:outputLabel for="text1" value="text1.png" styleClass="" />
+                <h:inputFile id="text1" value="#{contestAdminBean.images['text1']}">
+                    <f:validator validatorId="imageUploadValidator" />
+                </h:inputFile>
+                <h:message for="text1" />
+
+                <h:outputLabel for="text2" value="text2.png" styleClass="" />
+                <h:inputFile id="text2" value="#{contestAdminBean.images['text2']}">
+                    <f:validator validatorId="imageUploadValidator" />
+                </h:inputFile>
+                <h:message for="text2" />
+
+                <h:outputLabel for="text3" value="text3.png" styleClass="" />
+                <h:inputFile id="text3" value="#{contestAdminBean.images['text3']}">
+                    <f:validator validatorId="imageUploadValidator" />
+                </h:inputFile>
+                <h:message for="text3" />
+
+            </h:panelGrid>
+            <h:commandButton action="#{contestAdminBean.uploadFiles}" value="Upload" immediate="true" />
+            <h:messages />
+        </h:form>
+    </body>
+</html>

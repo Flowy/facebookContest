@@ -6,19 +6,24 @@
             <web-resource-name>The /resources folder.</web-resource-name>
             <url-pattern>/resources/*</url-pattern>
         </web-resource-collection>
-        <auth-constraint />
+        <auth-constraint/>
     </security-constraint>
     <context-param>
         <param-name>javax.faces.PROJECT_STAGE</param-name>
         <param-value>Development</param-value>
+    </context-param>
+    <context-param>
+        <param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
+        <param-value>true</param-value>
     </context-param>
     <filter-mapping>
         <filter-name>SignedRequestFilter</filter-name>
         <url-pattern>/contest/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
-        <filter-name>ContestPageAdminFilter</filter-name>
+        <filter-name>AdminFilter</filter-name>
         <url-pattern>/contest/admin.xhtml</url-pattern>
+        <url-pattern>/contest/contest-admin.xhtml</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>ContestPageLikedFilter</filter-name>
@@ -60,7 +65,7 @@
             30
         </session-timeout>
     </session-config>
-<!--    <welcome-file-list>
+        <welcome-file-list>
         <welcome-file>index.xhtml</welcome-file>
-    </welcome-file-list>-->
+    </welcome-file-list>
 </web-app>
