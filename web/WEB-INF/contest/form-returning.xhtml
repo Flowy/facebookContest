@@ -9,25 +9,25 @@
         <h:graphicImage styleClass="formImage" url="#{contestBean.getImageUrl('text2.png')}" />
         <p:growl id="msgs" life="15000" showDetail="true" showSummary="false" />
 
-        <span id="returningText">#{Loc['registerAgainText']}</span>
+        <span id="returningText">#{Loc['form.registerAgainText']}</span>
         <h:panelGrid styleClass="formTable" columns="2">
             <h:outputLabel for="emailTextInput" 
-                           value="#{Loc['emailInput']}" 
+                           value="#{Loc['form.emailInput']}" 
                            styleClass="inputLabel" />
             <h:inputText id="emailTextInput"
                          value="#{returningBean.returningEmail}" 
                          styleClass="inputText #{component.valid ? '' : 'error'}"
-                         validatorMessage="#{Loc['emailNotValid']}"  />
+                         validatorMessage="#{Loc['validator.email']}"  />
         </h:panelGrid>
         <div id="submitRow">
             <h:commandButton styleClass="inputSubmit"
-                             alt="#{Loc['registerButton']}"
+                             alt="#{Loc['form.registerButton']}"
                              action="#{returningBean.registerNewTicket}"
                              image="#{contestBean.getImageUrl('bt-odoslat.png')}">
             </h:commandButton>
             <h:commandLink styleClass="returningLink" immediate="true" action="register">
                 <f:setPropertyActionListener target="#{contestBean.returning}" value="false" />
-                #{Loc['dontHaveRegistration']}
+                #{Loc['form.dontHaveRegistration']}
             </h:commandLink>
         </div>
     </h:form>

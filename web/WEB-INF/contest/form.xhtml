@@ -11,44 +11,44 @@
         <h:panelGrid styleClass="formTable" columns="2">
 
             <h:outputLabel for="nameTextInput"
-                           value="#{Loc['nameInput']}" styleClass="inputLabel" />
+                           value="#{Loc['form.nameInput']}" styleClass="inputLabel" />
             <h:inputText id="nameTextInput"
                          value="#{registrationBean.activeUser.name}" 
                          styleClass="inputText #{component.valid ? '' : 'error'}" />
             <h:outputLabel for="emailTextInput"
-                           value="#{Loc['emailInput']}" styleClass="inputLabel" />
+                           value="#{Loc['form.emailInput']}" styleClass="inputLabel" />
             <h:inputText id="emailTextInput"
                          value="#{registrationBean.activeUser.email}" 
                          styleClass="inputText #{component.valid ? '' : 'error'}"
-                         validatorMessage="#{Loc['emailNotValid']}" />
+                         validatorMessage="#{Loc['validator.email']}" />
             <h:outputLabel for="mobileTextInput" 
-                           value="#{Loc['mobilInput']}" styleClass="inputLabel" />
+                           value="#{Loc['form.mobilInput']}" styleClass="inputLabel" />
             <h:inputText id="mobileTextInput" 
                          value="#{registrationBean.activeUser.telephone}" 
                          styleClass="inputText #{component.valid ? '' : 'error'}" 
-                         validatorMessage="#{Loc['telephoneNotValid']}" />
+                         validatorMessage="#{Loc['validator.telephone']}" />
 
         </h:panelGrid>
         <div id="acceptRulesRow">
             <h:selectBooleanCheckbox id="contestRulesCheckbox" 
                                      value="#{registrationBean.acceptedRules}"
                                      converter="javax.faces.Boolean"
-                                     validatorMessage="#{Loc['agreeRulesNotValid']}" />
-            <h:outputLabel for="contestRulesCheckbox">#{Loc['iAgree']}
-                <h:link value="#{Loc['withRules']}" target="_blank" outcome="contest-rules">
+                                     validatorMessage="#{Loc['validator.agreeRules']}" />
+            <h:outputLabel for="contestRulesCheckbox">#{Loc['form.iAgree']}
+                <h:link value="#{Loc['form.withRules']}" target="_blank" outcome="contest-rules">
                     <f:param name="contest" value="#{contestBean.activeContest.id}" />
                 </h:link>
             </h:outputLabel>
         </div>
         <div id="submitRow">
             <h:commandButton styleClass="inputSubmit"
-                             alt="#{Loc['registerButton']}"
+                             alt="#{Loc['form.registerButton']}"
                              action="#{registrationBean.register}"
                              image="#{contestBean.getImageUrl('bt-odoslat.png')}">
             </h:commandButton>
             <h:commandLink styleClass="returningLink" immediate="true" action="returning">
                 <f:setPropertyActionListener target="#{contestBean.returning}" value="true" />
-                #{Loc['wantNewTicket']}
+                #{Loc['form.wantNewTicket']}
             </h:commandLink>
         </div>
     </h:form>

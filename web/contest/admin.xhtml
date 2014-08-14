@@ -12,7 +12,7 @@
             <h:messages />
             <h:inputFile id="file" value="#{contestAdminBean.file}"
                          validator="#{contestAdminBean.validateFile}" />
-            <h:commandButton value="Upload"
+            <h:commandButton value="#{Loc['admin.uploadImage']}"
                              action="#{contestAdminBean.upload}"/>
             <h:inputTextarea readonly="true" value="#{contestAdminBean.fileContent}"
                              rows="10" cols="100" />

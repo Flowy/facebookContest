@@ -20,9 +20,9 @@
     <h:outputStylesheet name="#{contestBean.getResourceUrl('thanks.css')}"/>
     <div id="thankYouFrame">
         <div id="thankYouText">
-            <h:outputText value="#{Loc['thanksStrongText']}"
+            <h:outputText value="#{Loc['thanks.strongText']}"
                           styleClass="strong"/>
-            <h:outputText value=" #{Loc['thanksShareText']}"
+            <h:outputText value=" #{Loc['thanks.shareText']}"
                           styleClass=""/>
         </div>
         <h:outputLink id="shareLink" value="" onclick="#{thanksBean.shareScript}"><h:graphicImage url="#{contestBean.getImageUrl('bt-zdielat.png')}"/></h:outputLink>
