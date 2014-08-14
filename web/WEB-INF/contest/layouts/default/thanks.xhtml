@@ -20,9 +20,9 @@
     <h:outputStylesheet name="#{contestBean.getResourceUrl('thanks.css')}"/>
     <div id="thankYouFrame">
         <div id="thankYouText">
-            <h:outputText value="Zdieľaj a zvýš svoju šancu na výhru!"
+            <h:outputText value="#{Loc['thanksStrongText']}"
                           styleClass="strong"/>
-            <h:outputText value=" Každý tvoj priateľ, ktorý sa zúčastní tejto súťaže cez odkaz na tvojej stene Ti zvýši šancu na výhru o jeden lístok. Čím viac priateľov doporučís, tým je tvoja šanca vyššia!"
+            <h:outputText value=" #{Loc['thanksShareText']}"
                           styleClass=""/>
         </div>
         <h:outputLink id="shareLink" value="" onclick="#{thanksBean.shareScript}"><h:graphicImage url="#{contestBean.getImageUrl('bt-zdielat.png')}"/></h:outputLink>

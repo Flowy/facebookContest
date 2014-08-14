@@ -6,7 +6,7 @@
     <div id="infoBox">
         <h:outputText id="infoBoxTitle" value="#{contestBean.activeContest.popisSutaze}" />
         <div id="infoBoxLink">
-            <h:outputLink value="#{contestBean.activeContest.externeInfoUrl}" target="_blank">Viac informácií tu</h:outputLink>
+            <h:outputLink value="#{contestBean.activeContest.externeInfoUrl}" target="_blank">#{Loc['contestExternalInfo']}</h:outputLink>
         </div>
     </div>
 </ui:composition>

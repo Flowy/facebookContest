@@ -4,5 +4,5 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:h="http://xmlns.jcp.org/jsf/html">
     Page inactive
-    <h:link outcome="admin" value="Activate this page to allow creating contests"  rendered="#{signedRequest.page.admin}" />
+    <h:link outcome="admin" value="#{Loc['activatePage']}"  rendered="#{signedRequest.page.admin}" />
 </ui:composition>

@@ -22,7 +22,7 @@
                 <h:link outcome="admin" value="Admin" />
             </h:panelGroup>
             <h:panelGroup styleClass="footerField">
-                <h:link value="Pravidlá súťaže" target="_blank" outcome="contest-rules">
+                <h:link value="#{Loc['contestRules']}" target="_blank" outcome="contest-rules">
                     <f:param name="contest" value="#{contestBean.activeContest.id}" />
                 </h:link>
             </h:panelGroup>

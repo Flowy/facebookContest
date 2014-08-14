@@ -9,23 +9,25 @@
         <h:graphicImage styleClass="formImage" url="#{contestBean.getImageUrl('text2.png')}" />
         <p:growl id="msgs" life="15000" showDetail="true" showSummary="false" />
 
-        <span id="returningText">Pokiaľ si už v súťaži prihlásený a uplynul zadaný čas, zadaj svoj email, získaj ďalší lístok a zvýš svoju šancu na výhru.</span>
+        <span id="returningText">#{Loc['registerAgainText']}</span>
         <h:panelGrid styleClass="formTable" columns="2">
             <h:outputLabel for="emailTextInput" 
-                           value="Email" styleClass="inputLabel" />
+                           value="#{Loc['emailInput']}" 
+                           styleClass="inputLabel" />
             <h:inputText id="emailTextInput"
                          value="#{returningBean.returningEmail}" 
-                         styleClass="inputText #{component.valid ? '' : 'error'}" />
+                         styleClass="inputText #{component.valid ? '' : 'error'}"
+                         validatorMessage="#{Loc['emailNotValid']}"  />
         </h:panelGrid>
         <div id="submitRow">
             <h:commandButton styleClass="inputSubmit"
-                             alt="Submit"
+                             alt="#{Loc['registerButton']}"
                              action="#{returningBean.registerNewTicket}"
                              image="#{contestBean.getImageUrl('bt-odoslat.png')}">
             </h:commandButton>
             <h:commandLink styleClass="returningLink" immediate="true" action="register">
                 <f:setPropertyActionListener target="#{contestBean.returning}" value="false" />
-                Zatiaľ nemám registráciu
+                #{Loc['dontHaveRegistration']}
             </h:commandLink>
         </div>
     </h:form>
