@@ -10,8 +10,11 @@ import com.flowyk.fb.entity.Contest;
 import com.flowyk.fb.entity.RegisteredUser;
 import com.flowyk.fb.entity.facade.custom.CustomContestFacade;
 import com.flowyk.fb.entity.facade.custom.CustomRegisteredUserFacade;
+import com.flowyk.fb.model.session.ContestBean;
+import com.flowyk.fb.model.session.Login;
 import com.flowyk.fb.model.ShareUrlBean;
-import com.flowyk.fb.model.signedrequest.SignedRequest;
+import com.flowyk.fb.model.session.AppData;
+import com.flowyk.fb.model.session.SignedRequest;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.inject.Named;
@@ -33,39 +36,41 @@ public class OpenGraphBean {
 
     private static final Logger LOG = Logger.getLogger(OpenGraphBean.class.getName());
 
-    private RegisteredUser user = null;
-    private Contest contest = null;
+//    private RegisteredUser user = null;
+//    private Contest contest = null;
+
+    @Inject
+    ContestBean contestBean;
+
+    @Inject
+    Login login;
 
     @Inject
     SignedRequest signedRequest;
 
     @Inject
+    private AppData appDataBean;
+
+    @Inject
     ShareUrlBean shareUrlBean;
-    
+
     @EJB
     CustomRegisteredUserFacade registeredUserFacade;
 
     @EJB
     CustomContestFacade contestFacade;
 
-    @PostConstruct
-    public void init() {
-        int userId = signedRequest.getAppData().getReference();
-        if (userId != 0) {
-            user = registeredUserFacade.find(userId);
-            if (user != null) {
-                contest = user.getContest();
-            }
-            if (Constants.FINE_DEBUG) {
-                LOG.log(Level.INFO, "Found user: {0} for reference id: {1}", new Object[]{user, userId});
-            }
-        }
-
-        Integer contestId = signedRequest.getContestId();
-        if (contestId != null) {
-            contest = contestFacade.find(contestId);
-        }
-    }
+//    @PostConstruct
+//    public void init() {
+//        if (appDataBean.getReference() != null) {
+//            contest = appDataBean.getReference().getContest();
+//        }
+//
+//        int contestId = login.getContestId();
+//        if (contestId != 0) {
+//            contest = contestFacade.find(contestId);
+//        }
+//    }
 
     // Actions -----------------------------------------------------------------------------------
     // Getters -----------------------------------------------------------------------------------
@@ -79,7 +84,7 @@ public class OpenGraphBean {
 
     public String getImage() {
         if (contest != null) {
-            return contest.getShareImgUrl();
+            return contestBean.getImageUrl("share-img.png", contest);
         } else {
             return Constants.SITE_URL + "/images/default_share_img.png";
         }
@@ -121,6 +126,4 @@ public class OpenGraphBean {
     public String getFBShareUrl() {
         return shareUrlBean.getFBShareUrl(user);
     }
-
-    // Setters -----------------------------------------------------------------------------------
 }

@@ -5,7 +5,7 @@
  */
 package com.flowyk.fb.controller;
 
-import com.flowyk.fb.model.ContestBean;
+import com.flowyk.fb.model.session.Page;
 import java.io.IOException;
 import javax.inject.Inject;
 import javax.servlet.Filter;
@@ -22,11 +22,11 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Lukas
  */
-@WebFilter(filterName = "ContestPageActiveFilter")
-public class ContestPageActiveFilter implements Filter {
+@WebFilter(filterName = "PageActiveFilter")
+public class PageActiveFilter implements Filter {
 
     @Inject
-    ContestBean contestBean;
+    private Page pageBean;
     
     /**
      *
@@ -42,7 +42,7 @@ public class ContestPageActiveFilter implements Filter {
             FilterChain chain)
             throws IOException, ServletException {
 
-        if (contestBean.isPageActive()) {
+        if (pageBean.getPage() != null && pageBean.getPage().getActive()) {
             chain.doFilter(request, response);
         } else {
             HttpServletRequest req = (HttpServletRequest) request;

@@ -8,7 +8,7 @@ package com.flowyk.fb.model;
 
 import com.flowyk.fb.base.Constants;
 import com.flowyk.fb.entity.RegisteredUser;
-import com.flowyk.fb.model.signedrequest.AppData;
+import com.flowyk.fb.model.session.AppData;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
 

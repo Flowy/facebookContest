@@ -39,9 +39,11 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Registration.findByRegisteredUser", query = "SELECT r FROM Registration r WHERE r.registeredUser = :registeredUser")
 })
 public class Registration implements Serializable, Comparable<Registration> {
+    private static final long serialVersionUID = 1L;
+    
     @Basic(optional = false)
     @NotNull
-    @Column(name = "time_registered")
+    @Column(name = "time_registered", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Calendar timeRegistered;
     @Basic(optional = false)
@@ -55,14 +57,13 @@ public class Registration implements Serializable, Comparable<Registration> {
     @JoinColumn(name = "referal_id", referencedColumnName = "id")
     @ManyToOne
     private RegisteredUser referal;
-    private static final long serialVersionUID = 1L;
     @Id
     @NotNull
     @GeneratedValue
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    @Size(max = 30)
+    @Size(max = 50)
     @Column(name = "ip_address")
     private String ipAddress;
     @Size(max = 400)

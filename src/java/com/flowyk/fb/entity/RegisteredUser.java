@@ -8,10 +8,12 @@ package com.flowyk.fb.entity;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -45,25 +47,34 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "RegisteredUser.findByAgeMin", query = "SELECT r FROM RegisteredUser r WHERE r.ageMin = :ageMin"),
     @NamedQuery(name = "RegisteredUser.findByAgeMax", query = "SELECT r FROM RegisteredUser r WHERE r.ageMax = :ageMax")})
 public class RegisteredUser implements Serializable {
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "allowed_for_win")
-    private boolean allowedForWin;
     @Column(name = "tickets")
     private Integer tickets;
-    @Column(name = "age_min")
-    private Integer ageMin;
-    @Column(name = "age_max")
-    private Integer ageMax;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "registeredUser")
-    private Collection<Registration> registrationCollection;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "remove_from_contest", nullable = false)
+    private boolean removeFromContest;
+    @JoinColumn(name = "contest_id", referencedColumnName = "id", nullable = false)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    private Contest contest;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "registeredUser", fetch = FetchType.EAGER)
+    private List<Registration> registrationList;
+    @OneToMany(mappedBy = "referal", fetch = FetchType.EAGER)
+    private List<Registration> referalList;
+    @OneToMany(mappedBy = "registeredUser", fetch = FetchType.EAGER)
+    private List<Prize> prizeList;
     private static final long serialVersionUID = 1L;
+    
     @Id
     @NotNull
     @GeneratedValue
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
+    
+    @Column(name = "age_min")
+    private Integer ageMin;
+    @Column(name = "age_max")
+    private Integer ageMax;
     @Pattern(regexp = "[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+"  //meno
             + "(?:\\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*"  //subdomena
             + "@(?:[a-zA-Z0-9]+\\.)+"  //domena
@@ -86,18 +97,8 @@ public class RegisteredUser implements Serializable {
     @Size(max = 40)
     @Column(name = "country")
     private String country;
-    @JoinColumn(name = "contest_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private Contest contest;
-    @OneToMany(mappedBy = "registeredUser")
-    private Collection<RegisteredUser> registeredUserCollection;
-    @JoinColumn(name = "referal_id", referencedColumnName = "id")
-    @ManyToOne
-    private RegisteredUser registeredUser;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "registeredUser")
     private Registration registration;
-    @OneToMany(mappedBy = "registeredUser")
-    private Collection<Prize> prizeCollection;
 
     public RegisteredUser() {
     }
@@ -175,44 +176,12 @@ public class RegisteredUser implements Serializable {
         this.ageMax = ageMax;
     }
 
-    public Contest getContest() {
-        return contest;
-    }
-
-    public void setContest(Contest contest) {
-        this.contest = contest;
-    }
-
-    public Collection<RegisteredUser> getRegisteredUserCollection() {
-        return registeredUserCollection;
-    }
-
-    public void setRegisteredUserCollection(Collection<RegisteredUser> registeredUserCollection) {
-        this.registeredUserCollection = registeredUserCollection;
-    }
-
-    public RegisteredUser getRegisteredUser() {
-        return registeredUser;
-    }
-
-    public void setRegisteredUser(RegisteredUser registeredUser) {
-        this.registeredUser = registeredUser;
-    }
-
     public Registration getRegistration() {
         return registration;
     }
 
     public void setRegistration(Registration registration) {
         this.registration = registration;
-    }
-
-    public Collection<Prize> getPrizeCollection() {
-        return prizeCollection;
-    }
-
-    public void setPrizeCollection(Collection<Prize> prizeCollection) {
-        this.prizeCollection = prizeCollection;
     }
 
     @Override
@@ -236,14 +205,6 @@ public class RegisteredUser implements Serializable {
         return "com.flowyk.fb.entity.RegisteredUser[ id=" + id + " ]";
     }
 
-    public Collection<Registration> getRegistrationCollection() {
-        return registrationCollection;
-    }
-
-    public void setRegistrationCollection(Collection<Registration> registrationCollection) {
-        this.registrationCollection = registrationCollection;
-    }
-
     public Integer getTickets() {
         return tickets;
     }
@@ -252,12 +213,44 @@ public class RegisteredUser implements Serializable {
         this.tickets = tickets;
     }
 
-    public boolean getAllowedForWin() {
-        return allowedForWin;
+    public boolean getRemoveFromContest() {
+        return removeFromContest;
     }
 
-    public void setAllowedForWin(boolean allowedForWin) {
-        this.allowedForWin = allowedForWin;
+    public void setRemoveFromContest(boolean removeFromContest) {
+        this.removeFromContest = removeFromContest;
+    }
+
+    public Contest getContest() {
+        return contest;
+    }
+
+    public void setContest(Contest contest) {
+        this.contest = contest;
+    }
+
+    public List<Registration> getRegistrationList() {
+        return registrationList;
+    }
+
+    public void setRegistrationList(List<Registration> registrationList) {
+        this.registrationList = registrationList;
+    }
+
+    public List<Registration> getReferalList() {
+        return referalList;
+    }
+
+    public void setReferalList(List<Registration> referalList) {
+        this.referalList = referalList;
+    }
+
+    public List<Prize> getPrizeList() {
+        return prizeList;
+    }
+
+    public void setPrizeList(List<Prize> prizeList) {
+        this.prizeList = prizeList;
     }
     
 }

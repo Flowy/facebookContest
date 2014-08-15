@@ -5,7 +5,7 @@
  */
 package com.flowyk.fb.controller;
 
-import com.flowyk.fb.model.signedrequest.SignedRequest;
+import com.flowyk.fb.model.session.Page;
 import java.io.IOException;
 import javax.inject.Inject;
 import javax.servlet.Filter;
@@ -25,10 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 public class ContestPageLikedFilter implements Filter {
     
     @Inject
-    private SignedRequest signedRequest;
-    
-    public ContestPageLikedFilter() {
-    }
+    private Page pageBean;
 
     /**
      *
@@ -44,7 +41,7 @@ public class ContestPageLikedFilter implements Filter {
             FilterChain chain)
             throws IOException, ServletException {
 
-        if (signedRequest.getPage().isLiked()) {
+        if (pageBean.isLiked()) {
             chain.doFilter(request, response);
         } else {
             ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "Page accessible only for users that like this site");

@@ -8,10 +8,12 @@ package com.flowyk.fb.entity;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -30,6 +32,8 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "ContestLayout.findAll", query = "SELECT c FROM ContestLayout c"),
     @NamedQuery(name = "ContestLayout.findByName", query = "SELECT c FROM ContestLayout c WHERE c.name = :name")})
 public class ContestLayout implements Serializable {
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "contestLayout", fetch = FetchType.EAGER)
+    private List<Contest> contestList;
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -37,8 +41,6 @@ public class ContestLayout implements Serializable {
     @Size(min = 1, max = 45)
     @Column(name = "name")
     private String name;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "contestLayout")
-    private Collection<Contest> contestCollection;
 
     public ContestLayout() {
     }
@@ -53,14 +55,6 @@ public class ContestLayout implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Collection<Contest> getContestCollection() {
-        return contestCollection;
-    }
-
-    public void setContestCollection(Collection<Contest> contestCollection) {
-        this.contestCollection = contestCollection;
     }
 
     @Override
@@ -82,6 +76,14 @@ public class ContestLayout implements Serializable {
     @Override
     public String toString() {
         return "com.flowyk.fb.entity.ContestLayout[ name=" + name + " ]";
+    }
+
+    public List<Contest> getContestList() {
+        return contestList;
+    }
+
+    public void setContestList(List<Contest> contestList) {
+        this.contestList = contestList;
     }
     
 }

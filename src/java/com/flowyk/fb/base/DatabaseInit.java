@@ -55,14 +55,10 @@ public class DatabaseInit {
             c.setContestStart(new Date(System.currentTimeMillis() - 10 * 24 * 60 * 60 * 1000));
             c.setContestEnd(new Date(System.currentTimeMillis() + 10 * 24 * 60 * 60 * 1000));
             c.setDisabled(Boolean.FALSE);
-            Calendar ticketsDelay = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
-            ticketsDelay.setTimeInMillis(0L);
-            ticketsDelay.set(Calendar.HOUR_OF_DAY, 2);
+            java.sql.Time ticketsDelay = new java.sql.Time(1000*60*60*2);
             c.setTimeBetweenTickets(ticketsDelay);
             c.setDescription("Popis sutaze");
-            c.setExterneInfoUrl("http://stackoverflow.com/questions/15359306/how-to-load-lazy-fetched-items-from-hibernate-jpa-in-my-controller");
-            c.setIconUrl("http://img.cdnprg.webtea.cz/web/logo_new.png");
-            c.setShareImgUrl("https://sutaz.flowyk.com:8181/facebookContest/images/663981640350558/pozadie.png");
+            c.setExternalInfoUrl("http://stackoverflow.com/questions/15359306/how-to-load-lazy-fetched-items-from-hibernate-jpa-in-my-controller");
             c.setName("Constest name");
             c.setContestLayout(l);
             contestFacade.create(c);

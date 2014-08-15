@@ -31,8 +31,7 @@
         <url-pattern>/contest/thanks.xhtml</url-pattern>
     </filter-mapping>
     <filter-mapping>
-        <filter-name>ContestPageActiveFilter</filter-name>
-        <url-pattern>/contest/admin.xhtml</url-pattern>
+        <filter-name>PageActiveFilter</filter-name>
         <url-pattern>/contest/presslike.xhtml</url-pattern>
         <url-pattern>/contest/register.xhtml</url-pattern>
         <url-pattern>/contest/returning.xhtml</url-pattern>
@@ -40,7 +39,6 @@
     </filter-mapping>
     <filter-mapping>
         <filter-name>ContestActiveFilter</filter-name>
-        <url-pattern>/contest/admin.xhtml</url-pattern>
         <url-pattern>/contest/presslike.xhtml</url-pattern>
         <url-pattern>/contest/register.xhtml</url-pattern>
         <url-pattern>/contest/returning.xhtml</url-pattern>

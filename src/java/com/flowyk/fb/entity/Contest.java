@@ -7,13 +7,13 @@
 package com.flowyk.fb.entity;
 
 import java.io.Serializable;
-import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -39,36 +39,32 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Contest.findById", query = "SELECT c FROM Contest c WHERE c.id = :id"),
     @NamedQuery(name = "Contest.findByRegisteredPage", query = "SELECT c FROM Contest c WHERE c.registeredPage = :registeredPage"),
     @NamedQuery(name = "Contest.findByName", query = "SELECT c FROM Contest c WHERE c.name = :name"),
-    @NamedQuery(name = "Contest.findByIconUrl", query = "SELECT c FROM Contest c WHERE c.iconUrl = :iconUrl"),
     @NamedQuery(name = "Contest.findByContestStart", query = "SELECT c FROM Contest c WHERE c.contestStart = :contestStart"),
     @NamedQuery(name = "Contest.findByContestEnd", query = "SELECT c FROM Contest c WHERE c.contestEnd = :contestEnd"),
-    @NamedQuery(name = "Contest.findByDisabled", query = "SELECT c FROM Contest c WHERE c.disabled = :disabled"),
-    @NamedQuery(name = "Contest.findByExterneInfoUrl", query = "SELECT c FROM Contest c WHERE c.externeInfoUrl = :externeInfoUrl")})
+    @NamedQuery(name = "Contest.findByDisabled", query = "SELECT c FROM Contest c WHERE c.disabled = :disabled")})
 public class Contest implements Serializable {
+    private static final long serialVersionUID = 1L;
     
     @Basic(optional = false)
     @NotNull
-    @Temporal(TemporalType.TIME)
-    @Column(name = "time_between_tickets")
-    private Calendar timeBetweenTickets;
+    @Size(min = 1, max = 250)
+    @Column(name = "external_info_url", nullable = false, length = 250)
+    private String externalInfoUrl;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "time_between_tickets", nullable = false)
+    private java.sql.Time timeBetweenTickets;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "contest", fetch = FetchType.EAGER)
+    private List<RegisteredUser> registeredUserList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "contest", fetch = FetchType.EAGER)
+    private List<Prize> prizeList;
     @Size(max = 150)
     @Column(name = "description")
     private String description;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 250)
-    @Column(name = "externe_info_url")
-    private String externeInfoUrl;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 250)
-    @Column(name = "share_img_url")
-    private String shareImgUrl;
     @JoinColumn(name = "registered_page_id", referencedColumnName = "page_id")
     @ManyToOne(optional = false)
     @NotNull
     private RegisteredPage registeredPage;
-    private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
     @NotNull
@@ -79,9 +75,6 @@ public class Contest implements Serializable {
     @Size(max = 150)
     @Column(name = "name")
     private String name;
-    @Size(max = 250)
-    @Column(name = "icon_url")
-    private String iconUrl;
     @Basic(optional = false)
     @NotNull
     @Column(name = "contest_start")
@@ -103,10 +96,6 @@ public class Contest implements Serializable {
     @JoinColumn(name = "contest_layout_name", referencedColumnName = "name")
     @ManyToOne(optional = false)
     private ContestLayout contestLayout;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "contest")
-    private Collection<RegisteredUser> registeredUserCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "contest")
-    private Collection<Prize> prizeCollection;
 
     public Contest() {
     }
@@ -138,14 +127,6 @@ public class Contest implements Serializable {
         this.name = name;
     }
 
-    public String getIconUrl() {
-        return iconUrl;
-    }
-
-    public void setIconUrl(String iconUrl) {
-        this.iconUrl = iconUrl;
-    }
-
     public Date getContestStart() {
         return contestStart;
     }
@@ -170,14 +151,6 @@ public class Contest implements Serializable {
         this.disabled = disabled;
     }
 
-    public String getExterneInfoUrl() {
-        return externeInfoUrl;
-    }
-
-    public void setExterneInfoUrl(String externeInfoUrl) {
-        this.externeInfoUrl = externeInfoUrl;
-    }
-
     public String getRules() {
         return rules;
     }
@@ -192,22 +165,6 @@ public class Contest implements Serializable {
 
     public void setContestLayout(ContestLayout contestLayout) {
         this.contestLayout = contestLayout;
-    }
-
-    public Collection<RegisteredUser> getRegisteredUserCollection() {
-        return registeredUserCollection;
-    }
-
-    public void setRegisteredUserCollection(Collection<RegisteredUser> registeredUserCollection) {
-        this.registeredUserCollection = registeredUserCollection;
-    }
-
-    public Collection<Prize> getPrizeCollection() {
-        return prizeCollection;
-    }
-
-    public void setPrizeCollection(Collection<Prize> prizeCollection) {
-        this.prizeCollection = prizeCollection;
     }
 
     @Override
@@ -231,22 +188,6 @@ public class Contest implements Serializable {
         return "com.flowyk.fb.entity.Contest[ id=" + id + " ]";
     }
 
-    public Calendar getTimeBetweenTickets() {
-        return timeBetweenTickets;
-    }
-
-    public void setTimeBetweenTickets(Calendar timeBetweenTickets) {
-        this.timeBetweenTickets = timeBetweenTickets;
-    }
-
-    public String getShareImgUrl() {
-        return shareImgUrl;
-    }
-
-    public void setShareImgUrl(String shareImgUrl) {
-        this.shareImgUrl = shareImgUrl;
-    }
-
     public RegisteredPage getRegisteredPage() {
         return registeredPage;
     }
@@ -262,5 +203,36 @@ public class Contest implements Serializable {
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
+    public String getExternalInfoUrl() {
+        return externalInfoUrl;
+    }
+
+    public void setExternalInfoUrl(String externalInfoUrl) {
+        this.externalInfoUrl = externalInfoUrl;
+    }
+
+    public java.sql.Time getTimeBetweenTickets() {
+        return timeBetweenTickets;
+    }
+
+    public void setTimeBetweenTickets(java.sql.Time timeBetweenTickets) {
+        this.timeBetweenTickets = timeBetweenTickets;
+    }
+
+    public List<RegisteredUser> getRegisteredUserList() {
+        return registeredUserList;
+    }
+
+    public void setRegisteredUserList(List<RegisteredUser> registeredUserList) {
+        this.registeredUserList = registeredUserList;
+    }
+
+    public List<Prize> getPrizeList() {
+        return prizeList;
+    }
+
+    public void setPrizeList(List<Prize> prizeList) {
+        this.prizeList = prizeList;
+    }
 }

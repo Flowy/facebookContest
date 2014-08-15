@@ -5,11 +5,13 @@
  */
 package com.flowyk.fb.model;
 
+import com.flowyk.fb.model.session.ContestBean;
+import com.flowyk.fb.model.session.Login;
 import com.flowyk.fb.base.Constants;
 import com.flowyk.fb.entity.RegisteredUser;
 import com.flowyk.fb.entity.facade.custom.CustomRegisteredUserFacade;
 import com.flowyk.fb.entity.facade.custom.CustomRegistrationFacade;
-import com.flowyk.fb.model.signedrequest.SignedRequest;
+import com.flowyk.fb.model.session.SignedRequest;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -41,6 +43,9 @@ public class ReturningBean implements Serializable {
     private CustomRegistrationFacade registrationFacade;
 
     @Inject
+    Login contestUser;
+    
+    @Inject
     private ContestBean contestBean;
 
     @Pattern(regexp = "[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+" //meno
@@ -59,12 +64,13 @@ public class ReturningBean implements Serializable {
             return null;
         } else {
             RegisteredUser user = userList.iterator().next();
-            signedRequest.getUser().setId(user.getId());
+            contestUser.setContestUser(user);
+            
             
             Calendar lastTicket = registrationFacade.getLastTicketTime(user);
             long lastTicketMillis = lastTicket.getTimeInMillis();
 
-            long delayMillis = user.getContest().getTimeBetweenTickets().getTimeInMillis();
+            long delayMillis = user.getContest().getTimeBetweenTickets().getTime();
 
             Calendar nearestTicket = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
             nearestTicket.setTimeInMillis(lastTicketMillis + delayMillis);

@@ -10,13 +10,13 @@ package com.flowyk.fb.exceptions;
  *
  * @author Lukas
  */
-public class SignedRequestNotSignedException extends RuntimeException {
+public class MalformedSignedRequestException extends RuntimeException {
 
     /**
      * Creates a new instance of <code>SignedRequestNotSignedException</code>
      * without detail message.
      */
-    public SignedRequestNotSignedException() {
+    public MalformedSignedRequestException() {
     }
 
     /**
@@ -25,7 +25,7 @@ public class SignedRequestNotSignedException extends RuntimeException {
      *
      * @param msg the detail message.
      */
-    public SignedRequestNotSignedException(String msg) {
+    public MalformedSignedRequestException(String msg) {
         super(msg);
     }
 }

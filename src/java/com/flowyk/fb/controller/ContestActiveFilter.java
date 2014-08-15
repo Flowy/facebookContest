@@ -5,7 +5,7 @@
  */
 package com.flowyk.fb.controller;
 
-import com.flowyk.fb.model.ContestBean;
+import com.flowyk.fb.model.session.ContestBean;
 import java.io.IOException;
 import javax.inject.Inject;
 import javax.servlet.Filter;

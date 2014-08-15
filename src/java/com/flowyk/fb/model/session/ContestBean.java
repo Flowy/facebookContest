@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.flowyk.fb.model;
+package com.flowyk.fb.model.session;
 
+import com.flowyk.fb.model.session.Login;
 import com.flowyk.fb.entity.Contest;
 import com.flowyk.fb.entity.RegisteredPage;
 import com.flowyk.fb.entity.RegisteredUser;
@@ -15,8 +16,10 @@ import com.flowyk.fb.entity.facade.custom.CustomRegistrationFacade;
 import com.flowyk.fb.exceptions.FBPageNotActiveException;
 import com.flowyk.fb.exceptions.NoActiveContestException;
 import com.flowyk.fb.exceptions.PageIdNotFoundException;
-import com.flowyk.fb.model.signedrequest.SignedRequest;
+import com.flowyk.fb.model.session.Page;
+import com.flowyk.fb.model.session.SignedRequest;
 import java.io.Serializable;
+import java.security.InvalidParameterException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -24,7 +27,7 @@ import java.util.List;
 import java.util.TimeZone;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
-import javax.enterprise.context.SessionScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 import javax.inject.Inject;
 
@@ -33,28 +36,28 @@ import javax.inject.Inject;
  * @author Lukas
  */
 @Named
-@SessionScoped
+@RequestScoped
 public class ContestBean implements Serializable {
 
     private static final Logger LOG = Logger.getLogger(ContestBean.class.getName());
 
-    @Inject
-    private SignedRequest signedRequest;
+    private Contest activeContest = null;
 
     @EJB
     private CustomRegistrationFacade registrationFacade;
-    
+
     @EJB
     private CustomContestFacade contestFacade;
 
-    @EJB
-    private RegisteredPageFacade registeredPage;
+    @Inject
+    private Page pageBean;
+
+    @Inject
+    Login contestUser;
 
     private boolean returning = false;
 
-
     // Actions -----------------------------------------------------------------------------------
-    
     /**
      * expects open transaction and persisted user
      */
@@ -62,8 +65,8 @@ public class ContestBean implements Serializable {
         Registration ticket = new Registration();
         ticket.setRegisteredUser(forUser);
         ticket.setTimeRegistered(Calendar.getInstance(TimeZone.getTimeZone("GMT")));
-        ticket.setIpAddress(signedRequest.getIpAddress());
-        ticket.setUserAgent(signedRequest.getUserAgent());
+        ticket.setIpAddress(contestUser.getIpAddress());
+        ticket.setUserAgent(contestUser.getUserAgent());
         ticket.setReferal(referal);
         ticket.setWeight(weight);
         registrationFacade.create(ticket);
@@ -93,20 +96,14 @@ public class ContestBean implements Serializable {
      * @throws PageIdNotFoundException if page not found in signed request
      */
     public Contest getActiveContest() {
-        
-        if (signedRequest.getPage().getId() != null) {
-            RegisteredPage page = registeredPage.find(signedRequest.getPage().getId());
-            if (page != null) {
-//                System.out.println("Found page for: " + signedRequest.getPage().getId() + ", contests count: " + page.getContestCollection().size());
-                List<Contest> contestList = contestFacade.findByPage(page);
-//                List<Contest> list = new ArrayList(page.getContestCollection());
-                Contest active = selectActiveContest(contestList);
-                return active;
-            } else {
-                throw new FBPageNotActiveException("Page id: " + signedRequest.getPage().getId());
-            }
+
+        if (pageBean.getPage() != null && pageBean.getPage().getActive()) {
+            List<Contest> contestList = contestFacade.findByPage(pageBean.getPage());
+//          TODO: why this doesnt work ... List<Contest> list = new ArrayList(page.getContestCollection());
+            Contest active = selectActiveContest(contestList);
+            return active;
         } else {
-            throw new PageIdNotFoundException();
+            throw new FBPageNotActiveException("Page: " + pageBean.getPage());
         }
     }
 
@@ -130,28 +127,22 @@ public class ContestBean implements Serializable {
         return "./contest/layouts/" + contest.getContestLayout().getName() + "/" + resource;
     }
 
-    /**
-     *
-     * @param image with starting slash
-     * @return
-     */
-    public String getImageUrl(String image) {
-        if (signedRequest.getPage().getId() != null) {
-            return "/images/" + signedRequest.getPage().getId() + "/" + image;
+    public String getImageUrl(String image, Contest contest) {
+        if (contest != null) {
+            String pageId = contest.getRegisteredPage().getPageId();
+            return "/images/" + pageId + "/" + image;
         } else {
-            throw new PageIdNotFoundException();
+            throw new InvalidParameterException("Contest is null");
         }
     }
 
-    public boolean isPageActive() {
-        String pageId = signedRequest.getPage().getId();
-        if (pageId != null) {
-            RegisteredPage page = registeredPage.find(pageId);
-            if (page != null && page.getActive()) {
-                return true;
-            }
-        }
-        return false;
+    /**
+     *
+     * @param image with starting slash
+     * @return image url for actual contest
+     */
+    public String getImageUrl(String image) {
+        return getImageUrl(image, getActiveContest());
     }
 
     public boolean getReturning() {
@@ -159,7 +150,6 @@ public class ContestBean implements Serializable {
     }
 
     // Setters -----------------------------------------------------------------------------------
-    
     public void setReturning(boolean value) {
         this.returning = value;
     }

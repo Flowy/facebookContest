@@ -5,9 +5,10 @@
  */
 package com.flowyk.fb.controller;
 
-import com.flowyk.fb.model.ContestBean;
+import com.flowyk.fb.model.session.ContestBean;
 import com.flowyk.fb.model.opengraph.OpenGraphBean;
-import com.flowyk.fb.model.signedrequest.SignedRequest;
+import com.flowyk.fb.model.session.Page;
+import com.flowyk.fb.model.session.SignedRequest;
 import java.io.IOException;
 import javax.inject.Inject;
 import javax.servlet.Filter;
@@ -29,6 +30,9 @@ public class ContestFilter implements Filter {
 
     @Inject
     SignedRequest signedRequest;
+    
+    @Inject
+    private Page pageBean;
 
     @Inject
     OpenGraphBean openGraphBean;
@@ -56,20 +60,23 @@ public class ContestFilter implements Filter {
             chain.doFilter(request, response);
         } else {
             HttpServletResponse res = (HttpServletResponse) response;
-            if (signedRequest.isSigned()) {
-                if (signedRequest.getPage().isLiked()) {
-                    //TODO: redirect to fb page if not on already (signed request should not be session scoped)
-                    if (contestBean.getReturning()) {
-                        res.sendRedirect(req.getContextPath() + "/contest/returning.xhtml");
-                    } else {
-                        res.sendRedirect(req.getContextPath() + "/contest/register.xhtml");
-                    }
+            handleRequest(req, res);
+        }
+    }
+
+    private void handleRequest(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+        if (signedRequest.isSigned()) {
+            if (pageBean.isLiked()) {
+                if (contestBean.getReturning()) {
+                    res.sendRedirect(req.getContextPath() + "/contest/returning.xhtml");
                 } else {
-                    res.sendRedirect(req.getContextPath() + "/contest/presslike.xhtml");
+                    res.sendRedirect(req.getContextPath() + "/contest/register.xhtml");
                 }
             } else {
-                res.sendRedirect(openGraphBean.getFBShareUrl());
+                res.sendRedirect(req.getContextPath() + "/contest/presslike.xhtml");
             }
+        } else {
+            res.sendRedirect(openGraphBean.getFBShareUrl());
         }
     }
 

@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.flowyk.fb.base;
+package com.flowyk.fb.model.session;
 
-import com.flowyk.fb.exceptions.SignedRequestNotSignedException;
+import com.flowyk.fb.exceptions.MalformedSignedRequestException;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
@@ -49,9 +49,9 @@ public class LoginUtil {
      *
      * @param signedRequestInput
      * @return
-     * @throws com.flowyk.fb.exception.SignedRequestNotSignedException
+     * @throws com.flowyk.fb.exceptions.MalformedSignedRequestException
      */
-    public static JsonObject parseSignedRequest(String signedRequestInput) throws SignedRequestNotSignedException, JsonParsingException {
+    public static JsonObject parseSignedRequest(String signedRequestInput) throws MalformedSignedRequestException, JsonParsingException {
         String signature = signedRequestInput.substring(0, signedRequestInput.indexOf('.'));
         String payload = signedRequestInput.substring(signedRequestInput.indexOf('.') + 1);
 
@@ -61,7 +61,7 @@ public class LoginUtil {
             String decodedSignature = new String(decoder.decode(signature.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
             String payloadHash = new String(sha256_HMAC.doFinal(payload.getBytes()), StandardCharsets.UTF_8);
             if (decodedSignature.isEmpty() || !decodedSignature.equals(payloadHash)) {
-                throw new SignedRequestNotSignedException();
+                throw new MalformedSignedRequestException("Not signed");
             }
         } catch (InvalidKeyException ex) {
             LOG.log(Level.SEVERE, null, ex);

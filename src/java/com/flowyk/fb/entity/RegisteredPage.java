@@ -7,8 +7,8 @@
 package com.flowyk.fb.entity;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -34,10 +34,14 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "RegisteredPage.findAll", query = "SELECT r FROM RegisteredPage r"),
     @NamedQuery(name = "RegisteredPage.findByPageId", query = "SELECT r FROM RegisteredPage r WHERE r.pageId = :pageId"),
     @NamedQuery(name = "RegisteredPage.findByActive", query = "SELECT r FROM RegisteredPage r WHERE r.active = :active"),
-    @NamedQuery(name = "RegisteredPage.findByActivationCode", query = "SELECT r FROM RegisteredPage r WHERE r.activationCode = :activationCode"),
     @NamedQuery(name = "RegisteredPage.findByActiveUntil", query = "SELECT r FROM RegisteredPage r WHERE r.activeUntil = :activeUntil"),
     @NamedQuery(name = "RegisteredPage.findByActiveFrom", query = "SELECT r FROM RegisteredPage r WHERE r.activeFrom = :activeFrom")})
 public class RegisteredPage implements Serializable {
+    @Size(max = 255)
+    @Column(name = "note", length = 255)
+    private String note;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "registeredPage", fetch = FetchType.EAGER)
+    private List<Contest> contestList;
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -49,9 +53,6 @@ public class RegisteredPage implements Serializable {
     @NotNull
     @Column(name = "active")
     private boolean active;
-    @Size(max = 45)
-    @Column(name = "activation_code")
-    private String activationCode;
     @Column(name = "active_until")
     @Temporal(TemporalType.TIMESTAMP)
     private Date activeUntil;
@@ -60,8 +61,6 @@ public class RegisteredPage implements Serializable {
     @Column(name = "active_from")
     @Temporal(TemporalType.TIMESTAMP)
     private Date activeFrom;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "registeredPage")
-    private Collection<Contest> contestCollection;
 
     public RegisteredPage() {
     }
@@ -92,14 +91,6 @@ public class RegisteredPage implements Serializable {
         this.active = active;
     }
 
-    public String getActivationCode() {
-        return activationCode;
-    }
-
-    public void setActivationCode(String activationCode) {
-        this.activationCode = activationCode;
-    }
-
     public Date getActiveUntil() {
         return activeUntil;
     }
@@ -114,15 +105,6 @@ public class RegisteredPage implements Serializable {
 
     public void setActiveFrom(Date activeFrom) {
         this.activeFrom = activeFrom;
-    }
-
-    public Collection<Contest> getContestCollection() {
-        return contestCollection;
-    }
-
-    public void setContestCollection(Collection<Contest> contestCollection) {
-        System.out.println("RegisteredPage: setting new collection: " + contestCollection != null ? contestCollection.toString() : "");
-        this.contestCollection = contestCollection;
     }
 
     @Override
@@ -144,6 +126,22 @@ public class RegisteredPage implements Serializable {
     @Override
     public String toString() {
         return "com.flowyk.fb.entity.RegisteredPage[ pageId=" + pageId + " ]";
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public List<Contest> getContestList() {
+        return contestList;
+    }
+
+    public void setContestList(List<Contest> contestList) {
+        this.contestList = contestList;
     }
     
 }
