@@ -9,7 +9,7 @@ import com.flowyk.fb.base.Constants;
 import com.flowyk.fb.email.NoReplyEmailSession;
 import com.flowyk.fb.entity.RegisteredUser;
 import com.flowyk.fb.entity.Registration;
-import com.flowyk.fb.entity.facade.RegisteredUserFacade;
+import com.flowyk.fb.entity.facade.custom.CustomRegisteredUserFacade;
 import com.flowyk.fb.model.signedrequest.SignedRequest;
 import java.io.Serializable;
 import java.util.List;
@@ -31,7 +31,7 @@ import javax.validation.constraints.NotNull;
 public class RegistrationBean implements Serializable {
 
     @EJB
-    private RegisteredUserFacade registeredUserFacade;
+    private CustomRegisteredUserFacade registeredUserFacade;
 
     @NotNull
     private final RegisteredUser activeUser;

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="RegisteredPageViewDlg" widgetVar="RegisteredPageViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewRegisteredPageTitle}">
+            <h:form id="RegisteredPageViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{registeredPageController.selected != null}">
+                        <h:outputText value="#{bundle.ViewRegisteredPageLabel_pageId}"/>
+                        <h:outputText value="#{registeredPageController.selected.pageId}" title="#{bundle.ViewRegisteredPageTitle_pageId}"/>
+                        <h:outputText value="#{bundle.ViewRegisteredPageLabel_active}"/>
+                        <p:selectBooleanCheckbox value="#{registeredPageController.selected.active}" disabled="true"/>
+                        <h:outputText value="#{bundle.ViewRegisteredPageLabel_activationCode}"/>
+                        <h:outputText value="#{registeredPageController.selected.activationCode}" title="#{bundle.ViewRegisteredPageTitle_activationCode}"/>
+                        <h:outputText value="#{bundle.ViewRegisteredPageLabel_activeUntil}"/>
+                        <h:outputText value="#{registeredPageController.selected.activeUntil}" title="#{bundle.ViewRegisteredPageTitle_activeUntil}">
+                            <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
+                        </h:outputText>
+                        <h:outputText value="#{bundle.ViewRegisteredPageLabel_activeFrom}"/>
+                        <h:outputText value="#{registeredPageController.selected.activeFrom}" title="#{bundle.ViewRegisteredPageTitle_activeFrom}">
+                            <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
+                        </h:outputText>
+                    </p:panelGrid>
+                    <p:commandButton value="#{bundle.Close}" onclick="RegisteredPageViewDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

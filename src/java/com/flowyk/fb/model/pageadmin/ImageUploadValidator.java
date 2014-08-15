@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.flowyk.fb.model.admin;
+package com.flowyk.fb.model.pageadmin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,14 +29,17 @@ public class ImageUploadValidator implements Validator {
         List<FacesMessage> msgs = new ArrayList<>();
         Part tempFile = (Part) value;
         if (tempFile.getSubmittedFileName().isEmpty()) {
-            msgs.add(new FacesMessage("No file selected"));
+            String msg = "No file selected";
+            msgs.add(new FacesMessage(FacesMessage.SEVERITY_INFO, msg, msg));
         } else {
             String expectedFileName = tempFile.getName().replace("uploadForm:", "") + ".png";
             if (!expectedFileName.equals(tempFile.getSubmittedFileName())) {
-                msgs.add(new FacesMessage("Expected name of image: " + expectedFileName + " got name: " + tempFile.getSubmittedFileName()));
+                String msg = "Expected name of image: " + expectedFileName + " got name: " + tempFile.getSubmittedFileName();
+                msgs.add(new FacesMessage(FacesMessage.SEVERITY_ERROR, msg, msg));
             }
             if (tempFile.getSize() > maxFileSize) {
-                msgs.add(new FacesMessage("Maximum size of file is: " + maxFileSize));
+                String msg = "Maximum size of file is: " + maxFileSize;
+                msgs.add(new FacesMessage(FacesMessage.SEVERITY_ERROR, msg, msg));
             }
         }
         if (!msgs.isEmpty()) {

@@ -8,8 +8,8 @@ package com.flowyk.fb.model.opengraph;
 import com.flowyk.fb.base.Constants;
 import com.flowyk.fb.entity.Contest;
 import com.flowyk.fb.entity.RegisteredUser;
-import com.flowyk.fb.entity.facade.ContestFacade;
-import com.flowyk.fb.entity.facade.RegisteredUserFacade;
+import com.flowyk.fb.entity.facade.custom.CustomContestFacade;
+import com.flowyk.fb.entity.facade.custom.CustomRegisteredUserFacade;
 import com.flowyk.fb.model.ShareUrlBean;
 import com.flowyk.fb.model.signedrequest.SignedRequest;
 import java.util.logging.Logger;
@@ -43,10 +43,10 @@ public class OpenGraphBean {
     ShareUrlBean shareUrlBean;
     
     @EJB
-    RegisteredUserFacade registeredUserFacade;
+    CustomRegisteredUserFacade registeredUserFacade;
 
     @EJB
-    ContestFacade contestFacade;
+    CustomContestFacade contestFacade;
 
     @PostConstruct
     public void init() {
@@ -87,7 +87,7 @@ public class OpenGraphBean {
 
     public String getDescription() {
         if (contest != null) {
-            return contest.getPopisSutaze();
+            return contest.getDescription();
         } else {
             return null;
         }

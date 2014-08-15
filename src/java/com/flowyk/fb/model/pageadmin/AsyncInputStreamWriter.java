@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.flowyk.fb.model.admin;
+package com.flowyk.fb.model.pageadmin;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;

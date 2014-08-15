@@ -43,7 +43,6 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Contest.findByContestStart", query = "SELECT c FROM Contest c WHERE c.contestStart = :contestStart"),
     @NamedQuery(name = "Contest.findByContestEnd", query = "SELECT c FROM Contest c WHERE c.contestEnd = :contestEnd"),
     @NamedQuery(name = "Contest.findByDisabled", query = "SELECT c FROM Contest c WHERE c.disabled = :disabled"),
-    @NamedQuery(name = "Contest.findByPopisSutaze", query = "SELECT c FROM Contest c WHERE c.popisSutaze = :popisSutaze"),
     @NamedQuery(name = "Contest.findByExterneInfoUrl", query = "SELECT c FROM Contest c WHERE c.externeInfoUrl = :externeInfoUrl")})
 public class Contest implements Serializable {
     
@@ -97,9 +96,6 @@ public class Contest implements Serializable {
     @NotNull
     @Column(name = "disabled")
     private boolean disabled;
-    @Size(max = 150)
-    @Column(name = "popis_sutaze")
-    private String popisSutaze;
     @Lob
     @Size(max = 65535)
     @Column(name = "rules")
@@ -172,14 +168,6 @@ public class Contest implements Serializable {
 
     public void setDisabled(boolean disabled) {
         this.disabled = disabled;
-    }
-
-    public String getPopisSutaze() {
-        return popisSutaze;
-    }
-
-    public void setPopisSutaze(String popisSutaze) {
-        this.popisSutaze = popisSutaze;
     }
 
     public String getExterneInfoUrl() {

@@ -7,8 +7,8 @@ package com.flowyk.fb.model;
 
 import com.flowyk.fb.base.Constants;
 import com.flowyk.fb.entity.RegisteredUser;
-import com.flowyk.fb.entity.facade.RegisteredUserFacade;
-import com.flowyk.fb.entity.facade.RegistrationFacade;
+import com.flowyk.fb.entity.facade.custom.CustomRegisteredUserFacade;
+import com.flowyk.fb.entity.facade.custom.CustomRegistrationFacade;
 import com.flowyk.fb.model.signedrequest.SignedRequest;
 import java.io.Serializable;
 import java.util.Calendar;
@@ -35,10 +35,10 @@ public class ReturningBean implements Serializable {
     private SignedRequest signedRequest;
     
     @EJB
-    private RegisteredUserFacade registeredUserFacade;
+    private CustomRegisteredUserFacade registeredUserFacade;
 
     @EJB
-    private RegistrationFacade registrationFacade;
+    private CustomRegistrationFacade registrationFacade;
 
     @Inject
     private ContestBean contestBean;

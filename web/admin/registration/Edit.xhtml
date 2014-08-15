@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="RegistrationEditDlg" widgetVar="RegistrationEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditRegistrationTitle}">
+            <h:form id="RegistrationEditForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{registrationController.selected != null}">
+                        <p:outputLabel value="#{bundle.EditRegistrationLabel_id}" for="id" />
+                        <p:inputText id="id" value="#{registrationController.selected.id}" title="#{bundle.EditRegistrationTitle_id}" required="true" requiredMessage="#{bundle.EditRegistrationRequiredMessage_id}"/>
+                        <p:outputLabel value="#{bundle.EditRegistrationLabel_timeRegistered}" for="timeRegistered" />
+                        <p:inputText id="timeRegistered" value="#{registrationController.selected.timeRegistered}" title="#{bundle.EditRegistrationTitle_timeRegistered}" required="true" requiredMessage="#{bundle.EditRegistrationRequiredMessage_timeRegistered}"/>
+                        <p:outputLabel value="#{bundle.EditRegistrationLabel_ipAddress}" for="ipAddress" />
+                        <p:inputText id="ipAddress" value="#{registrationController.selected.ipAddress}" title="#{bundle.EditRegistrationTitle_ipAddress}" />
+                        <p:outputLabel value="#{bundle.EditRegistrationLabel_userAgent}" for="userAgent" />
+                        <p:inputText id="userAgent" value="#{registrationController.selected.userAgent}" title="#{bundle.EditRegistrationTitle_userAgent}" />
+                        <p:outputLabel value="#{bundle.EditRegistrationLabel_registeredUser}" for="registeredUser" />
+                        <p:selectOneMenu id="registeredUser" value="#{registrationController.selected.registeredUser}" required="true" requiredMessage="#{bundle.EditRegistrationRequiredMessage_registeredUser}">
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                            <f:selectItems value="#{registeredUserController.itemsAvailableSelectOne}"
+                                           var="registeredUserItem"
+                                           itemValue="#{registeredUserItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.EditRegistrationLabel_weight}" for="weight" />
+                        <p:inputText id="weight" value="#{registrationController.selected.weight}" title="#{bundle.EditRegistrationTitle_weight}" required="true" requiredMessage="#{bundle.EditRegistrationRequiredMessage_weight}"/>
+                        <p:outputLabel value="#{bundle.EditRegistrationLabel_referal}" for="referal" />
+                        <p:selectOneMenu id="referal" value="#{registrationController.selected.referal}" >
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                            <f:selectItems value="#{registeredUserController.itemsAvailableSelectOne}"
+                                           var="referalItem"
+                                           itemValue="#{referalItem}"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{registrationController.update}" value="#{bundle.Save}" update="display,:RegistrationListForm:datalist,:growl" oncomplete="handleSubmit(args, 'RegistrationEditDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="RegistrationEditDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

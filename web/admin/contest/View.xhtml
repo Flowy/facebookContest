@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="ContestViewDlg" widgetVar="ContestViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewContestTitle}">
+            <h:form id="ContestViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{contestController.selected != null}">
+                        <h:outputText value="#{bundle.ViewContestLabel_id}"/>
+                        <h:outputText value="#{contestController.selected.id}" title="#{bundle.ViewContestTitle_id}"/>
+                        <h:outputText value="#{bundle.ViewContestLabel_name}"/>
+                        <h:outputText value="#{contestController.selected.name}" title="#{bundle.ViewContestTitle_name}"/>
+                        <h:outputText value="#{bundle.ViewContestLabel_iconUrl}"/>
+                        <h:outputText value="#{contestController.selected.iconUrl}" title="#{bundle.ViewContestTitle_iconUrl}"/>
+                        <h:outputText value="#{bundle.ViewContestLabel_contestStart}"/>
+                        <h:outputText value="#{contestController.selected.contestStart}" title="#{bundle.ViewContestTitle_contestStart}">
+                            <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
+                        </h:outputText>
+                        <h:outputText value="#{bundle.ViewContestLabel_contestEnd}"/>
+                        <h:outputText value="#{contestController.selected.contestEnd}" title="#{bundle.ViewContestTitle_contestEnd}">
+                            <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
+                        </h:outputText>
+                        <h:outputText value="#{bundle.ViewContestLabel_disabled}"/>
+                        <p:selectBooleanCheckbox value="#{contestController.selected.disabled}" disabled="true"/>
+                        <h:outputText value="#{bundle.ViewContestLabel_externeInfoUrl}"/>
+                        <h:outputText value="#{contestController.selected.externeInfoUrl}" title="#{bundle.ViewContestTitle_externeInfoUrl}"/>
+                        <h:outputText value="#{bundle.ViewContestLabel_rules}"/>
+                        <h:outputText value="#{contestController.selected.rules}" title="#{bundle.ViewContestTitle_rules}"/>
+                        <h:outputText value="#{bundle.ViewContestLabel_contestLayout}"/>
+                        <h:outputText value="#{contestController.selected.contestLayout}" title="#{bundle.ViewContestTitle_contestLayout}"/>
+                        <h:outputText value="#{bundle.ViewContestLabel_timeBetweenTickets}"/>
+                        <h:outputText value="#{contestController.selected.timeBetweenTickets}" title="#{bundle.ViewContestTitle_timeBetweenTickets}"/>
+                        <h:outputText value="#{bundle.ViewContestLabel_shareImgUrl}"/>
+                        <h:outputText value="#{contestController.selected.shareImgUrl}" title="#{bundle.ViewContestTitle_shareImgUrl}"/>
+                        <h:outputText value="#{bundle.ViewContestLabel_registeredPage}"/>
+                        <h:outputText value="#{contestController.selected.registeredPage}" title="#{bundle.ViewContestTitle_registeredPage}"/>
+                        <h:outputText value="#{bundle.ViewContestLabel_description}"/>
+                        <h:outputText value="#{contestController.selected.description}" title="#{bundle.ViewContestTitle_description}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="#{bundle.Close}" onclick="ContestViewDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

@@ -22,8 +22,7 @@
     </filter-mapping>
     <filter-mapping>
         <filter-name>AdminFilter</filter-name>
-        <url-pattern>/contest/admin.xhtml</url-pattern>
-        <url-pattern>/contest/contest-admin.xhtml</url-pattern>
+        <url-pattern>/contest/pageAdmin/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>ContestPageLikedFilter</filter-name>

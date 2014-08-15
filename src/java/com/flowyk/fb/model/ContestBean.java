@@ -9,9 +9,9 @@ import com.flowyk.fb.entity.Contest;
 import com.flowyk.fb.entity.RegisteredPage;
 import com.flowyk.fb.entity.RegisteredUser;
 import com.flowyk.fb.entity.Registration;
-import com.flowyk.fb.entity.facade.ContestFacade;
+import com.flowyk.fb.entity.facade.custom.CustomContestFacade;
 import com.flowyk.fb.entity.facade.RegisteredPageFacade;
-import com.flowyk.fb.entity.facade.RegistrationFacade;
+import com.flowyk.fb.entity.facade.custom.CustomRegistrationFacade;
 import com.flowyk.fb.exceptions.FBPageNotActiveException;
 import com.flowyk.fb.exceptions.NoActiveContestException;
 import com.flowyk.fb.exceptions.PageIdNotFoundException;
@@ -42,10 +42,10 @@ public class ContestBean implements Serializable {
     private SignedRequest signedRequest;
 
     @EJB
-    private RegistrationFacade registrationFacade;
+    private CustomRegistrationFacade registrationFacade;
     
     @EJB
-    private ContestFacade contestFacade;
+    private CustomContestFacade contestFacade;
 
     @EJB
     private RegisteredPageFacade registeredPage;
@@ -100,7 +100,8 @@ public class ContestBean implements Serializable {
 //                System.out.println("Found page for: " + signedRequest.getPage().getId() + ", contests count: " + page.getContestCollection().size());
                 List<Contest> contestList = contestFacade.findByPage(page);
 //                List<Contest> list = new ArrayList(page.getContestCollection());
-                return selectActiveContest(contestList);
+                Contest active = selectActiveContest(contestList);
+                return active;
             } else {
                 throw new FBPageNotActiveException("Page id: " + signedRequest.getPage().getId());
             }

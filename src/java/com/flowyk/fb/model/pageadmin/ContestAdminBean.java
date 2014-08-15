@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.flowyk.fb.model.admin;
+package com.flowyk.fb.model.pageadmin;
 
 import com.flowyk.fb.entity.Contest;
+import com.flowyk.fb.model.ContestBean;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Files;
@@ -19,6 +20,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
 import javax.servlet.http.Part;
 import javax.validation.constraints.NotNull;
 
@@ -30,17 +32,30 @@ import javax.validation.constraints.NotNull;
 @ViewScoped
 public class ContestAdminBean implements Serializable {
 
+    @Inject
+    ContestBean contestBean;
+    
     @NotNull
     private Contest actualContest;
     private final Map<String, Part> images;
 
+    private Part tempImage;
+    
     public ContestAdminBean() {
         images = new HashMap<>();
     }
     // Actions -----------------------------------------------------------------------------------
 
     public void uploadFiles() {
-        Path folderPath = Paths.get("C:\\var\\webapp");
+        this.actualContest = contestBean.getActiveContest();
+        if (actualContest == null) {
+            FacesContext.getCurrentInstance().addMessage(
+                    null,
+                    new FacesMessage("This page is not accessible the way you opened it, try it another way or contact administrator")
+            );
+            throw new IllegalStateException("Actual contest not set for contestAdminBean");
+        }
+        Path folderPath = Paths.get("C:\\var\\webapp\\images");
         if (!Files.exists(folderPath)) {
             FacesContext.getCurrentInstance().addMessage(
                     null,
@@ -48,7 +63,7 @@ public class ContestAdminBean implements Serializable {
             );
             return;
         }
-        Path contestPath = folderPath.resolve("/" + actualContest.getRegisteredPage().getPageId());
+        Path contestPath = folderPath.resolve(actualContest.getRegisteredPage().getPageId());
         if (!Files.exists(contestPath)) {
             FacesContext.getCurrentInstance().addMessage(
                     null,
@@ -57,7 +72,7 @@ public class ContestAdminBean implements Serializable {
             return;
         }
         for (Part image : images.values()) {
-            Path imagePath = contestPath.resolve("/" + image.getSubmittedFileName() + ".png");
+            Path imagePath = contestPath.resolve(image.getSubmittedFileName() + ".png");
 
             if (Files.exists(imagePath)) {
                 try {
@@ -73,17 +88,6 @@ public class ContestAdminBean implements Serializable {
                 }
             }
         }
-//        if (file != null) {
-//            try {
-//                fileContent = new Scanner(file.getInputStream())
-//                        .useDelimiter("\\A").next();
-//            } catch (IOException e) {
-//                FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-//                        "error uploading file",
-//                        null);
-//                FacesContext.getCurrentInstance().addMessage(null, msg);
-//            }
-//        }
     }
 
     // Getters -----------------------------------------------------------------------------------
@@ -98,6 +102,14 @@ public class ContestAdminBean implements Serializable {
     // Setters -----------------------------------------------------------------------------------
     public void setActualContest(Contest actualContest) {
         this.actualContest = actualContest;
+    }
+
+    public Part getTempImage() {
+        return tempImage;
+    }
+
+    public void setTempImage(Part tempImage) {
+        this.tempImage = tempImage;
     }
 
 }

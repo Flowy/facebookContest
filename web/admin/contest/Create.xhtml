@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="ContestCreateDlg" widgetVar="ContestCreateDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.CreateContestTitle}">
+            <h:form id="ContestCreateForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{contestController.selected != null}">
+                        <p:outputLabel value="#{bundle.CreateContestLabel_id}" for="id" />
+                        <p:inputText id="id" value="#{contestController.selected.id}" title="#{bundle.CreateContestTitle_id}" required="true" requiredMessage="#{bundle.CreateContestRequiredMessage_id}"/>
+                        <p:outputLabel value="#{bundle.CreateContestLabel_name}" for="name" />
+                        <p:inputText id="name" value="#{contestController.selected.name}" title="#{bundle.CreateContestTitle_name}" />
+                        <p:outputLabel value="#{bundle.CreateContestLabel_iconUrl}" for="iconUrl" />
+                        <p:inputText id="iconUrl" value="#{contestController.selected.iconUrl}" title="#{bundle.CreateContestTitle_iconUrl}" />
+                        <p:outputLabel value="#{bundle.CreateContestLabel_contestStart}" for="contestStart" />
+                        <p:calendar id="contestStart" pattern="MM/dd/yyyy HH:mm:ss" value="#{contestController.selected.contestStart}" title="#{bundle.EditContestTitle_contestStart}" required="true" requiredMessage="#{bundle.EditContestRequiredMessage_contestStart}" showOn="button"/>
+                        <p:outputLabel value="#{bundle.CreateContestLabel_contestEnd}" for="contestEnd" />
+                        <p:calendar id="contestEnd" pattern="MM/dd/yyyy HH:mm:ss" value="#{contestController.selected.contestEnd}" title="#{bundle.EditContestTitle_contestEnd}" required="true" requiredMessage="#{bundle.EditContestRequiredMessage_contestEnd}" showOn="button"/>
+                        <p:outputLabel value="#{bundle.CreateContestLabel_disabled}" for="disabled" />
+                        <p:selectBooleanCheckbox id="disabled" value="#{contestController.selected.disabled}" required="true" requiredMessage="#{bundle.EditContestRequiredMessage_disabled}"/>
+                        <p:outputLabel value="#{bundle.CreateContestLabel_externeInfoUrl}" for="externeInfoUrl" />
+                        <p:inputText id="externeInfoUrl" value="#{contestController.selected.externeInfoUrl}" title="#{bundle.CreateContestTitle_externeInfoUrl}" required="true" requiredMessage="#{bundle.CreateContestRequiredMessage_externeInfoUrl}"/>
+                        <p:outputLabel value="#{bundle.CreateContestLabel_rules}" for="rules" />
+                        <p:inputTextarea rows="4" cols="30" id="rules" value="#{contestController.selected.rules}" title="#{bundle.CreateContestTitle_rules}" />
+                        <p:outputLabel value="#{bundle.CreateContestLabel_contestLayout}" for="contestLayout" />
+                        <p:selectOneMenu id="contestLayout" value="#{contestController.selected.contestLayout}" required="true" requiredMessage="#{bundle.EditContestRequiredMessage_contestLayout}">
+                            <f:selectItems value="#{contestLayoutController.itemsAvailableSelectOne}"
+                                           var="contestLayoutItem"
+                                           itemValue="#{contestLayoutItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.CreateContestLabel_timeBetweenTickets}" for="timeBetweenTickets" />
+                        <p:inputText id="timeBetweenTickets" value="#{contestController.selected.timeBetweenTickets}" title="#{bundle.CreateContestTitle_timeBetweenTickets}" required="true" requiredMessage="#{bundle.CreateContestRequiredMessage_timeBetweenTickets}"/>
+                        <p:outputLabel value="#{bundle.CreateContestLabel_shareImgUrl}" for="shareImgUrl" />
+                        <p:inputText id="shareImgUrl" value="#{contestController.selected.shareImgUrl}" title="#{bundle.CreateContestTitle_shareImgUrl}" required="true" requiredMessage="#{bundle.CreateContestRequiredMessage_shareImgUrl}"/>
+                        <p:outputLabel value="#{bundle.CreateContestLabel_registeredPage}" for="registeredPage" />
+                        <p:selectOneMenu id="registeredPage" value="#{contestController.selected.registeredPage}" required="true" requiredMessage="#{bundle.EditContestRequiredMessage_registeredPage}">
+                            <f:selectItems value="#{registeredPageController.itemsAvailableSelectOne}"
+                                           var="registeredPageItem"
+                                           itemValue="#{registeredPageItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.CreateContestLabel_description}" for="description" />
+                        <p:inputText id="description" value="#{contestController.selected.description}" title="#{bundle.CreateContestTitle_description}" />
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{contestController.create}" value="#{bundle.Save}" update="display,:ContestListForm:datalist,:growl" oncomplete="handleSubmit(args,'ContestCreateDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="ContestCreateDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

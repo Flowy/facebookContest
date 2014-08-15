@@ -11,6 +11,10 @@
         <locale-config>
             <default-locale>sk</default-locale>
         </locale-config>
+        <resource-bundle>
+            <base-name>/Bundle</base-name>
+            <var>bundle</var>
+        </resource-bundle>
     </application>
     <navigation-rule>
         <navigation-case>
@@ -39,11 +43,11 @@
         </navigation-case>
         <navigation-case>
             <from-outcome>admin</from-outcome>
-            <to-view-id>/contest/admin.xhtml</to-view-id>
+            <to-view-id>/contest/pageAdmin/admin.xhtml</to-view-id>
         </navigation-case>
         <navigation-case>
             <from-outcome>contest-admin</from-outcome>
-            <to-view-id>/contest/contest-admin.xhtml</to-view-id>
+            <to-view-id>/contest/pageAdmin/contest-admin.xhtml</to-view-id>
         </navigation-case>
     </navigation-rule>
 </faces-config>

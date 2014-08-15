@@ -8,7 +8,7 @@ package com.flowyk.fb.base;
 import com.flowyk.fb.entity.Contest;
 import com.flowyk.fb.entity.ContestLayout;
 import com.flowyk.fb.entity.RegisteredPage;
-import com.flowyk.fb.entity.facade.ContestFacade;
+import com.flowyk.fb.entity.facade.custom.CustomContestFacade;
 import com.flowyk.fb.entity.facade.ContestLayoutFacade;
 import com.flowyk.fb.entity.facade.RegisteredPageFacade;
 import java.util.Calendar;
@@ -38,7 +38,7 @@ public class DatabaseInit {
     ContestLayoutFacade contestLayoutFacade;
 
     @EJB
-    ContestFacade contestFacade;
+    CustomContestFacade contestFacade;
 
     @PostConstruct
     public void init() {
@@ -59,7 +59,7 @@ public class DatabaseInit {
             ticketsDelay.setTimeInMillis(0L);
             ticketsDelay.set(Calendar.HOUR_OF_DAY, 2);
             c.setTimeBetweenTickets(ticketsDelay);
-            c.setPopisSutaze("Popis sutaze");
+            c.setDescription("Popis sutaze");
             c.setExterneInfoUrl("http://stackoverflow.com/questions/15359306/how-to-load-lazy-fetched-items-from-hibernate-jpa-in-my-controller");
             c.setIconUrl("http://img.cdnprg.webtea.cz/web/logo_new.png");
             c.setShareImgUrl("https://sutaz.flowyk.com:8181/facebookContest/images/663981640350558/pozadie.png");

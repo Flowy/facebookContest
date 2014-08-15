@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="RegisteredPageCreateDlg" widgetVar="RegisteredPageCreateDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.CreateRegisteredPageTitle}">
+            <h:form id="RegisteredPageCreateForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{registeredPageController.selected != null}">
+                        <p:outputLabel value="#{bundle.CreateRegisteredPageLabel_pageId}" for="pageId" />
+                        <p:inputText id="pageId" value="#{registeredPageController.selected.pageId}" title="#{bundle.CreateRegisteredPageTitle_pageId}" required="true" requiredMessage="#{bundle.CreateRegisteredPageRequiredMessage_pageId}"/>
+                        <p:outputLabel value="#{bundle.CreateRegisteredPageLabel_active}" for="active" />
+                        <p:selectBooleanCheckbox id="active" value="#{registeredPageController.selected.active}" required="true" requiredMessage="#{bundle.EditRegisteredPageRequiredMessage_active}"/>
+                        <p:outputLabel value="#{bundle.CreateRegisteredPageLabel_activationCode}" for="activationCode" />
+                        <p:inputText id="activationCode" value="#{registeredPageController.selected.activationCode}" title="#{bundle.CreateRegisteredPageTitle_activationCode}" />
+                        <p:outputLabel value="#{bundle.CreateRegisteredPageLabel_activeUntil}" for="activeUntil" />
+                        <p:calendar id="activeUntil" pattern="MM/dd/yyyy HH:mm:ss" value="#{registeredPageController.selected.activeUntil}" title="#{bundle.EditRegisteredPageTitle_activeUntil}"  showOn="button"/>
+                        <p:outputLabel value="#{bundle.CreateRegisteredPageLabel_activeFrom}" for="activeFrom" />
+                        <p:calendar id="activeFrom" pattern="MM/dd/yyyy HH:mm:ss" value="#{registeredPageController.selected.activeFrom}" title="#{bundle.EditRegisteredPageTitle_activeFrom}" required="true" requiredMessage="#{bundle.EditRegisteredPageRequiredMessage_activeFrom}" showOn="button"/>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{registeredPageController.create}" value="#{bundle.Save}" update="display,:RegisteredPageListForm:datalist,:growl" oncomplete="handleSubmit(args,'RegisteredPageCreateDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="RegisteredPageCreateDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>
