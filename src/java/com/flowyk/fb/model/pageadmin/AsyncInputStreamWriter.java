@@ -41,7 +41,7 @@ public class AsyncInputStreamWriter implements Runnable {
             }
             FacesContext.getCurrentInstance().addMessage(
                     null,
-                    new FacesMessage("File " + outPath.getFileName() + ": upload successful.")
+                    new FacesMessage("", "File " + outPath.getFileName() + ": upload successful.")
             );
         } catch (IOException ex) {
             Logger.getLogger(AsyncInputStreamWriter.class.getName()).log(Level.SEVERE, null, ex);
