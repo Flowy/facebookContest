@@ -12,8 +12,6 @@ import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
@@ -21,8 +19,9 @@ import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
-import javax.servlet.http.Part;
 import javax.validation.constraints.NotNull;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.UploadedFile;
 
 /**
  *
@@ -34,19 +33,17 @@ public class ContestAdminBean implements Serializable {
 
     @Inject
     ContestBean contestBean;
-    
+
     @NotNull
     private Contest actualContest;
-    private final Map<String, Part> images;
 
-    private Part tempImage;
-    
     public ContestAdminBean() {
-        images = new HashMap<>();
     }
     // Actions -----------------------------------------------------------------------------------
 
-    public void uploadFiles() {
+    public void uploadFiles(FileUploadEvent event) {
+//        System.out.println("uploading: " + event.getFile().getFileName());
+        UploadedFile uploadedFile = event.getFile();
         this.actualContest = contestBean.getActiveContest();
         if (actualContest == null) {
             FacesContext.getCurrentInstance().addMessage(
@@ -71,30 +68,16 @@ public class ContestAdminBean implements Serializable {
             );
             return;
         }
-        for (Part image : images.values()) {
-            Path imagePath = contestPath.resolve(image.getSubmittedFileName() + ".png");
-
-            if (Files.exists(imagePath)) {
-                try {
-                    Files.delete(imagePath);
-                } catch (IOException ex) {
-                    Logger.getLogger(ContestAdminBean.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                try {
-                    AsyncInputStreamWriter fileWriter = new AsyncInputStreamWriter(image.getInputStream(), imagePath);
-                    fileWriter.run();
-                } catch (IOException ex) {
-                    Logger.getLogger(ContestAdminBean.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
+        Path imagePath = contestPath.resolve(uploadedFile.getFileName());
+        try {
+            AsyncInputStreamWriter fileWriter = new AsyncInputStreamWriter(uploadedFile.getInputstream(), imagePath);
+            fileWriter.run();
+        } catch (IOException ex) {
+            Logger.getLogger(ContestAdminBean.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     // Getters -----------------------------------------------------------------------------------
-    public Map<String, Part> getImages() {
-        return images;
-    }
-
     public Contest getActualContest() {
         return actualContest;
     }
@@ -102,14 +85,6 @@ public class ContestAdminBean implements Serializable {
     // Setters -----------------------------------------------------------------------------------
     public void setActualContest(Contest actualContest) {
         this.actualContest = actualContest;
-    }
-
-    public Part getTempImage() {
-        return tempImage;
-    }
-
-    public void setTempImage(Part tempImage) {
-        this.tempImage = tempImage;
     }
 
 }
