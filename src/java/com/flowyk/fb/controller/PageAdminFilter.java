@@ -5,7 +5,7 @@
  */
 package com.flowyk.fb.controller;
 
-import com.flowyk.fb.model.session.SignedRequest;
+import com.flowyk.fb.model.signedrequest.SignedRequest;
 import java.io.IOException;
 import javax.inject.Inject;
 import javax.servlet.Filter;

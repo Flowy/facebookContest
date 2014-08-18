@@ -5,19 +5,14 @@
  */
 package com.flowyk.fb.model.session;
 
-import com.flowyk.fb.model.session.Login;
 import com.flowyk.fb.entity.Contest;
-import com.flowyk.fb.entity.RegisteredPage;
 import com.flowyk.fb.entity.RegisteredUser;
 import com.flowyk.fb.entity.Registration;
 import com.flowyk.fb.entity.facade.custom.CustomContestFacade;
-import com.flowyk.fb.entity.facade.RegisteredPageFacade;
 import com.flowyk.fb.entity.facade.custom.CustomRegistrationFacade;
 import com.flowyk.fb.exceptions.FBPageNotActiveException;
 import com.flowyk.fb.exceptions.NoActiveContestException;
 import com.flowyk.fb.exceptions.PageIdNotFoundException;
-import com.flowyk.fb.model.session.Page;
-import com.flowyk.fb.model.session.SignedRequest;
 import java.io.Serializable;
 import java.security.InvalidParameterException;
 import java.util.Calendar;
@@ -49,8 +44,8 @@ public class ContestBean implements Serializable {
     @EJB
     private CustomContestFacade contestFacade;
 
-    @Inject
-    private Page pageBean;
+//    @Inject
+//    private SignedRequestPage pageBean;
 
     @Inject
     Login contestUser;
@@ -96,15 +91,15 @@ public class ContestBean implements Serializable {
      * @throws PageIdNotFoundException if page not found in signed request
      */
     public Contest getActiveContest() {
-
-        if (pageBean.getPage() != null && pageBean.getPage().getActive()) {
-            List<Contest> contestList = contestFacade.findByPage(pageBean.getPage());
-//          TODO: why this doesnt work ... List<Contest> list = new ArrayList(page.getContestCollection());
-            Contest active = selectActiveContest(contestList);
-            return active;
-        } else {
-            throw new FBPageNotActiveException("Page: " + pageBean.getPage());
-        }
+        return null;
+//        if (pageBean.getPage() != null && pageBean.getPage().getActive()) {
+//            List<Contest> contestList = contestFacade.findByPage(pageBean.getPage());
+////          TODO: why this doesnt work ... List<Contest> list = new ArrayList(page.getContestCollection());
+//            Contest active = selectActiveContest(contestList);
+//            return active;
+//        } else {
+//            throw new FBPageNotActiveException("Page: " + pageBean.getPage());
+//        }
     }
 
     /**

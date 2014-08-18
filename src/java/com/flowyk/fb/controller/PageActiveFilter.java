@@ -5,7 +5,7 @@
  */
 package com.flowyk.fb.controller;
 
-import com.flowyk.fb.model.session.Page;
+import com.flowyk.fb.model.signedrequest.SignedRequest;
 import java.io.IOException;
 import javax.inject.Inject;
 import javax.servlet.Filter;
@@ -15,8 +15,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  *
@@ -26,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 public class PageActiveFilter implements Filter {
 
     @Inject
-    private Page pageBean;
+    private SignedRequest signedRequest;
     
     /**
      *
@@ -42,13 +40,13 @@ public class PageActiveFilter implements Filter {
             FilterChain chain)
             throws IOException, ServletException {
 
-        if (pageBean.getPage() != null && pageBean.getPage().getActive()) {
+//        if (signedRequest.getPage() pageBean.getPage().getActive()) {
             chain.doFilter(request, response);
-        } else {
-            HttpServletRequest req = (HttpServletRequest) request;
-            HttpServletResponse res = (HttpServletResponse) response;
-            res.sendRedirect(req.getContextPath() + "/contest/page-unactive.xhtml");
-        }
+//        } else {
+//            HttpServletRequest req = (HttpServletRequest) request;
+//            HttpServletResponse res = (HttpServletResponse) response;
+//            res.sendRedirect(req.getContextPath() + "/contest/page-unactive.xhtml");
+//        }
     }
     
     @Override

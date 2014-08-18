@@ -6,8 +6,7 @@
 package com.flowyk.fb.controller;
 
 import com.flowyk.fb.base.Constants;
-import com.flowyk.fb.model.session.SignedRequest;
-import com.flowyk.fb.model.session.LoginUtil;
+import com.flowyk.fb.model.signedrequest.SignedRequest;
 import com.flowyk.fb.exceptions.MalformedSignedRequestException;
 import com.flowyk.fb.model.session.Login;
 import java.io.IOException;
@@ -65,21 +64,9 @@ public class SignedRequestFilter implements Filter {
         String signedRequestString = req.getParameter("signed_request");
         if (signedRequestString != null) {
             try {
-                parseSignedRequest(signedRequestString);
+                signedRequest.parseSignedRequest(signedRequestString);
             } catch (MalformedSignedRequestException | JsonParsingException e) {
                 LOG.log(Level.INFO, "Got malformed signed request: {0}", signedRequestString);
-                res.sendError(HttpServletResponse.SC_FORBIDDEN, "Malformed header");
-                return;
-            }
-        }
-
-        String contest = req.getParameter("contest");
-        if (contest != null) {
-            try {
-                int contestInt = Integer.parseInt(contest);
-                login.setContestId(contestInt);
-            } catch (NumberFormatException e) {
-                LOG.log(Level.INFO, "Can't parse contest id from: {0}", contest);
                 res.sendError(HttpServletResponse.SC_FORBIDDEN, "Malformed header");
                 return;
             }
@@ -121,12 +108,6 @@ public class SignedRequestFilter implements Filter {
         }
         sb.append("\tREMOTE ADDRESS: ").append(req.getRemoteAddr());
         return sb.toString();
-    }
-
-    private void parseSignedRequest(String signedRequestString) {
-        JsonObject jObject = LoginUtil.parseSignedRequest(signedRequestString);
-        signedRequest.setSigned(true);
-        signedRequest.parseSignedRequestJson(jObject);
     }
 
     /**

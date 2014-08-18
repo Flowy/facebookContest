@@ -7,9 +7,10 @@ package com.flowyk.fb.controller;
 
 import com.flowyk.fb.model.session.ContestBean;
 import com.flowyk.fb.model.opengraph.OpenGraphBean;
-import com.flowyk.fb.model.session.Page;
-import com.flowyk.fb.model.session.SignedRequest;
+import com.flowyk.fb.model.signedrequest.SignedRequest;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.inject.Inject;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -27,15 +28,13 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebFilter(filterName = "ContestFilter")
 public class ContestFilter implements Filter {
+    private static final Logger LOG = Logger.getLogger(ContestFilter.class.getName());
 
     @Inject
     SignedRequest signedRequest;
-    
-    @Inject
-    private Page pageBean;
 
     @Inject
-    OpenGraphBean openGraphBean;
+    private OpenGraphBean openGraphBean;
 
     @Inject
     ContestBean contestBean;
@@ -55,18 +54,33 @@ public class ContestFilter implements Filter {
             throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
         String userAgent = req.getHeader("user-agent");
-        if (userAgent != null && userAgent.contains("facebookexternalhit")) {
+//        if (userAgent != null && userAgent.contains("facebookexternalhit")) {
             //facebook bot - allow to see open graph page
-            chain.doFilter(request, response);
+
+        String contest = req.getParameter("contest");
+        if (contest != null) {
+            try {
+                Integer.valueOf(contest);
+                int contestInt = Integer.parseInt(contest);
+                openGraphBean.setContestId(contestInt);
+            } catch (NumberFormatException e) {
+                LOG.log(Level.INFO, "Can't parse contest id from: {0}", contest);
+                ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "Malformed header");
+                return;
+            }
         } else {
-            HttpServletResponse res = (HttpServletResponse) response;
-            handleRequest(req, res);
+            
         }
+            chain.doFilter(request, response);
+//        } else {
+//            HttpServletResponse res = (HttpServletResponse) response;
+//            handleRequest(req, res);
+//        }
     }
 
     private void handleRequest(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
         if (signedRequest.isSigned()) {
-            if (pageBean.isLiked()) {
+            if (signedRequest.getPage().isLiked()) {
                 if (contestBean.getReturning()) {
                     res.sendRedirect(req.getContextPath() + "/contest/returning.xhtml");
                 } else {

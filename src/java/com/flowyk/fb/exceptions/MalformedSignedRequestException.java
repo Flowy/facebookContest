@@ -28,4 +28,8 @@ public class MalformedSignedRequestException extends RuntimeException {
     public MalformedSignedRequestException(String msg) {
         super(msg);
     }
+    
+    public MalformedSignedRequestException(String msg, Throwable throwable) {
+        super(msg, throwable);
+    }
 }

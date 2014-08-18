@@ -11,7 +11,7 @@ import com.flowyk.fb.base.Constants;
 import com.flowyk.fb.entity.RegisteredUser;
 import com.flowyk.fb.entity.facade.custom.CustomRegisteredUserFacade;
 import com.flowyk.fb.entity.facade.custom.CustomRegistrationFacade;
-import com.flowyk.fb.model.session.SignedRequest;
+import com.flowyk.fb.model.signedrequest.SignedRequest;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -64,7 +64,7 @@ public class ReturningBean implements Serializable {
             return null;
         } else {
             RegisteredUser user = userList.iterator().next();
-            contestUser.setContestUser(user);
+//            contestUser.setContestUser(user);
             
             
             Calendar lastTicket = registrationFacade.getLastTicketTime(user);
@@ -76,7 +76,7 @@ public class ReturningBean implements Serializable {
             nearestTicket.setTimeInMillis(lastTicketMillis + delayMillis);
 
             if (Calendar.getInstance().after(nearestTicket)) {
-                contestBean.createNewTicket(user, Constants.RETURNING_TICKETS, null);
+//                contestBean.createNewTicket(user, Constants.RETURNING_TICKETS, null);
                 return "thanks";
             } else {
                 //needed delay for new ticket not passed

@@ -12,9 +12,7 @@ import com.flowyk.fb.email.NoReplyEmailSession;
 import com.flowyk.fb.entity.RegisteredUser;
 import com.flowyk.fb.entity.Registration;
 import com.flowyk.fb.entity.facade.custom.CustomRegisteredUserFacade;
-import com.flowyk.fb.model.session.AppData;
-import com.flowyk.fb.model.session.SignedRequest;
-import com.flowyk.fb.model.session.User;
+import com.flowyk.fb.model.signedrequest.SignedRequest;
 import java.io.Serializable;
 import java.util.List;
 import javax.ejb.EJB;
@@ -39,9 +37,6 @@ public class RegistrationBean implements Serializable {
 
     @Inject
     private ContestBean contestBean;
-    
-    @Inject
-    private User userBean;
 
     @Inject
     private SignedRequest signedRequest;
@@ -51,9 +46,6 @@ public class RegistrationBean implements Serializable {
 
     @Inject
     private Login login;
-    
-    @Inject
-    private AppData appDataBean;
     
     @AssertTrue
     private boolean acceptedRules = false;

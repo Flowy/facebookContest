@@ -27,8 +27,8 @@ public class ThanksBean implements Serializable {
         StringBuilder sb = new StringBuilder("FB.ui({");
         sb.append("method: 'share_open_graph',");
         sb.append("action_type: 'flowykcontests:attend',");
-        sb.append("action_properties: {")
-                .append("contest: '").append(contestUser.getShareUrl()).append("'");
+        sb.append("action_properties: {");
+//                .append("contest: '").append(contestUser.getShareUrl()).append("'");
         sb.append("} }); return false;");
         return sb.toString();
         
