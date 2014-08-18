@@ -10,7 +10,7 @@ package com.flowyk.fb.exceptions;
  *
  * @author Lukas
  */
-public class NoActiveContestException extends RuntimeException {
+public class NoActiveContestException extends Exception {
 
     /**
      * Creates a new instance of <code>NoActiveContestException</code> without

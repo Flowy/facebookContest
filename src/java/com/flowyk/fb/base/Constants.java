@@ -5,6 +5,8 @@
  */
 package com.flowyk.fb.base;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import javax.ejb.Singleton;
 import javax.inject.Named;
 
@@ -21,6 +23,7 @@ public class Constants {
 
     public static final String API_KEY = "675005359221214";
     public static final String SITE_URL = "https://sutaz.flowyk.com:8181/facebookContest";
+    public static final Path LOCAL_IMAGES_PATH = Paths.get("C:\\var\\webapp\\images");
 //    public static final String CALLBACK_URL = "https://sutaz.flowyk.com:8181/FacebookSutaz-newwar/contest.xhtml";
     
     //ticket weight after first registration

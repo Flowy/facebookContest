@@ -2,11 +2,10 @@
 <Scene Scope="Project" version="2">
     <Scope Scope="Faces Configuration Only"/>
     <Scope Scope="Project">
-        <Node id="contest/admin.xhtml" x="150" y="750" zoom="true"/>
         <Node id="index.xhtml" x="400" y="300" zoom="true"/>
         <Node id="contest/presslike.xhtml" x="838" y="80" zoom="true"/>
-        <Node id="contest/thanks.xhtml" x="754" y="494" zoom="true"/>
         <Node id="contest-rules.xhtml" x="736" y="230" zoom="true"/>
+        <Node id="contest/thanks.xhtml" x="754" y="494" zoom="true"/>
         <Node id="contest/register.xhtml" x="400" y="150" zoom="true"/>
         <Node id="contest/contest.xhtml" x="825" y="380" zoom="true"/>
         <Node id="contest/page-unactive.xhtml" x="470" y="428" zoom="true"/>

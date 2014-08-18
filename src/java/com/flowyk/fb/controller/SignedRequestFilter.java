@@ -14,7 +14,6 @@ import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.inject.Inject;
-import javax.json.JsonObject;
 import javax.json.stream.JsonParsingException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;

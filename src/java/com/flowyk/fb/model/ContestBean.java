@@ -8,20 +8,18 @@ package com.flowyk.fb.model;
 import com.flowyk.fb.entity.Contest;
 import com.flowyk.fb.entity.RegisteredUser;
 import com.flowyk.fb.entity.Registration;
-import com.flowyk.fb.entity.facade.RegistrationFacade;
-import com.flowyk.fb.exceptions.NoActiveContestException;
 import java.io.Serializable;
 import java.security.InvalidParameterException;
 import java.util.Calendar;
 import java.util.TimeZone;
 import java.util.logging.Logger;
-import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 import javax.inject.Inject;
 
 /**
- *
+ * expects login initialized with actual user, contest, page
+ * 
  * @author Lukas
  */
 @Named
@@ -63,18 +61,12 @@ public class ContestBean implements Serializable {
     }
 
     // Getters -----------------------------------------------------------------------------------
-
     /**
      *
      * @return active contest for actual page from signed request
-     * @throws NoActiveContestException
      */
     public Contest getActiveContest() {
-        if (login.getUser().getContest() != null) {
-            return login.getUser().getContest();
-        } else {
-            throw new NoActiveContestException();
-        }
+        return login.getUser().getContest();
     }
 
     /**

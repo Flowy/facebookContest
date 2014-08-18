@@ -5,6 +5,7 @@
  */
 package com.flowyk.fb.model;
 
+import com.flowyk.fb.base.Constants;
 import com.flowyk.fb.entity.Contest;
 import com.flowyk.fb.entity.RegisteredPage;
 import com.flowyk.fb.entity.RegisteredUser;
@@ -12,7 +13,10 @@ import com.flowyk.fb.entity.facade.ContestFacade;
 import com.flowyk.fb.entity.facade.RegisteredPageFacade;
 import com.flowyk.fb.entity.facade.RegisteredUserFacade;
 import com.flowyk.fb.exceptions.NoActiveContestException;
+import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -20,7 +24,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -42,7 +49,9 @@ public class Login implements Serializable {
     @EJB
     ContestFacade contestFacade;
 
-    private RegisteredUser user = new RegisteredUser();
+    private Contest contest;
+    private RegisteredPage page;
+    private RegisteredUser user;
 
     private String ipAddress;
     private String userAgent;
@@ -64,58 +73,68 @@ public class Login implements Serializable {
     }
 
     public RegisteredPage getPage() {
-        return user
-                .getContest()
-                .getRegisteredPage();
+        return page;
+    }
+
+    /**
+     * actualizes reference to page in there, in user, and sets actual contest
+     * 
+     * @param page 
+     */
+    public void setPage(@NotNull RegisteredPage page) {
+        this.page = page;
+        this.contest = getActualContest(page);
+        this.user = new RegisteredUser();
+        this.user.setContest(this.contest);
+    }
+
+    public Contest getContest() {
+        return contest;
+    }
+
+    public void setContest(@NotNull Contest contest) {
+        this.page = contest.getRegisteredPage();
+        this.contest = contest;
+        user.setContest(contest);
     }
 
     public RegisteredUser getUser() {
         return user;
     }
-
+    
+    /**
+     * rewrites user with associated contest and page
+     * @param user 
+     */
     public void setUser(@NotNull RegisteredUser user) {
         this.user = user;
+        this.contest = user.getContest();
+        if (this.contest != null) {
+            this.page = this.contest.getRegisteredPage();
+        }
     }
 
     /**
-     * creates new if page does not exists
      *
-     * @param pageId
-     * @throws NullPointerException if pageId is null
+     * @param page
+     * @return active + actual contest for given page
+     * @throws NoActiveContestException if no active/actual contest found
      */
-    public void setPage(@NotNull String pageId) {
-        if (user.getContest() == null) {
-            RegisteredPage page = registeredPageFacade.find(pageId);
-            if (page != null) {
-                Contest contest = getActualContest(page);
-                if (contest != null) {
-                    user.setContest(contest);
-                } else {
-                    throw new NoActiveContestException("for page: " + pageId);
-                }
-            } else {
-                //TODO create new entry if this page does not exists yet
-                throw new IllegalArgumentException("Page with page id: " + pageId + " not found");
-            }
-        } else {
-            if (!pageId.equals(user.getContest().getRegisteredPage().getPageId())) {
-                user = new RegisteredUser();
-                LOG.log(Level.INFO, "User {0}\t\nfrom another contest {1}\t\ncame to this page {2}", new Object[]{user, user.getContest(), pageId});
-            }
-        }
-    }
-
     private Contest getActualContest(RegisteredPage page) {
         List<Contest> contestList = contestFacade.findByPage(page);
         if (contestList.isEmpty()) {
-            System.out.println("Contest list is: " + contestList);
             return null;
         } else {
-            return selectActiveContest(contestList);
+            return selectActualContest(contestList);
         }
     }
 
-    private static Contest selectActiveContest(@NotNull List<Contest> list) {
+    /**
+     *
+     * @param list
+     * @return null if no active+actual contest
+     */
+    private static Contest selectActualContest(@NotNull List<Contest> list) {
         Collections.sort(list, Collections.reverseOrder());
         Contest selected = null;
         Date now = new Date();
@@ -124,10 +143,6 @@ public class Login implements Serializable {
                 selected = x;
             }
         }
-        if (selected != null) {
-            return selected;
-        } else {
-            throw new NoActiveContestException();
-        }
+        return selected;
     }
 }

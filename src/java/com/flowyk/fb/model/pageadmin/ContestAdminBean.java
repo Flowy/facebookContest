@@ -5,6 +5,7 @@
  */
 package com.flowyk.fb.model.pageadmin;
 
+import com.flowyk.fb.base.Constants;
 import com.flowyk.fb.entity.Contest;
 import com.flowyk.fb.model.ContestBean;
 import java.io.IOException;
@@ -31,40 +32,36 @@ import org.primefaces.model.UploadedFile;
 @ViewScoped
 public class ContestAdminBean implements Serializable {
 
-    @Inject
-    ContestBean contestBean;
+//    @Inject
+//    ContestBean contestBean;
 
     @NotNull
-    private Contest actualContest;
+    private Contest selectedContest = null;
 
-    public ContestAdminBean() {
-    }
     // Actions -----------------------------------------------------------------------------------
 
     public void uploadFiles(FileUploadEvent event) {
-//        System.out.println("uploading: " + event.getFile().getFileName());
         UploadedFile uploadedFile = event.getFile();
-        this.actualContest = contestBean.getActiveContest();
-        if (actualContest == null) {
+        if (selectedContest == null) {
             FacesContext.getCurrentInstance().addMessage(
                     null,
                     new FacesMessage("This page is not accessible the way you opened it, try it another way or contact administrator")
             );
             throw new IllegalStateException("Actual contest not set for contestAdminBean");
         }
-        Path folderPath = Paths.get("C:\\var\\webapp\\images");
-        if (!Files.exists(folderPath)) {
+        
+        if (!Files.exists(Constants.LOCAL_IMAGES_PATH)) {
             FacesContext.getCurrentInstance().addMessage(
                     null,
                     new FacesMessage("Can not upload files to server - directory for files doesn't exists - contact administrator")
             );
             return;
         }
-        Path contestPath = folderPath.resolve(actualContest.getRegisteredPage().getPageId());
+        Path contestPath = Constants.LOCAL_IMAGES_PATH.resolve(selectedContest.getRegisteredPage().getPageId());
         if (!Files.exists(contestPath)) {
             FacesContext.getCurrentInstance().addMessage(
                     null,
-                    new FacesMessage("This contest does not have directory in file system - contact administrator, contest ID: " + actualContest.getRegisteredPage().getPageId())
+                    new FacesMessage("This contest does not have directory in file system - contact administrator, contest ID: " + selectedContest.getRegisteredPage().getPageId())
             );
             return;
         }
@@ -78,13 +75,13 @@ public class ContestAdminBean implements Serializable {
     }
 
     // Getters -----------------------------------------------------------------------------------
-    public Contest getActualContest() {
-        return actualContest;
+    public Contest getSelectedContest() {
+        return selectedContest;
     }
 
     // Setters -----------------------------------------------------------------------------------
-    public void setActualContest(Contest actualContest) {
-        this.actualContest = actualContest;
+    public void setSelectedContest(Contest selectedContest) {
+        this.selectedContest = selectedContest;
     }
 
 }

@@ -23,7 +23,7 @@ import javax.ejb.Startup;
  * @author Lukas
  */
 @Singleton
-@Startup
+//@Startup
 public class DatabaseInit {
 
     private static final Logger LOG = Logger.getLogger(DatabaseInit.class.getName());

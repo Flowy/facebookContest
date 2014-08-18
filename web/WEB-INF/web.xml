@@ -19,16 +19,15 @@
     <filter-mapping>
         <filter-name>SignedRequestFilter</filter-name>
         <url-pattern>/contest/*</url-pattern>
+        <url-pattern>/canvas/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>AdminFilter</filter-name>
         <url-pattern>/contest/pageAdmin/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
-        <filter-name>ContestPageLikedFilter</filter-name>
-        <url-pattern>/contest/register.xhtml</url-pattern>
-        <url-pattern>/contest/returning.xhtml</url-pattern>
-        <url-pattern>/contest/thanks.xhtml</url-pattern>
+        <filter-name>LoginInitializer</filter-name>
+        <url-pattern>/contest/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>PageActiveFilter</filter-name>
@@ -40,6 +39,12 @@
     <filter-mapping>
         <filter-name>ContestActiveFilter</filter-name>
         <url-pattern>/contest/presslike.xhtml</url-pattern>
+        <url-pattern>/contest/register.xhtml</url-pattern>
+        <url-pattern>/contest/returning.xhtml</url-pattern>
+        <url-pattern>/contest/thanks.xhtml</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>ContestPageLikedFilter</filter-name>
         <url-pattern>/contest/register.xhtml</url-pattern>
         <url-pattern>/contest/returning.xhtml</url-pattern>
         <url-pattern>/contest/thanks.xhtml</url-pattern>

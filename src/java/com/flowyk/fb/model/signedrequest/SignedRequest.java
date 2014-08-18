@@ -34,9 +34,6 @@ import javax.validation.constraints.NotNull;
 @SessionScoped
 public class SignedRequest implements Serializable {
 
-    @Inject
-    private Login login;
-
     private static final Logger LOG = Logger.getLogger(SignedRequest.class.getName());
 
     private static final String API_SECRET = "842b931caf789225b22182d92a670bf0";
@@ -120,7 +117,6 @@ public class SignedRequest implements Serializable {
             page.liked = pageObject.getBoolean("liked", false);
             page.admin = pageObject.getBoolean("admin", false);
             page.pageId = pageObject.getString("id", null);
-            login.setPage(page.pageId);
             if (page.pageId == null) {
                 throw new MalformedSignedRequestException("Unknown page id");
             }

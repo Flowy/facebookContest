@@ -27,7 +27,7 @@ public class ContestActiveFilter implements Filter {
 
     @Inject
     private Login login;
-    
+
     /**
      *
      * @param request The servlet request we are processing
@@ -42,7 +42,7 @@ public class ContestActiveFilter implements Filter {
             FilterChain chain)
             throws IOException, ServletException {
 
-        if (login.getUser().getContest() != null) {
+        if (login.getContest() != null) {
             chain.doFilter(request, response);
         } else {
             HttpServletRequest req = (HttpServletRequest) request;
@@ -50,7 +50,7 @@ public class ContestActiveFilter implements Filter {
             res.sendRedirect(req.getContextPath() + "/contest/contest-unactive.xhtml");
         }
     }
-    
+
     @Override
     public void destroy() {
     }

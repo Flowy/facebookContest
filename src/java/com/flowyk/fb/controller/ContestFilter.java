@@ -72,7 +72,7 @@ public class ContestFilter implements Filter {
                 }
                 openGraphBean.setContestId(contestId);
             }
-                chain.doFilter(request, response);
+            chain.doFilter(request, response);
         } else {
             HttpServletResponse res = (HttpServletResponse) response;
             if (signedRequest.isSigned()) {
@@ -88,8 +88,6 @@ public class ContestFilter implements Filter {
             } else {
                 LOG.log(Level.INFO, "Unauthorized access: {0} {1}", new Object[]{login.getIpAddress(), login.getUserAgent()});
                 ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "This page is accessible only through facebook");
-
-//                res.sendRedirect(openGraphBean.getFBShareUrl());
             }
 
         }

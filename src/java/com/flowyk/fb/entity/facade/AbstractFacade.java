@@ -33,6 +33,10 @@ public abstract class AbstractFacade<T> {
     public void remove(T entity) {
         getEntityManager().remove(getEntityManager().merge(entity));
     }
+    
+    public boolean contains(Object entity) {
+        return getEntityManager().contains(entity);
+    }
 
     public T find(Object id) {
         return getEntityManager().find(entityClass, id);

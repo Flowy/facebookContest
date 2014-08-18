@@ -67,6 +67,10 @@ public class RegisteredPage implements Serializable {
     public RegisteredPage() {
     }
 
+    public RegisteredPage(String pageId, Date activeFrom) {
+        this.pageId = pageId;
+        this.activeFrom = activeFrom;
+    }
     public RegisteredPage(String pageId) {
         this.pageId = pageId;
     }

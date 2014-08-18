@@ -15,6 +15,8 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  *
@@ -25,7 +27,7 @@ public class PageActiveFilter implements Filter {
 
     @Inject
     Login login;
-    
+
     /**
      *
      * @param request The servlet request we are processing
@@ -39,10 +41,15 @@ public class PageActiveFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain)
             throws IOException, ServletException {
-
+        if (login.getPage() != null && login.getPage().getActive()) {
             chain.doFilter(request, response);
+        } else {
+            HttpServletRequest req = (HttpServletRequest) request;
+            HttpServletResponse res = (HttpServletResponse) response;
+            res.sendRedirect(req.getContextPath() + "/contest/page-unactive.xhtml");
+        }
     }
-    
+
     @Override
     public void destroy() {
     }
