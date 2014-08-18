@@ -6,7 +6,7 @@
 package com.flowyk.fb.model.pageadmin;
 
 import com.flowyk.fb.entity.Contest;
-import com.flowyk.fb.model.session.ContestBean;
+import com.flowyk.fb.model.ContestBean;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Files;

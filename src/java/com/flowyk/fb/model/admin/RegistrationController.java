@@ -1,9 +1,9 @@
 package com.flowyk.fb.model.admin;
 
 import com.flowyk.fb.entity.Registration;
+import com.flowyk.fb.entity.facade.RegistrationFacade;
 import com.flowyk.fb.model.admin.util.JsfUtil;
 import com.flowyk.fb.model.admin.util.JsfUtil.PersistAction;
-import com.flowyk.fb.entity.facade.custom.CustomRegistrationFacade;
 
 import java.io.Serializable;
 import java.util.List;
@@ -24,7 +24,7 @@ import javax.faces.convert.FacesConverter;
 public class RegistrationController implements Serializable {
 
     @EJB
-    private com.flowyk.fb.entity.facade.custom.CustomRegistrationFacade ejbFacade;
+    private RegistrationFacade ejbFacade;
     private List<Registration> items = null;
     private Registration selected;
 
@@ -45,7 +45,7 @@ public class RegistrationController implements Serializable {
     protected void initializeEmbeddableKey() {
     }
 
-    private CustomRegistrationFacade getFacade() {
+    private RegistrationFacade getFacade() {
         return ejbFacade;
     }
 

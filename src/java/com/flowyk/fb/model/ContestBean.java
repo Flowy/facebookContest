@@ -3,22 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.flowyk.fb.model.session;
+package com.flowyk.fb.model;
 
 import com.flowyk.fb.entity.Contest;
 import com.flowyk.fb.entity.RegisteredUser;
 import com.flowyk.fb.entity.Registration;
-import com.flowyk.fb.entity.facade.custom.CustomContestFacade;
-import com.flowyk.fb.entity.facade.custom.CustomRegistrationFacade;
-import com.flowyk.fb.exceptions.FBPageNotActiveException;
+import com.flowyk.fb.entity.facade.RegistrationFacade;
 import com.flowyk.fb.exceptions.NoActiveContestException;
-import com.flowyk.fb.exceptions.PageIdNotFoundException;
 import java.io.Serializable;
 import java.security.InvalidParameterException;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
 import java.util.TimeZone;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -36,70 +30,51 @@ public class ContestBean implements Serializable {
 
     private static final Logger LOG = Logger.getLogger(ContestBean.class.getName());
 
-    private Contest activeContest = null;
-
-    @EJB
-    private CustomRegistrationFacade registrationFacade;
-
-    @EJB
-    private CustomContestFacade contestFacade;
-
-//    @Inject
-//    private SignedRequestPage pageBean;
-
     @Inject
-    Login contestUser;
-
-    private boolean returning = false;
+    private Login login;
 
     // Actions -----------------------------------------------------------------------------------
     /**
-     * expects open transaction and persisted user
+     *
+     * @param forUser
+     * @param weight
+     * @return same as createNewTicket(forUser, weight, null);
      */
-    Registration createNewTicket(RegisteredUser forUser, int weight, RegisteredUser referal) {
-        Registration ticket = new Registration();
-        ticket.setRegisteredUser(forUser);
-        ticket.setTimeRegistered(Calendar.getInstance(TimeZone.getTimeZone("GMT")));
-        ticket.setIpAddress(contestUser.getIpAddress());
-        ticket.setUserAgent(contestUser.getUserAgent());
-        ticket.setReferal(referal);
-        ticket.setWeight(weight);
-        registrationFacade.create(ticket);
-        return ticket;
-    }
-
-    // Getters -----------------------------------------------------------------------------------
-    private Contest selectActiveContest(List<Contest> list) {
-        Collections.sort(list, Collections.reverseOrder());
-        Contest selected = null;
-        Date now = new Date();
-        for (Contest x : list) {
-            if (!x.getDisabled() && x.getContestEnd().after(now)) {
-                selected = x;
-            }
-        }
-        if (selected != null) {
-            return selected;
-        } else {
-            throw new NoActiveContestException();
-        }
+    public Registration createNewTicket(RegisteredUser forUser, int weight) {
+        return createNewTicket(forUser, weight, null);
     }
 
     /**
      *
+     * @param forUser
+     * @param weight
+     * @param referal
+     * @return new registration
+     */
+    public Registration createNewTicket(RegisteredUser forUser, int weight, RegisteredUser referal) {
+        Registration ticket = new Registration();
+        ticket.setRegisteredUser(forUser);
+        ticket.setTimeRegistered(Calendar.getInstance(TimeZone.getTimeZone("GMT")));
+        ticket.setIpAddress(login.getIpAddress());
+        ticket.setUserAgent(login.getUserAgent());
+        ticket.setReferal(referal);
+        ticket.setWeight(weight);
+        return ticket;
+    }
+
+    // Getters -----------------------------------------------------------------------------------
+
+    /**
+     *
      * @return active contest for actual page from signed request
-     * @throws PageIdNotFoundException if page not found in signed request
+     * @throws NoActiveContestException
      */
     public Contest getActiveContest() {
-        return null;
-//        if (pageBean.getPage() != null && pageBean.getPage().getActive()) {
-//            List<Contest> contestList = contestFacade.findByPage(pageBean.getPage());
-////          TODO: why this doesnt work ... List<Contest> list = new ArrayList(page.getContestCollection());
-//            Contest active = selectActiveContest(contestList);
-//            return active;
-//        } else {
-//            throw new FBPageNotActiveException("Page: " + pageBean.getPage());
-//        }
+        if (login.getUser().getContest() != null) {
+            return login.getUser().getContest();
+        } else {
+            throw new NoActiveContestException();
+        }
     }
 
     /**
@@ -122,7 +97,7 @@ public class ContestBean implements Serializable {
         return "./contest/layouts/" + contest.getContestLayout().getName() + "/" + resource;
     }
 
-    public String getImageUrl(String image, Contest contest) {
+    public String getShareImgUrl(String image, Contest contest) {
         if (contest != null) {
             String pageId = contest.getRegisteredPage().getPageId();
             return "/images/" + pageId + "/" + image;
@@ -136,16 +111,13 @@ public class ContestBean implements Serializable {
      * @param image with starting slash
      * @return image url for actual contest
      */
-    public String getImageUrl(String image) {
-        return getImageUrl(image, getActiveContest());
+    public String getShareImgUrl(String image) {
+        return getShareImgUrl(image, getActiveContest());
     }
 
     public boolean getReturning() {
-        return returning;
+        return login.getUser().getId() != null;
     }
 
     // Setters -----------------------------------------------------------------------------------
-    public void setReturning(boolean value) {
-        this.returning = value;
-    }
 }

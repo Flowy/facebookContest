@@ -1,9 +1,9 @@
 package com.flowyk.fb.model.admin;
 
 import com.flowyk.fb.entity.Contest;
+import com.flowyk.fb.entity.facade.ContestFacade;
 import com.flowyk.fb.model.admin.util.JsfUtil;
 import com.flowyk.fb.model.admin.util.JsfUtil.PersistAction;
-import com.flowyk.fb.entity.facade.custom.CustomContestFacade;
 
 import java.io.Serializable;
 import java.util.List;
@@ -24,7 +24,7 @@ import javax.faces.convert.FacesConverter;
 public class ContestController implements Serializable {
 
     @EJB
-    private CustomContestFacade ejbFacade;
+    private ContestFacade ejbFacade;
     private List<Contest> items = null;
     private Contest selected;
 
@@ -45,7 +45,7 @@ public class ContestController implements Serializable {
     protected void initializeEmbeddableKey() {
     }
 
-    private CustomContestFacade getFacade() {
+    private ContestFacade getFacade() {
         return ejbFacade;
     }
 

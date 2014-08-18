@@ -5,7 +5,7 @@
  */
 package com.flowyk.fb.controller;
 
-import com.flowyk.fb.model.signedrequest.SignedRequest;
+import com.flowyk.fb.model.Login;
 import java.io.IOException;
 import javax.inject.Inject;
 import javax.servlet.Filter;
@@ -24,7 +24,7 @@ import javax.servlet.annotation.WebFilter;
 public class PageActiveFilter implements Filter {
 
     @Inject
-    private SignedRequest signedRequest;
+    Login login;
     
     /**
      *
@@ -40,13 +40,7 @@ public class PageActiveFilter implements Filter {
             FilterChain chain)
             throws IOException, ServletException {
 
-//        if (signedRequest.getPage() pageBean.getPage().getActive()) {
             chain.doFilter(request, response);
-//        } else {
-//            HttpServletRequest req = (HttpServletRequest) request;
-//            HttpServletResponse res = (HttpServletResponse) response;
-//            res.sendRedirect(req.getContextPath() + "/contest/page-unactive.xhtml");
-//        }
     }
     
     @Override

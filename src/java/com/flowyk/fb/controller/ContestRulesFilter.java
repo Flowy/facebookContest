@@ -5,8 +5,10 @@
  */
 package com.flowyk.fb.controller;
 
-import com.flowyk.fb.model.RulesBean;
+import com.flowyk.fb.model.external.RulesBean;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.inject.Inject;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -23,6 +25,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebFilter(filterName = "FBContestRulesFilter", urlPatterns = {"/contest-rules.xhtml"})
 public class ContestRulesFilter implements Filter {
+
+    private static final Logger LOG = Logger.getLogger(ContestRulesFilter.class.getName());
 
     @Inject
     RulesBean rulesBean;
@@ -41,33 +45,21 @@ public class ContestRulesFilter implements Filter {
             FilterChain chain)
             throws IOException, ServletException {
         HttpServletResponse res = (HttpServletResponse) response;
-        String contestId = request.getParameter("contest");
-        
-        if (contestId != null) {
-            rulesBean.setContestId(contestId);
-            chain.doFilter(request, response);
+
+        String contestString = request.getParameter("contest");
+
+        if (contestString != null) {
+            try {
+                int contestInt = Integer.parseInt(contestString);
+                rulesBean.setContestId(contestInt);
+                chain.doFilter(request, response);
+            } catch (NumberFormatException e) {
+                LOG.log(Level.INFO, "Can't parse contest id from: {0}", contestString);
+                ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "Malformed header");
+            }
         } else {
             res.sendError(HttpServletResponse.SC_FORBIDDEN, "Unknown contest");
         }
-
-////        System.out.println("Filter got request from: " + req.getRequestURL() + "\nparameters: " + req.getQueryString());
-//        String code = request.getParameter("code");
-//        if (code != null) {
-//            login.setCode(code);
-//        }
-//        
-////        String contestUrl = req.getContextPath() + "/faces/contest.xhtml";
-//        String errorUrl = req.getContextPath() + "/faces/error.xhtml";
-//
-////        if (req.getRequestURI().equals(contestUrl)) {
-//        if (login.checkLogin()) {
-//            chain.doFilter(request, response);
-//        } else {
-//            res.sendRedirect(errorUrl);
-//        }
-////        } else {
-////            chain.doFilter(request, response);
-////        }
     }
 
     /**

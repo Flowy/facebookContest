@@ -6,7 +6,7 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:form id="registerForm">
-        <h:graphicImage styleClass="formImage" url="#{contestBean.getImageUrl('text2.png')}" />
+        <h:graphicImage styleClass="formImage" url="#{contestBean.getShareImgUrl('text2.png')}" />
         <p:growl id="msgs" life="15000" showDetail="true" showSummary="false" />
 
         <span id="returningText">#{Loc['form.registerAgainText']}</span>
@@ -23,7 +23,7 @@
             <h:commandButton styleClass="inputSubmit"
                              alt="#{Loc['form.registerButton']}"
                              action="#{returningBean.registerNewTicket}"
-                             image="#{contestBean.getImageUrl('bt-odoslat.png')}">
+                             image="#{contestBean.getShareImgUrl('bt-odoslat.png')}">
             </h:commandButton>
             <h:commandLink styleClass="returningLink" immediate="true" action="register">
                 <f:setPropertyActionListener target="#{contestBean.returning}" value="false" />

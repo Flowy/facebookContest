@@ -15,8 +15,8 @@
                 js.src = &quot;//connect.facebook.net/#{signedRequest.user.locale}/sdk.js#xfbml=1&amp;appId=#{constants.API_KEY}&amp;version=v2.0&quot;;
                 fjs.parentNode.insertBefore(js, fjs);
             }(document, 'script', 'facebook-jssdk'));</script>
-    <h:graphicImage id="youAreInImage" url="#{contestBean.getImageUrl('nazov2.png')}" />
-    <h:graphicImage id="thankYouImage" url="#{contestBean.getImageUrl('text3.png')}" />
+    <h:graphicImage id="youAreInImage" url="#{contestBean.getShareImgUrl('nazov2.png')}" />
+    <h:graphicImage id="thankYouImage" url="#{contestBean.getShareImgUrl('text3.png')}" />
     <h:outputStylesheet name="#{contestBean.getResourceUrl('thanks.css')}"/>
     <div id="thankYouFrame">
         <div id="thankYouText">
@@ -25,6 +25,6 @@
             <h:outputText value=" #{Loc['thanks.shareText']}"
                           styleClass=""/>
         </div>
-        <h:outputLink id="shareLink" value="" onclick="#{thanksBean.shareScript}"><h:graphicImage url="#{contestBean.getImageUrl('bt-zdielat.png')}"/></h:outputLink>
+        <h:outputLink id="shareLink" value="" onclick="#{thanksBean.shareScript}"><h:graphicImage url="#{contestBean.getShareImgUrl('bt-zdielat.png')}"/></h:outputLink>
     </div>
 </ui:composition>

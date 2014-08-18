@@ -5,7 +5,7 @@
  */
 package com.flowyk.fb.controller;
 
-import com.flowyk.fb.model.session.ContestBean;
+import com.flowyk.fb.model.Login;
 import java.io.IOException;
 import javax.inject.Inject;
 import javax.servlet.Filter;
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 public class ContestActiveFilter implements Filter {
 
     @Inject
-    ContestBean contestBean;
+    private Login login;
     
     /**
      *
@@ -42,7 +42,7 @@ public class ContestActiveFilter implements Filter {
             FilterChain chain)
             throws IOException, ServletException {
 
-        if (contestBean.getActiveContest() != null) {
+        if (login.getUser().getContest() != null) {
             chain.doFilter(request, response);
         } else {
             HttpServletRequest req = (HttpServletRequest) request;

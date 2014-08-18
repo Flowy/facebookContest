@@ -3,12 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.flowyk.fb.model;
 
 import com.flowyk.fb.base.Constants;
 import com.flowyk.fb.entity.RegisteredUser;
-import com.flowyk.fb.model.session.Login;
+import com.flowyk.fb.model.signedrequest.AppData;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -20,10 +19,10 @@ import javax.inject.Inject;
 @Named
 @RequestScoped
 public class ShareUrlBean {
-    
+
     @Inject
     Login login;
-    
+
     public String getFBShareUrl(RegisteredUser user) {
 //        if (user != null) {
 //            AppData appData = new AppData();
@@ -37,14 +36,22 @@ public class ShareUrlBean {
 //                    .append(appData.getAsJson().toString());
 //            return sb.toString();
 //        } else {
-            return "https://apps.facebook.com/flowykcontests";
+        return "https://apps.facebook.com/flowykcontests";
 //        }
     }
-    
+
     public String getShareUrl() {
-        return Constants.SITE_URL
-                + "/contest/contest.xhtml"
-                + (login.getUser() != null ? ("?reference=" + login.getUser().getId()) : "");
+        StringBuilder sb = new StringBuilder();
+        sb.append(Constants.SITE_URL);
+        sb.append("/contest/contest.xhtml");
+
+        RegisteredUser reference = login.getUser();
+        if (reference != null) {
+            AppData appData = new AppData();
+            appData.setReference(reference.getId());
+            sb.append("?").append(appData.getAsHeader());
+        }
+        return sb.toString();
     }
-    
+
 }

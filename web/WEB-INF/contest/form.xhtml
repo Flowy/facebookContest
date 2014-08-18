@@ -6,25 +6,25 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:form id="registerForm">
-        <h:graphicImage styleClass="formImage" url="#{contestBean.getImageUrl('text2.png')}" />
+        <h:graphicImage styleClass="formImage" url="#{contestBean.getShareImgUrl('text2.png')}" />
         <p:growl id="msgs" life="15000" showDetail="true" showSummary="false" />
         <h:panelGrid styleClass="formTable" columns="2">
 
             <h:outputLabel for="nameTextInput"
                            value="#{Loc['form.nameInput']}" styleClass="inputLabel" />
             <h:inputText id="nameTextInput"
-                         value="#{registrationBean.activeUser.name}" 
+                         value="#{login.user.name}" 
                          styleClass="inputText #{component.valid ? '' : 'error'}" />
             <h:outputLabel for="emailTextInput"
                            value="#{Loc['form.emailInput']}" styleClass="inputLabel" />
             <h:inputText id="emailTextInput"
-                         value="#{registrationBean.activeUser.email}" 
+                         value="#{login.user.email}" 
                          styleClass="inputText #{component.valid ? '' : 'error'}"
                          validatorMessage="#{Loc['validator.email']}" />
             <h:outputLabel for="mobileTextInput" 
                            value="#{Loc['form.mobilInput']}" styleClass="inputLabel" />
             <h:inputText id="mobileTextInput" 
-                         value="#{registrationBean.activeUser.telephone}" 
+                         value="#{login.user.telephone}" 
                          styleClass="inputText #{component.valid ? '' : 'error'}" 
                          validatorMessage="#{Loc['validator.telephone']}" />
 
@@ -44,7 +44,7 @@
             <h:commandButton styleClass="inputSubmit"
                              alt="#{Loc['form.registerButton']}"
                              action="#{registrationBean.register}"
-                             image="#{contestBean.getImageUrl('bt-odoslat.png')}">
+                             image="#{contestBean.getShareImgUrl('bt-odoslat.png')}">
             </h:commandButton>
             <h:commandLink styleClass="returningLink" immediate="true" action="returning">
                 <f:setPropertyActionListener target="#{contestBean.returning}" value="true" />

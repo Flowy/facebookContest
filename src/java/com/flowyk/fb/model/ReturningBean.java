@@ -5,13 +5,9 @@
  */
 package com.flowyk.fb.model;
 
-import com.flowyk.fb.model.session.ContestBean;
-import com.flowyk.fb.model.session.Login;
-import com.flowyk.fb.base.Constants;
 import com.flowyk.fb.entity.RegisteredUser;
-import com.flowyk.fb.entity.facade.custom.CustomRegisteredUserFacade;
-import com.flowyk.fb.entity.facade.custom.CustomRegistrationFacade;
-import com.flowyk.fb.model.signedrequest.SignedRequest;
+import com.flowyk.fb.entity.facade.RegisteredUserFacade;
+import com.flowyk.fb.entity.facade.RegistrationFacade;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -32,15 +28,12 @@ import javax.validation.constraints.Pattern;
 @Named(value = "returningBean")
 @ViewScoped
 public class ReturningBean implements Serializable {
-
-    @Inject
-    private SignedRequest signedRequest;
     
     @EJB
-    private CustomRegisteredUserFacade registeredUserFacade;
+    private RegisteredUserFacade registeredUserFacade;
 
     @EJB
-    private CustomRegistrationFacade registrationFacade;
+    private RegistrationFacade registrationFacade;
 
     @Inject
     Login contestUser;
@@ -56,41 +49,41 @@ public class ReturningBean implements Serializable {
 
     public String registerNewTicket() {
 
-        List<RegisteredUser> userList = registeredUserFacade.findByContestAndEmail(contestBean.getActiveContest(), returningEmail);
-
-        if (userList.isEmpty()) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Zadaný email ešte nieje v súťaži", "Zadaný email ešte nieje v súťaži"));
-            contestBean.setReturning(Boolean.FALSE);
-            return null;
-        } else {
-            RegisteredUser user = userList.iterator().next();
-//            contestUser.setContestUser(user);
-            
-            
-            Calendar lastTicket = registrationFacade.getLastTicketTime(user);
-            long lastTicketMillis = lastTicket.getTimeInMillis();
-
-            long delayMillis = user.getContest().getTimeBetweenTickets().getTime();
-
-            Calendar nearestTicket = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
-            nearestTicket.setTimeInMillis(lastTicketMillis + delayMillis);
-
-            if (Calendar.getInstance().after(nearestTicket)) {
-//                contestBean.createNewTicket(user, Constants.RETURNING_TICKETS, null);
-                return "thanks";
-            } else {
-                //needed delay for new ticket not passed
-                String msg = "Zatiaľ neuplinul potrebný čas pre znovuregistráciu, najbližšie sa môžte registrovať: {1}".replace("{1}", nearestTicket.toString());
-                FacesContext.getCurrentInstance().addMessage(
-                        null,
-                        new FacesMessage(
-                                FacesMessage.SEVERITY_ERROR,
-                                msg, msg
-                        )
-                );
-                return null;
-            }
-        }
+//        List<RegisteredUser> userList = registeredUserFacade.findByContestAndEmail(contestBean.getActiveContest(), returningEmail);
+//
+//        if (userList.isEmpty()) {
+//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Zadaný email ešte nieje v súťaži", "Zadaný email ešte nieje v súťaži"));
+//            return null;
+//        } else {
+//            RegisteredUser user = userList.iterator().next();
+////            contestUser.setContestUser(user);
+//            
+//            
+//            Calendar lastTicket = registrationFacade.getLastTicketTime(user);
+//            long lastTicketMillis = lastTicket.getTimeInMillis();
+//
+//            long delayMillis = user.getContest().getTimeBetweenTickets().getTime();
+//
+//            Calendar nearestTicket = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+//            nearestTicket.setTimeInMillis(lastTicketMillis + delayMillis);
+//
+//            if (Calendar.getInstance().after(nearestTicket)) {
+////                contestBean.createNewTicket(user, Constants.RETURNING_TICKETS, null);
+//                return "thanks";
+//            } else {
+//                //needed delay for new ticket not passed
+//                String msg = "Zatiaľ neuplinul potrebný čas pre znovuregistráciu, najbližšie sa môžte registrovať: {1}".replace("{1}", nearestTicket.toString());
+//                FacesContext.getCurrentInstance().addMessage(
+//                        null,
+//                        new FacesMessage(
+//                                FacesMessage.SEVERITY_ERROR,
+//                                msg, msg
+//                        )
+//                );
+//                return null;
+//            }
+//        }
+        return null;
     }
 
     public String getReturningEmail() {

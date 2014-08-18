@@ -6,6 +6,7 @@
 package com.flowyk.fb.model.signedrequest;
 
 import com.flowyk.fb.exceptions.MalformedSignedRequestException;
+import com.flowyk.fb.model.Login;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
@@ -17,6 +18,8 @@ import java.util.logging.Logger;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
@@ -27,8 +30,12 @@ import javax.validation.constraints.NotNull;
  *
  * @author Lukas
  */
+@Named
 @SessionScoped
 public class SignedRequest implements Serializable {
+
+    @Inject
+    private Login login;
 
     private static final Logger LOG = Logger.getLogger(SignedRequest.class.getName());
 
@@ -50,7 +57,7 @@ public class SignedRequest implements Serializable {
 
     private final Page page = new Page();
     private final User user = new User();
-    private final AppData appData = new AppData();
+    private AppData appData = new AppData();
 
     private boolean signed = false;
 
@@ -69,7 +76,7 @@ public class SignedRequest implements Serializable {
     public AppData getAppData() {
         return appData;
     }
-    
+
     /**
      * decodes signed request from facebook and sets token
      *
@@ -107,12 +114,13 @@ public class SignedRequest implements Serializable {
     }
 
     private void parseSignedRequestJson(@NotNull JsonObject json) throws MalformedSignedRequestException {
-
+        System.out.println("Got signed request: " + json);
         JsonObject pageObject = json.getJsonObject("page");
         if (pageObject != null) {
             page.liked = pageObject.getBoolean("liked", false);
-            page.liked = pageObject.getBoolean("admin", false);
+            page.admin = pageObject.getBoolean("admin", false);
             page.pageId = pageObject.getString("id", null);
+            login.setPage(page.pageId);
             if (page.pageId == null) {
                 throw new MalformedSignedRequestException("Unknown page id");
             }
@@ -128,26 +136,15 @@ public class SignedRequest implements Serializable {
                 user.ageMax = age.getInt("max", 0);
             }
         }
-
-        //TODO: try to remove string encapsulate of app data from signed request
+        
         String appDataString = json.getString("app_data", null);
         if (appDataString != null) {
-            System.out.println("TODO: app_data: " + appDataString);
-        } else {
-            JsonObject appDataObject = json.getJsonObject("app_data");
-            if (appDataObject != null) {
-                System.out.println("TODO: parse this object: " + appDataObject.toString());
-            }
-//    public void parseJson(JsonObject json) {
-//        if (json == null) {
-//            return;
-//        }
-//        setReference(json.getInt("reference", 0));
-//    }
+            appData = AppData.parseString(appDataString);
         }
     }
 
-    public class Page implements Serializable {
+    public static class Page implements Serializable {
+
         private boolean liked;
         private boolean admin;
         private String pageId;
@@ -163,10 +160,11 @@ public class SignedRequest implements Serializable {
         public String getPageId() {
             return pageId;
         }
-        
+
     }
 
-    public class User implements Serializable  {
+    public static class User implements Serializable {
+
         private String locale;
         private String country;
         private int ageMin;
@@ -187,22 +185,5 @@ public class SignedRequest implements Serializable {
         public int getAgeMax() {
             return ageMax;
         }
-        
-    }
-
-    public class AppData implements Serializable  {
-        private String reference;
-
-        public String getReference() {
-            return reference;
-        }
-        
-        //TODO: get reference to actual user
-//    public JsonObject getAsJson() {
-//        JsonObject json = Json.createObjectBuilder()
-//                .add("reference", (getReference() != null ? getReference().getId() : 0))
-//                .build();
-//        return json;
-//    }
     }
 }

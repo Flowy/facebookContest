@@ -8,7 +8,7 @@ package com.flowyk.fb.controller;
 import com.flowyk.fb.base.Constants;
 import com.flowyk.fb.model.signedrequest.SignedRequest;
 import com.flowyk.fb.exceptions.MalformedSignedRequestException;
-import com.flowyk.fb.model.session.Login;
+import com.flowyk.fb.model.Login;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.logging.Level;
@@ -82,16 +82,6 @@ public class SignedRequestFilter implements Filter {
         login.setUserAgent(userAgent);
 
         chain.doFilter(request, response);
-
-//        String reference = req.getParameter("reference");
-//        if (reference != null && !reference.equals("null")) {
-//            try {
-//                Integer refInt = Integer.parseInt(reference);
-//                signedRequest.getAppData().setReference(refInt);
-//            } catch (NumberFormatException e) {
-//                LOG.log(Level.WARNING, "Can't parse reference to: {0}", reference);
-//            }
-//        }
     }
 
     /**
