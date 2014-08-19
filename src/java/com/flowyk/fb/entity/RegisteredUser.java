@@ -60,7 +60,7 @@ public class RegisteredUser implements Serializable {
     private List<Registration> registrationList;
     @OneToMany(mappedBy = "referal", fetch = FetchType.EAGER)
     private List<Registration> referalList;
-    @OneToMany(mappedBy = "registeredUser", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "winner", fetch = FetchType.EAGER)
     private List<Prize> prizeList;
     private static final long serialVersionUID = 1L;
     

@@ -47,13 +47,15 @@ public class Contest implements Serializable {
     
     @Basic(optional = false)
     @NotNull
+    @Column(name = "time_between_tickets", nullable = false)
+    @Temporal(TemporalType.TIME)
+    private Date timeBetweenTickets;
+    
+    @Basic(optional = false)
+    @NotNull
     @Size(min = 1, max = 250)
     @Column(name = "external_info_url", nullable = false, length = 250)
     private String externalInfoUrl;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "time_between_tickets", nullable = false)
-    private java.sql.Time timeBetweenTickets;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "contest", fetch = FetchType.EAGER)
     private List<RegisteredUser> registeredUserList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "contest", fetch = FetchType.EAGER)
@@ -71,6 +73,7 @@ public class Contest implements Serializable {
     @GeneratedValue
     @Column(name = "id")
     private Integer id;
+    @Basic(optional = false)
     @NotNull
     @Size(max = 150)
     @Column(name = "name")
@@ -100,12 +103,7 @@ public class Contest implements Serializable {
     public Contest() {
     }
 
-    public Contest(Integer id) {
-        this.id = id;
-    }
-
-    public Contest(Integer id, Date contestStart, Date contestEnd, boolean disabled) {
-        this.id = id;
+    public Contest(Date contestStart, Date contestEnd, boolean disabled) {
         this.contestStart = contestStart;
         this.contestEnd = contestEnd;
         this.disabled = disabled;
@@ -212,14 +210,6 @@ public class Contest implements Serializable {
         this.externalInfoUrl = externalInfoUrl;
     }
 
-    public java.sql.Time getTimeBetweenTickets() {
-        return timeBetweenTickets;
-    }
-
-    public void setTimeBetweenTickets(java.sql.Time timeBetweenTickets) {
-        this.timeBetweenTickets = timeBetweenTickets;
-    }
-
     public List<RegisteredUser> getRegisteredUserList() {
         return registeredUserList;
     }
@@ -234,5 +224,13 @@ public class Contest implements Serializable {
 
     public void setPrizeList(List<Prize> prizeList) {
         this.prizeList = prizeList;
+    }
+
+    public Date getTimeBetweenTickets() {
+        return timeBetweenTickets;
+    }
+
+    public void setTimeBetweenTickets(Date timeBetweenTickets) {
+        this.timeBetweenTickets = timeBetweenTickets;
     }
 }

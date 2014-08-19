@@ -39,13 +39,13 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Registration.findByRegisteredUser", query = "SELECT r FROM Registration r WHERE r.registeredUser = :registeredUser")
 })
 public class Registration implements Serializable, Comparable<Registration> {
-    private static final long serialVersionUID = 1L;
-    
     @Basic(optional = false)
     @NotNull
     @Column(name = "time_registered", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private Calendar timeRegistered;
+    private Date timeRegistered;
+    private static final long serialVersionUID = 1L;
+    
     @Basic(optional = false)
     @NotNull
     @Column(name = "weight")
@@ -83,14 +83,6 @@ public class Registration implements Serializable, Comparable<Registration> {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Calendar getTimeRegistered() {
-        return timeRegistered;
-    }
-
-    public void setTimeRegistered(Calendar timeRegistered) {
-        this.timeRegistered = timeRegistered;
     }
 
     public String getIpAddress() {
@@ -158,6 +150,14 @@ public class Registration implements Serializable, Comparable<Registration> {
 
     public void setReferal(RegisteredUser referal) {
         this.referal = referal;
+    }
+
+    public Date getTimeRegistered() {
+        return timeRegistered;
+    }
+
+    public void setTimeRegistered(Date timeRegistered) {
+        this.timeRegistered = timeRegistered;
     }
     
 }

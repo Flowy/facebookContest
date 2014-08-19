@@ -2,30 +2,28 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <h:outputStylesheet name="./contest/admin.css" />
 
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>Admin page</title>
     </h:head>
-    <body>
+    <h:body>
+        <h:form>
+            <h:commandButton value="#{Loc['admin.createNewContest']}" action="#{pageAdminBean.createNewContest}" />
+        </h:form>
+        <h:form>
             <h:dataTable value="#{pageAdminBean.contests}" var="contest">
                 <f:facet name="header">
-
-                    <h:form>
-                        <h:commandButton value="#{Loc['admin.createNewContest']}" action="#{contestEditBean.createNewContest}" />
-                    </h:form>
                 </f:facet>
                 <h:column>
                     <f:facet name="header">#{Loc['admin.contestList']}</f:facet>
-                    <h:form>
-                        <h:commandLink value="#{contest.name}" action="contest-admin">
-                            <f:setPropertyActionListener target="#{contestAdminBean.selectedContest}" value="#{contest}" />
-                        </h:commandLink>
-                    </h:form>
+                    <h:commandLink value="#{contest.name}" action="contest-edit">
+                        <f:setPropertyActionListener target="#{contestEditBean.selectedContest}" value="#{contest}" />
+                    </h:commandLink>
                 </h:column>
             </h:dataTable>
-    </body>
+        </h:form>
+    </h:body>
 </html>

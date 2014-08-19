@@ -9,7 +9,7 @@ package com.flowyk.fb.entity.facade;
 import com.flowyk.fb.base.Constants;
 import com.flowyk.fb.entity.RegisteredUser;
 import com.flowyk.fb.entity.Registration;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,10 +49,9 @@ public class RegistrationFacade extends AbstractFacade<Registration> {
      * @param user
      * @return registered time of last ticket
      */
-    public Calendar getLastTicketTime(RegisteredUser user) {
+    public Date getLastTicketTime(RegisteredUser user) {
         List<Registration> list = em.createNamedQuery("Registration.findByRegisteredUser").setParameter("registeredUser", user).getResultList();
-        Calendar last = Calendar.getInstance();
-        last.setTimeInMillis(0L);
+        Date last = new Date(Long.MIN_VALUE);
         if (Constants.FINE_DEBUG) {
             Logger.getLogger(RegistrationFacade.class.getName()).log(Level.INFO, "Found registrations: {0}\r\n for user: {1}", new Object[]{list != null ? list.toString() : "none", user});
         }

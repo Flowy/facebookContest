@@ -3,8 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <h:outputStylesheet name="./contest/admin.css" />
 
@@ -13,82 +12,89 @@
     </h:head>
     <h:body>
         <p:tabView id="contestEditTabs">
+            <p:growl id="messages" showDetail="true" showSummary="false" sticky="true" />
+            <p:messages />
 
             <p:tab title="#{Loc['admin.contestTitle']}">
                 <h:form>
                     <p:panelGrid columns="2">
                         <p:outputLabel for="nameInput" value="#{Loc['admin.nameInputLabel']}" />
-                        <p:inputText id="nameInput" value="#{contestEditBean.selectedContest.name}" />
+                        <p:inputText id="nameInput" value="#{contestEditBean.selectedContest.name}" 
+                                     required="true" />
 
                         <p:outputLabel for="descriptionInput" value="#{Loc['admin.descriptionInputLabel']}" />
                         <p:inputTextarea id="descriptionInput" value="#{contestEditBean.selectedContest.description}" 
-                                         rows="2" autoResize="true" cols="50"/>
+                                         rows="2" autoResize="true" cols="50"
+                                         required="true" />
 
                         <p:outputLabel for="contestStartInput" value="#{Loc['admin.contestStartLabel']}" />
                         <p:calendar id="contestStartInput" value="#{contestEditBean.selectedContest.contestStart}"
-                                    locale="sk" pattern="dd.MM.yyyy HH:mm"/>
+                                    locale="sk" pattern="dd.MM.yyyy HH:mm"
+                                    required="true" />
 
                         <p:outputLabel for="contestEndInput" value="#{Loc['admin.contestEndLabel']}" />
                         <p:calendar id="contestEndInput" value="#{contestEditBean.selectedContest.contestEnd}"
-                                    pattern="dd.MM.yyyy HH:mm"/>
+                                    pattern="dd.MM.yyyy HH:mm"
+                                    required="true" />
 
                         <p:outputLabel for="externalUrlInput" value="#{Loc['admin.externalUrlLabel']}" />
-                        <p:inputText id="externalUrlInput" value="#{contestEditBean.selectedContest.externalInfoUrl}" />
+                        <p:inputText id="externalUrlInput" value="#{contestEditBean.selectedContest.externalInfoUrl}" 
+                                     required="true" />
 
                         <p:outputLabel for="contestRulesEditor" value="#{Loc['admin.rulesLabel']}" />
-                        <p:editor id="contestRulesEditor" value="#{contestEditBean.selectedContest.rules}" />
+                        <p:editor id="contestRulesEditor" value="#{contestEditBean.selectedContest.rules}" 
+                                  required="true"  />
 
                         <p:outputLabel for="ticketsDelayCalendar" value="#{Loc['admin.ticketsDelayLabel']}" />
                         <p:calendar id="ticketsDelayCalendar" value="#{contestEditBean.selectedContest.timeBetweenTickets}" 
                                     timeOnly="true"
-                                    pattern="HH:mm"/>
+                                    pattern="HH:mm"
+                                    required="true" />
                         <f:facet name="footer">
-                            <h:commandButton value="#{Loc['admin.saveButton']}" action="#{contestEditBean.save}" />
+                            <p:commandButton value="#{Loc['admin.saveButton']}" action="#{contestEditBean.save}" ajax="false" />
                         </f:facet>
                     </p:panelGrid>
                 </h:form>
             </p:tab>
 
-
-
             <p:tab title="#{Loc['admin.uploadImageTitle']}">
+                <h:outputText value="#{Loc['admin.imageUploadWarn']}" /><br />
+                <h:outputText value="#{Loc['admin.imageUploadFiles']}" /><br />
                 <h:form id="uploadForm" enctype="multipart/form-data">
                     <p:fileUpload fileUploadListener="#{contestEditBean.uploadFiles}" mode="advanced" dragDropSupport="false"
-                                  multiple="true" update="messages" sizeLimit="1000000" 
+                                  multiple="true" update=":contestEditTabs:messages" sizeLimit="1000000" 
                                   allowTypes="/(bt-odoslat|bt-zdielat|cena|nazov|nazov2|pozadie|text1|text2|text3|share-img|icon).png$/" 
-                                  auto="true"  />
-
-                    <p:growl id="messages" showDetail="true" sticky="true" />
+                                  auto="true" />
                 </h:form>
             </p:tab>
-
-
-
+            
             <p:tab title="#{Loc['admin.prizesTitle']}">
 
                 <h:form id="prizesForm">
-                    <p:growl id="prizesMsgs" showDetail="true" />
-                    <p:dataTable value="#{contestEditBean.prizes}" var="prize">
+                    <p:dataTable value="#{contestEditBean.prizes}" var="prize" editable="true">
 
+                        <p:column style="width:32px">
+                            <p:rowEditor />
+                        </p:column>
+                        
                         <p:column headerText="#{Loc['admin.prizeName']}">
-                            <h:outputText value="#{prize.name}" />
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{prize.name}" /></f:facet>
+                                <f:facet name="input"><p:inputText id="prizeNameInput" value="#{prize.name}" /></f:facet>
+                            </p:cellEditor>
                         </p:column>
 
                         <p:column headerText="#{Loc['admin.prizeWinner']}">
-                            <h:outputText value="#{prize.registeredUser}" />
-                            <br />
-                            <p:commandButton value="#{Loc['admin.rollWinner']}" action="#{contestEditBean.rollWinnerFor(prize)}"/>
+                            <h:outputText value="#{prize.winner}" rendered="#{!empty prize.winner}"/>
+                            <h:commandButton value="#{Loc['admin.rollWinner']}" action="#{contestEditBean.rollWinnerFor(prize)}"/>
                         </p:column>
 
                     </p:dataTable>
                 </h:form>
                 <h:form>
-                    <h:commandButton action="#{contestEditBean.createNewPrize}" value="#{Loc['admin.createPrize']}" />
+                    <p:commandButton action="#{contestEditBean.createNewPrize}" value="#{Loc['admin.createPrize']}" ajax="false" />
                 </h:form>
             </p:tab>
-
-
-
         </p:tabView>
     </h:body>
 </html>

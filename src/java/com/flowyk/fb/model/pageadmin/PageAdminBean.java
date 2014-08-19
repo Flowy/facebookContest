@@ -33,6 +33,9 @@ public class PageAdminBean implements Serializable {
     
     @EJB
     ContestFacade contestFacade;
+    
+    @Inject
+    ContestEditBean contestEditBean;
 
     // Actions -----------------------------------------------------------------------------------
     
@@ -41,6 +44,11 @@ public class PageAdminBean implements Serializable {
         page.setActive(true);
         registeredPageFacade.edit(page);
         return "admin";
+    }
+    
+    public String createNewContest() {
+        contestEditBean.createNewContest();
+        return "contest-edit";
     }
 
     // Getters -----------------------------------------------------------------------------------

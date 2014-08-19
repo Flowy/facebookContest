@@ -7,7 +7,6 @@ package com.flowyk.fb.entity.facade;
 
 import com.flowyk.fb.entity.Contest;
 import com.flowyk.fb.entity.RegisteredUser;
-import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;

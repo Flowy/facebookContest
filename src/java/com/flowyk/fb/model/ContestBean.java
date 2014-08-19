@@ -10,8 +10,7 @@ import com.flowyk.fb.entity.RegisteredUser;
 import com.flowyk.fb.entity.Registration;
 import java.io.Serializable;
 import java.security.InvalidParameterException;
-import java.util.Calendar;
-import java.util.TimeZone;
+import java.util.Date;
 import java.util.logging.Logger;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
@@ -52,7 +51,7 @@ public class ContestBean implements Serializable {
     public Registration createNewTicket(RegisteredUser forUser, int weight, RegisteredUser referal) {
         Registration ticket = new Registration();
         ticket.setRegisteredUser(forUser);
-        ticket.setTimeRegistered(Calendar.getInstance(TimeZone.getTimeZone("GMT")));
+        ticket.setTimeRegistered(new Date());
         ticket.setIpAddress(login.getIpAddress());
         ticket.setUserAgent(login.getUserAgent());
         ticket.setReferal(referal);

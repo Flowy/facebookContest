@@ -9,6 +9,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import javax.ejb.Singleton;
 import javax.inject.Named;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 
 /**
  *
@@ -42,6 +44,22 @@ public class Constants {
         return API_KEY;
     }
 
+    
+    public static void printConstraintViolation(ConstraintViolationException e) {
+        StringBuilder sb = new StringBuilder("Constraints violated:\n");
+        for (ConstraintViolation<?> constraint : e.getConstraintViolations()) {
+            sb
+                    .append("Root Bean Class: ")
+                    .append(constraint.getRootBeanClass() != null ? constraint.getRootBeanClass().toString() : "")
+                    .append("\n");
+            sb
+                    .append("\tInvalid value: ")
+                    .append(constraint.getPropertyPath() != null ? constraint.getPropertyPath().toString() : "")
+                    .append("\n");
+            sb.append("\t\t").append(constraint.getMessage()).append("\n");
+        }
+        System.out.println(sb.toString());
+    }
 //    public String getCALLBACK_URL() {
 //        return CALLBACK_URL;
 //    }

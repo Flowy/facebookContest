@@ -8,7 +8,10 @@ package com.flowyk.fb.model.pageadmin;
 import com.flowyk.fb.base.Constants;
 import com.flowyk.fb.entity.Contest;
 import com.flowyk.fb.entity.Prize;
-import com.flowyk.fb.entity.PrizePK;
+import com.flowyk.fb.entity.facade.ContestFacade;
+import com.flowyk.fb.entity.facade.ContestLayoutFacade;
+import com.flowyk.fb.entity.facade.RegisteredPageFacade;
+import com.flowyk.fb.model.signedrequest.SignedRequest;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Files;
@@ -17,13 +20,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.inject.Named;
-import javax.faces.view.ViewScoped;
-import javax.validation.constraints.NotNull;
 import org.primefaces.event.FileUploadEvent;
-import org.primefaces.event.RowEditEvent;
 import org.primefaces.model.UploadedFile;
 
 /**
@@ -31,38 +34,48 @@ import org.primefaces.model.UploadedFile;
  * @author Lukas
  */
 @Named(value = "contestEditBean")
-@ViewScoped
+@SessionScoped
 public class ContestEditBean implements Serializable {
 
-    public enum State {
+    @EJB
+    ContestFacade contestFacade;
 
-        ILLEGAL, CREATING, EDITING
-    }
+    @Inject
+    SignedRequest signedRequest;
 
-    private State state = State.ILLEGAL;
+    @EJB
+    RegisteredPageFacade registeredPageFacade;
 
-    @NotNull
-    private Contest selectedContest = new Contest();
+    @EJB
+    ContestLayoutFacade contestLayoutFacade;
+
+    private Contest selectedContest = null;
 
     // Actions -----------------------------------------------------------------------------------
-    public String createNewContest() {
+    public void createNewContest() {
         selectedContest = new Contest();
-        state = State.CREATING;
-        return "contest-edit";
+        selectedContest.setPrizeList(new ArrayList<>());
+        String pageId = signedRequest.getPage().getPageId();
+        selectedContest.setRegisteredPage(registeredPageFacade.find(pageId));
+        selectedContest.setContestLayout(contestLayoutFacade.find("default"));
     }
 
     public void save() {
-
+        if (selectedContest.getId() != null && contestFacade.find(selectedContest.getId()) != null) {
+            contestFacade.edit(selectedContest);
+        } else {
+            contestFacade.create(selectedContest);
+        }
     }
 
     public void createNewPrize() {
-//        Prize prize = new Prize();
-
-//        selectedContest.getPrizeList().add(prize);
+        Prize prize = new Prize();
+        prize.setContest(selectedContest);
+        selectedContest.getPrizeList().add(prize);
     }
-    
+
     public void rollWinnerFor(Prize prize) {
-        
+//TODO: roll for winner
     }
 
     public void uploadFiles(FileUploadEvent event) {
@@ -105,17 +118,12 @@ public class ContestEditBean implements Serializable {
     }
 
     public List<Prize> getPrizes() {
-        List<Prize> list = new ArrayList<>();
-        for (int i = 1; i < 10; i++) {
-            PrizePK pk = new PrizePK();
-            pk.setPosition(i);
-            Prize prize = new Prize();
-            prize.setPrizePK(pk);
-            prize.setName("Prize name");
-            list.add(prize);
-        }
-        return list;
+        return selectedContest.getPrizeList();
     }
 
     // Setters -----------------------------------------------------------------------------------
+    public void setSelectedContest(Contest selectedContest) {
+        this.selectedContest = selectedContest;
+    }
+
 }

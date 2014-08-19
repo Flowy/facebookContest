@@ -11,6 +11,9 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -28,13 +31,15 @@ import javax.validation.constraints.Size;
 @NamedQueries({
     @NamedQuery(name = "Prize.findAll", query = "SELECT p FROM Prize p"),
     @NamedQuery(name = "Prize.findByName", query = "SELECT p FROM Prize p WHERE p.name = :name"),
-    @NamedQuery(name = "Prize.findByPosition", query = "SELECT p FROM Prize p WHERE p.prizePK.position = :position"),
-    @NamedQuery(name = "Prize.findByContestId", query = "SELECT p FROM Prize p WHERE p.prizePK.contestId = :contestId")})
+    @NamedQuery(name = "Prize.findByContest", query = "SELECT p FROM Prize p WHERE p.contest = :contest")})
 public class Prize implements Serializable {
     private static final long serialVersionUID = 1L;
-    @EmbeddedId
-    @NotNull
-    protected PrizePK prizePK;
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id", nullable = false)
+    private Integer id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 250)
@@ -45,32 +50,11 @@ public class Prize implements Serializable {
     private Contest contest;
     @JoinColumn(name = "winner_id", referencedColumnName = "id")
     @ManyToOne
-    private RegisteredUser registeredUser;
+    private RegisteredUser winner;
 
     public Prize() {
     }
-
-    public Prize(PrizePK prizePK) {
-        this.prizePK = prizePK;
-    }
-
-    public Prize(PrizePK prizePK, String name) {
-        this.prizePK = prizePK;
-        this.name = name;
-    }
-
-    public Prize(int position, int contestId) {
-        this.prizePK = new PrizePK(position, contestId);
-    }
-
-    public PrizePK getPrizePK() {
-        return prizePK;
-    }
-
-    public void setPrizePK(PrizePK prizePK) {
-        this.prizePK = prizePK;
-    }
-
+    
     public String getName() {
         return name;
     }
@@ -87,33 +71,45 @@ public class Prize implements Serializable {
         this.contest = contest;
     }
 
-    public RegisteredUser getRegisteredUser() {
-        return registeredUser;
+    public RegisteredUser getWinner() {
+        return winner;
     }
 
-    public void setRegisteredUser(RegisteredUser registeredUser) {
-        this.registeredUser = registeredUser;
+    public void setWinner(RegisteredUser winner) {
+        this.winner = winner;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (prizePK != null ? prizePK.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Prize)) {
             return false;
         }
         Prize other = (Prize) object;
-        return this.prizePK.equals(other.prizePK);
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
     }
 
     @Override
     public String toString() {
-        return "com.flowyk.fb.entity.Prize[ prizePK=" + prizePK + " ]";
+        return "com.flowyk.fb.entity.Prize[ id=" + id + " ]";
     }
     
 }
