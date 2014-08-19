@@ -24,6 +24,7 @@
     <filter-mapping>
         <filter-name>AdminFilter</filter-name>
         <url-pattern>/contest/pageAdmin/*</url-pattern>
+        <url-pattern>/contest/contest-admin/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>LoginInitializer</filter-name>

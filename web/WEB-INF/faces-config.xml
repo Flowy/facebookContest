@@ -5,7 +5,7 @@
               xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
     <application>
         <resource-bundle>
-            <base-name>com.flowyk.fb.Texts</base-name>
+            <base-name>com.flowyk.fb.i18n.Bundle</base-name>
             <var>Loc</var>
         </resource-bundle>
         <locale-config>
@@ -46,8 +46,12 @@
             <to-view-id>/contest/pageAdmin/admin.xhtml</to-view-id>
         </navigation-case>
         <navigation-case>
-            <from-outcome>contest-admin</from-outcome>
-            <to-view-id>/contest/pageAdmin/contest-admin.xhtml</to-view-id>
+            <from-outcome>contest-edit</from-outcome>
+            <to-view-id>/contest/contestAdmin/contest-edit.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>admin-page-unactive</from-outcome>
+            <to-view-id>/contest/pageAdmin/admin-page-unactive.xhtml</to-view-id>
         </navigation-case>
     </navigation-rule>
 </faces-config>

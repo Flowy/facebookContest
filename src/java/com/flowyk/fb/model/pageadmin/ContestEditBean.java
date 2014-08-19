@@ -7,38 +7,63 @@ package com.flowyk.fb.model.pageadmin;
 
 import com.flowyk.fb.base.Constants;
 import com.flowyk.fb.entity.Contest;
-import com.flowyk.fb.model.ContestBean;
+import com.flowyk.fb.entity.Prize;
+import com.flowyk.fb.entity.PrizePK;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.event.RowEditEvent;
 import org.primefaces.model.UploadedFile;
 
 /**
  *
  * @author Lukas
  */
-@Named(value = "contestAdminBean")
+@Named(value = "contestEditBean")
 @ViewScoped
-public class ContestAdminBean implements Serializable {
+public class ContestEditBean implements Serializable {
 
-//    @Inject
-//    ContestBean contestBean;
+    public enum State {
+
+        ILLEGAL, CREATING, EDITING
+    }
+
+    private State state = State.ILLEGAL;
 
     @NotNull
-    private Contest selectedContest = null;
+    private Contest selectedContest = new Contest();
 
     // Actions -----------------------------------------------------------------------------------
+    public String createNewContest() {
+        selectedContest = new Contest();
+        state = State.CREATING;
+        return "contest-edit";
+    }
+
+    public void save() {
+
+    }
+
+    public void createNewPrize() {
+//        Prize prize = new Prize();
+
+//        selectedContest.getPrizeList().add(prize);
+    }
+    
+    public void rollWinnerFor(Prize prize) {
+        
+    }
 
     public void uploadFiles(FileUploadEvent event) {
         UploadedFile uploadedFile = event.getFile();
@@ -49,7 +74,7 @@ public class ContestAdminBean implements Serializable {
             );
             throw new IllegalStateException("Actual contest not set for contestAdminBean");
         }
-        
+
         if (!Files.exists(Constants.LOCAL_IMAGES_PATH)) {
             FacesContext.getCurrentInstance().addMessage(
                     null,
@@ -70,7 +95,7 @@ public class ContestAdminBean implements Serializable {
             AsyncInputStreamWriter fileWriter = new AsyncInputStreamWriter(uploadedFile.getInputstream(), imagePath);
             fileWriter.run();
         } catch (IOException ex) {
-            Logger.getLogger(ContestAdminBean.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ContestEditBean.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -79,9 +104,18 @@ public class ContestAdminBean implements Serializable {
         return selectedContest;
     }
 
-    // Setters -----------------------------------------------------------------------------------
-    public void setSelectedContest(Contest selectedContest) {
-        this.selectedContest = selectedContest;
+    public List<Prize> getPrizes() {
+        List<Prize> list = new ArrayList<>();
+        for (int i = 1; i < 10; i++) {
+            PrizePK pk = new PrizePK();
+            pk.setPosition(i);
+            Prize prize = new Prize();
+            prize.setPrizePK(pk);
+            prize.setName("Prize name");
+            list.add(prize);
+        }
+        return list;
     }
 
+    // Setters -----------------------------------------------------------------------------------
 }
