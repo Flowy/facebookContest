@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <f:metadata>
+        <f:viewParam name="contestId" value="#{usersAdminBean.contestString}" />
+        <f:viewAction action="#{usersAdminBean.init}" />
+    </f:metadata>
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+
+        <h:form id="RegisteredUserListForm">
+            <p:growl id="userMsgs" />
+            <p:panel header="#{Loc['admin.users.table.title']}">
+                <p:dataTable id="datalist" value="#{usersAdminBean.registeredUsers}" var="user"
+                             paginator="true"
+                             rows="50">
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{Loc['admin.users.table.name']}"/>
+                        </f:facet>
+                        <h:outputText value="#{user.name}"/>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{Loc['admin.users.table.email']}"/>
+                        </f:facet>
+                        <h:outputText value="#{user.email}"/>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{Loc['admin.users.table.phone']}"/>
+                        </f:facet>
+                        <h:outputText value="#{user.telephone}"/>
+                    </p:column>
+<!--                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{Loc['admin.users.table.locale']}"/>
+                        </f:facet>
+                        <h:outputText value="#{user.locale}"/>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{Loc['admin.users.table.country']}"/>
+                        </f:facet>
+                        <h:outputText value="#{user.country}"/>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{Loc['admin.users.table.ageMin']}"/>
+                        </f:facet>
+                        <h:outputText value="#{user.ageMin}"/>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{Loc['admin.users.table.ageMax']}"/>
+                        </f:facet>
+                        <h:outputText value="#{user.ageMax}"/>
+                    </p:column>-->
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{Loc['admin.users.table.disabled']}"/>
+                        </f:facet>
+                        <p:selectBooleanCheckbox value="#{user.removeFromContest}">
+                            <p:ajax update=":RegisteredUserListForm:userMsgs" listener="#{usersAdminBean.addRemovedMessage(user)}" />
+                        </p:selectBooleanCheckbox>
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
+        </h:form>
+        Formated text: <br />
+        #{usersAdminBean.test}
+    </h:body>
+</html>
+

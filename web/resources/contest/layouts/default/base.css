@@ -53,5 +53,13 @@ body {
 
 .footerField {
     float: left;
-    margin: 5px 20px;
+    margin: 5px 15px;
+}
+
+.footerField a {
+    font-size: 80%;
+    font-weight: bold;
+    color: #3a4f54;
+    text-decoration: none;
+    
 }

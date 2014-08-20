@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.flowyk.fb.i18n;
 
 import java.io.IOException;
@@ -26,7 +25,7 @@ public class Bundle extends ResourceBundle {
     protected static final String BUNDLE_NAME = "com.flowyk.fb.i18n.Texts";
     protected static final String BUNDLE_EXTENSION = "properties";
     protected static final Control UTF8_CONTROL = new UTF8Control();
-    
+
     public Bundle() {
         setParent(
                 ResourceBundle.getBundle(
@@ -36,6 +35,7 @@ public class Bundle extends ResourceBundle {
                 )
         );
     }
+
     @Override
     protected Object handleGetObject(String key) {
         return parent.getObject(key);
@@ -45,8 +45,9 @@ public class Bundle extends ResourceBundle {
     public Enumeration<String> getKeys() {
         return parent.getKeys();
     }
-    
+
     protected static class UTF8Control extends Control {
+
         @Override
         public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader, boolean reload)
                 throws IllegalAccessException, InstantiationException, IOException {

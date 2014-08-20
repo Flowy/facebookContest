@@ -6,13 +6,16 @@
 
 package com.flowyk.fb.entity;
 
+import com.flowyk.fb.exceptions.NoActiveContestException;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -22,8 +25,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -31,48 +32,53 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "registered_page")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "RegisteredPage.findAll", query = "SELECT r FROM RegisteredPage r"),
     @NamedQuery(name = "RegisteredPage.findByPageId", query = "SELECT r FROM RegisteredPage r WHERE r.pageId = :pageId"),
     @NamedQuery(name = "RegisteredPage.findByActive", query = "SELECT r FROM RegisteredPage r WHERE r.active = :active"),
     @NamedQuery(name = "RegisteredPage.findByActiveUntil", query = "SELECT r FROM RegisteredPage r WHERE r.activeUntil = :activeUntil"),
-    @NamedQuery(name = "RegisteredPage.findByActiveFrom", query = "SELECT r FROM RegisteredPage r WHERE r.activeFrom = :activeFrom"),
-    @NamedQuery(name = "RegisteredPage.findByNote", query = "SELECT r FROM RegisteredPage r WHERE r.note = :note")})
+    @NamedQuery(name = "RegisteredPage.findByActiveFrom", query = "SELECT r FROM RegisteredPage r WHERE r.activeFrom = :activeFrom")})
 public class RegisteredPage implements Serializable {
+    @Size(max = 255)
+    @Column(name = "note", length = 255)
+    private String note;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "registeredPage", fetch = FetchType.EAGER)
+    private List<Contest> contestList;
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 20)
-    @Column(name = "page_id", nullable = false, length = 20)
+    @Column(name = "page_id")
     private String pageId;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "active", nullable = false)
-    private boolean active = false;
+    @Column(name = "active")
+    private boolean active;
     @Column(name = "active_until")
     @Temporal(TemporalType.TIMESTAMP)
     private Date activeUntil;
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "active_from")
     @Temporal(TemporalType.TIMESTAMP)
     private Date activeFrom;
-    @Size(max = 255)
-    @Column(name = "note", length = 255)
-    private String note;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "registeredPage")
-    private List<Contest> contestList;
 
     public RegisteredPage() {
     }
 
+    public RegisteredPage(String pageId, Date activeFrom) {
+        this.pageId = pageId;
+        this.activeFrom = activeFrom;
+    }
     public RegisteredPage(String pageId) {
         this.pageId = pageId;
     }
 
-    public RegisteredPage(String pageId, boolean active) {
+    public RegisteredPage(String pageId, boolean active, Date activeFrom) {
         this.pageId = pageId;
         this.active = active;
+        this.activeFrom = activeFrom;
     }
 
     public String getPageId() {
@@ -107,23 +113,6 @@ public class RegisteredPage implements Serializable {
         this.activeFrom = activeFrom;
     }
 
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-    }
-
-    @XmlTransient
-    public List<Contest> getContestList() {
-        return contestList;
-    }
-
-    public void setContestList(List<Contest> contestList) {
-        this.contestList = contestList;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -133,20 +122,32 @@ public class RegisteredPage implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof RegisteredPage)) {
             return false;
         }
         RegisteredPage other = (RegisteredPage) object;
-        if ((this.pageId == null && other.pageId != null) || (this.pageId != null && !this.pageId.equals(other.pageId))) {
-            return false;
-        }
-        return true;
+        return this.pageId.equals(other.pageId);
     }
 
     @Override
     public String toString() {
         return "com.flowyk.fb.entity.RegisteredPage[ pageId=" + pageId + " ]";
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public List<Contest> getContestList() {
+        return contestList;
+    }
+
+    public void setContestList(List<Contest> contestList) {
+        this.contestList = contestList;
     }
     
 }

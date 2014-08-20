@@ -13,8 +13,8 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
@@ -27,8 +27,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -36,85 +34,79 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "contest")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Contest.findAll", query = "SELECT c FROM Contest c"),
     @NamedQuery(name = "Contest.findById", query = "SELECT c FROM Contest c WHERE c.id = :id"),
-    @NamedQuery(name = "Contest.findByName", query = "SELECT c FROM Contest c WHERE c.name = :name"),
     @NamedQuery(name = "Contest.findByRegisteredPage", query = "SELECT c FROM Contest c WHERE c.registeredPage = :registeredPage"),
+    @NamedQuery(name = "Contest.findByName", query = "SELECT c FROM Contest c WHERE c.name = :name"),
     @NamedQuery(name = "Contest.findByContestStart", query = "SELECT c FROM Contest c WHERE c.contestStart = :contestStart"),
     @NamedQuery(name = "Contest.findByContestEnd", query = "SELECT c FROM Contest c WHERE c.contestEnd = :contestEnd"),
-    @NamedQuery(name = "Contest.findByDescription", query = "SELECT c FROM Contest c WHERE c.description = :description"),
-    @NamedQuery(name = "Contest.findByExternalInfoUrl", query = "SELECT c FROM Contest c WHERE c.externalInfoUrl = :externalInfoUrl"),
-    @NamedQuery(name = "Contest.findByTimeBetweenTickets", query = "SELECT c FROM Contest c WHERE c.timeBetweenTickets = :timeBetweenTickets")})
+    @NamedQuery(name = "Contest.findByDisabled", query = "SELECT c FROM Contest c WHERE c.disabled = :disabled")})
 public class Contest implements Serializable {
     private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue //(strategy = GenerationType.IDENTITY)
-    @NotNull
-    @Basic(optional = false)
-    @Column(name = "id", nullable = false)
-    private Integer id;
+    
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 150)
-    @Column(name = "name", nullable = false, length = 150)
-    private String name;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "contest_start", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date contestStart;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "contest_end", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date contestEnd;
-    @Size(max = 150)
-    @Column(name = "description", length = 150)
-    private String description;
+    @Column(name = "time_between_tickets", nullable = false)
+    @Temporal(TemporalType.TIME)
+    private Date timeBetweenTickets;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 250)
     @Column(name = "external_info_url", nullable = false, length = 250)
     private String externalInfoUrl;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "contest", fetch = FetchType.EAGER)
+    private List<RegisteredUser> registeredUserList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "contest", fetch = FetchType.EAGER)
+    private List<Prize> prizeList;
+    @Size(max = 150)
+    @Column(name = "description")
+    private String description;
+    @JoinColumn(name = "registered_page_id", referencedColumnName = "page_id")
+    @ManyToOne(optional = false)
+    @NotNull
+    private RegisteredPage registeredPage;
+    @Id
     @Basic(optional = false)
     @NotNull
+    @GeneratedValue
+    @Column(name = "id")
+    private Integer id;
+    @Basic(optional = false)
+    @NotNull
+    @Size(max = 150)
+    @Column(name = "name")
+    private String name;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "contest_start")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date contestStart;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "contest_end")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date contestEnd;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "disabled")
+    private boolean disabled;
     @Lob
-    @Size(min = 1, max = 65535)
-    @Column(name = "rules", nullable = false, length = 65535)
+    @Size(max = 65535)
+    @Column(name = "rules")
     private String rules;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "time_between_tickets", nullable = false)
-    @Temporal(TemporalType.TIME)
-    private Date timeBetweenTickets = new Date((long) 1000*60*60*2);
-    @JoinColumn(name = "contest_layout_name", referencedColumnName = "name", nullable = false)
+    @JoinColumn(name = "contest_layout_name", referencedColumnName = "name")
     @ManyToOne(optional = false)
     private ContestLayout contestLayout;
-    @JoinColumn(name = "registered_page_id", referencedColumnName = "page_id", nullable = false)
-    @ManyToOne(optional = false)
-    private RegisteredPage registeredPage;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "contest")
-    private List<RegisteredUser> registeredUserList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "contest")
-    private List<Prize> prizeList;
 
     public Contest() {
     }
 
-    public Contest(Integer id) {
-        this.id = id;
-    }
-
-    public Contest(Integer id, String name, Date contestStart, Date contestEnd, String externalInfoUrl, String rules, Date timeBetweenTickets) {
-        this.id = id;
-        this.name = name;
+    public Contest(Date contestStart, Date contestEnd, boolean disabled) {
         this.contestStart = contestStart;
         this.contestEnd = contestEnd;
-        this.externalInfoUrl = externalInfoUrl;
-        this.rules = rules;
-        this.timeBetweenTickets = timeBetweenTickets;
+        this.disabled = disabled;
     }
 
     public Integer getId() {
@@ -149,6 +141,59 @@ public class Contest implements Serializable {
         this.contestEnd = contestEnd;
     }
 
+    public boolean getDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    public String getRules() {
+        return rules;
+    }
+
+    public void setRules(String rules) {
+        this.rules = rules;
+    }
+
+    public ContestLayout getContestLayout() {
+        return contestLayout;
+    }
+
+    public void setContestLayout(ContestLayout contestLayout) {
+        this.contestLayout = contestLayout;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (!(object instanceof Contest)) {
+            return false;
+        }
+        Contest other = (Contest) object;
+        return this.id.equals(other.id);
+    }
+
+    @Override
+    public String toString() {
+        return "com.flowyk.fb.entity.Contest[ id=" + id + " ]";
+    }
+
+    public RegisteredPage getRegisteredPage() {
+        return registeredPage;
+    }
+
+    public void setRegisteredPage(RegisteredPage registeredPage) {
+        this.registeredPage = registeredPage;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -165,12 +210,20 @@ public class Contest implements Serializable {
         this.externalInfoUrl = externalInfoUrl;
     }
 
-    public String getRules() {
-        return rules;
+    public List<RegisteredUser> getRegisteredUserList() {
+        return registeredUserList;
     }
 
-    public void setRules(String rules) {
-        this.rules = rules;
+    public void setRegisteredUserList(List<RegisteredUser> registeredUserList) {
+        this.registeredUserList = registeredUserList;
+    }
+
+    public List<Prize> getPrizeList() {
+        return prizeList;
+    }
+
+    public void setPrizeList(List<Prize> prizeList) {
+        this.prizeList = prizeList;
     }
 
     public Date getTimeBetweenTickets() {
@@ -180,64 +233,4 @@ public class Contest implements Serializable {
     public void setTimeBetweenTickets(Date timeBetweenTickets) {
         this.timeBetweenTickets = timeBetweenTickets;
     }
-
-    public ContestLayout getContestLayout() {
-        return contestLayout;
-    }
-
-    public void setContestLayout(ContestLayout contestLayout) {
-        this.contestLayout = contestLayout;
-    }
-
-    public RegisteredPage getRegisteredPage() {
-        return registeredPage;
-    }
-
-    public void setRegisteredPage(RegisteredPage registeredPage) {
-        this.registeredPage = registeredPage;
-    }
-
-    @XmlTransient
-    public List<RegisteredUser> getRegisteredUserList() {
-        return registeredUserList;
-    }
-
-    public void setRegisteredUserList(List<RegisteredUser> registeredUserList) {
-        this.registeredUserList = registeredUserList;
-    }
-
-    @XmlTransient
-    public List<Prize> getPrizeList() {
-        return prizeList;
-    }
-
-    public void setPrizeList(List<Prize> prizeList) {
-        this.prizeList = prizeList;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Contest)) {
-            return false;
-        }
-        Contest other = (Contest) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "com.flowyk.fb.entity.Contest[ id=" + id + " ]";
-    }
-    
 }

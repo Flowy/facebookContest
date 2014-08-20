@@ -6,7 +6,6 @@
 package com.flowyk.fb.model.signedrequest;
 
 import com.flowyk.fb.exceptions.MalformedSignedRequestException;
-import com.flowyk.fb.model.Login;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
@@ -18,7 +17,6 @@ import java.util.logging.Logger;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import javax.enterprise.context.SessionScoped;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.json.Json;
 import javax.json.JsonObject;

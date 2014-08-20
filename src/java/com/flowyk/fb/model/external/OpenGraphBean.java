@@ -100,7 +100,7 @@ public class OpenGraphBean {
     public String getCanonicalUrl() {
         StringBuilder sb = new StringBuilder();
         sb.append(Constants.SITE_URL);
-        sb.append("/contest/contest.xhtml");
+        sb.append("/opengraph.xhtml");
         if (contest != null) {
             sb.append("?contest=").append(contest.getId());
         }

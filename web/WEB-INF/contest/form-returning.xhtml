@@ -26,7 +26,6 @@
                              image="#{contestBean.getShareImgUrl('bt-odoslat.png')}">
             </h:commandButton>
             <h:commandLink styleClass="returningLink" immediate="true" action="register">
-                <f:setPropertyActionListener target="#{contestBean.returning}" value="false" />
                 #{Loc['form.dontHaveRegistration']}
             </h:commandLink>
         </div>

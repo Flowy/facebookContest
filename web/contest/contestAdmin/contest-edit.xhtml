@@ -11,9 +11,8 @@
         <title>Admin page</title>
     </h:head>
     <h:body>
+        <p:growl id="messages" showDetail="true" showSummary="false" sticky="true" />
         <p:tabView id="contestEditTabs">
-            <p:growl id="messages" showDetail="true" showSummary="false" sticky="true" />
-            <p:messages />
 
             <p:tab title="#{Loc['admin.contestTitle']}">
                 <h:form>
@@ -62,12 +61,12 @@
                 <h:outputText value="#{Loc['admin.imageUploadFiles']}" /><br />
                 <h:form id="uploadForm" enctype="multipart/form-data">
                     <p:fileUpload fileUploadListener="#{contestEditBean.uploadFiles}" mode="advanced" dragDropSupport="false"
-                                  multiple="true" update=":contestEditTabs:messages" sizeLimit="1000000" 
+                                  multiple="true" update=":messages" sizeLimit="1000000" 
                                   allowTypes="/(bt-odoslat|bt-zdielat|cena|nazov|nazov2|pozadie|text1|text2|text3|share-img|icon).png$/" 
                                   auto="true" />
                 </h:form>
             </p:tab>
-            
+
             <p:tab title="#{Loc['admin.prizesTitle']}">
 
                 <h:form id="prizesForm">
@@ -76,7 +75,7 @@
                         <p:column style="width:32px">
                             <p:rowEditor />
                         </p:column>
-                        
+
                         <p:column headerText="#{Loc['admin.prizeName']}">
                             <p:cellEditor>
                                 <f:facet name="output"><h:outputText value="#{prize.name}" /></f:facet>

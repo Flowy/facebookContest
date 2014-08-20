@@ -7,6 +7,7 @@
 package com.flowyk.fb.entity.facade;
 
 import com.flowyk.fb.base.Constants;
+import com.flowyk.fb.entity.Contest;
 import com.flowyk.fb.entity.RegisteredUser;
 import com.flowyk.fb.entity.Registration;
 import java.util.Date;
@@ -61,6 +62,11 @@ public class RegistrationFacade extends AbstractFacade<Registration> {
             }
         }
         return last;
+    }
+    
+    public List<Registration> getActiveByContest(Contest contest) {
+        List<Registration> list = em.createNamedQuery("Registration.findActiveByContest").setParameter("contest", contest).getResultList();
+        return list;
     }
     
 }

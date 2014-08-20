@@ -6,9 +6,7 @@
 package com.flowyk.fb.controller;
 
 import com.flowyk.fb.model.external.OpenGraphBean;
-import com.flowyk.fb.model.Login;
 import com.flowyk.fb.model.signedrequest.AppData;
-import com.flowyk.fb.model.signedrequest.SignedRequest;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,22 +19,18 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  *
  * @author Lukas
  */
-@WebFilter(filterName = "ContestFilter")
-public class ContestFilter implements Filter {
+@WebFilter(filterName = "OpenGraphFilter")
+public class OpenGraphFilter implements Filter {
 
-    private static final Logger LOG = Logger.getLogger(ContestFilter.class.getName());
-
-    @Inject
-    private SignedRequest signedRequest;
+    private static final Logger LOG = Logger.getLogger(OpenGraphFilter.class.getName());
 
     @Inject
-    private Login login;
+    private OpenGraphBean openGraphBean;
 
     /**
      *
@@ -52,22 +46,22 @@ public class ContestFilter implements Filter {
             FilterChain chain)
             throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
-        HttpServletResponse res = (HttpServletResponse) response;
-        if (signedRequest.isSigned()) {
-            if (signedRequest.getPage().isLiked()) {
-                if (login.getUser().getId() != null) {
-                    res.sendRedirect(req.getContextPath() + "/contest/returning.xhtml");
-                } else {
-                    res.sendRedirect(req.getContextPath() + "/contest/register.xhtml");
-                }
-            } else {
-                res.sendRedirect(req.getContextPath() + "/contest/presslike.xhtml");
-            }
-        } else {
-            LOG.log(Level.INFO, "Unauthorized access: {0} {1}", new Object[]{login.getIpAddress(), login.getUserAgent()});
-            ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "This page is accessible only through facebook");
-        }
 
+        String appDataString = req.getParameter("app_data");
+        String contestString = req.getParameter("contest");
+        if (appDataString != null) {
+            AppData appData = AppData.parseString(appDataString);
+            openGraphBean.setReferenceId(appData.getReference());
+        } else if (contestString != null) {
+            Integer contestId = null;
+            try {
+                contestId = Integer.parseInt(contestString);
+            } catch (NumberFormatException e) {
+                LOG.log(Level.INFO, "Can not parse contest id to integer: {0}", contestString);
+            }
+            openGraphBean.setContestId(contestId);
+        }
+        chain.doFilter(request, response);
     }
 
     @Override

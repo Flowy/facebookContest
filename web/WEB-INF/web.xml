@@ -16,6 +16,16 @@
         <param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
         <param-value>true</param-value>
     </context-param>
+    
+    <filter-mapping>
+        <filter-name>ContestOGRedirect</filter-name>
+        <url-pattern>/contest/contest.xhtml</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>OpenGraphFilter</filter-name>
+        <url-pattern>/opengraph.xhtml</url-pattern>
+    </filter-mapping>
+    
     <filter-mapping>
         <filter-name>SignedRequestFilter</filter-name>
         <url-pattern>/contest/*</url-pattern>

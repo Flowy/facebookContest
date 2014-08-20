@@ -139,7 +139,7 @@ public class Login implements Serializable {
         Contest selected = null;
         Date now = new Date();
         for (Contest x : list) {
-            if (!x.getDisabled() && now.before(x.getContestEnd())) {
+            if (now.before(x.getContestEnd())) {
                 selected = x;
             }
         }

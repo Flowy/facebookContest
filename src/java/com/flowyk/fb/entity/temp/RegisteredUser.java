@@ -12,8 +12,8 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -25,8 +25,6 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -34,30 +32,45 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "registered_user", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"email", "contest_id"})})
-@XmlRootElement
+    @UniqueConstraint(name = "email_contestId_unique", columnNames = { "email", "contest_id" } )
+})
 @NamedQueries({
     @NamedQuery(name = "RegisteredUser.findAll", query = "SELECT r FROM RegisteredUser r"),
     @NamedQuery(name = "RegisteredUser.findById", query = "SELECT r FROM RegisteredUser r WHERE r.id = :id"),
     @NamedQuery(name = "RegisteredUser.findByContest", query = "SELECT r FROM RegisteredUser r WHERE r.contest = :contest"),
-    @NamedQuery(name = "RegisteredUser.findByEmail", query = "SELECT r FROM RegisteredUser r WHERE r.email = :email"),
     @NamedQuery(name = "RegisteredUser.findByEmailAndContest", query = "SELECT r FROM RegisteredUser r WHERE r.contest = :contest AND r.email = :email"),
-    @NamedQuery(name = "RegisteredUser.findByName", query = "SELECT r FROM RegisteredUser r WHERE r.name = :name"),
     @NamedQuery(name = "RegisteredUser.findByTelephone", query = "SELECT r FROM RegisteredUser r WHERE r.telephone = :telephone"),
     @NamedQuery(name = "RegisteredUser.findByLocale", query = "SELECT r FROM RegisteredUser r WHERE r.locale = :locale"),
     @NamedQuery(name = "RegisteredUser.findByCountry", query = "SELECT r FROM RegisteredUser r WHERE r.country = :country"),
     @NamedQuery(name = "RegisteredUser.findByAgeMin", query = "SELECT r FROM RegisteredUser r WHERE r.ageMin = :ageMin"),
-    @NamedQuery(name = "RegisteredUser.findByAgeMax", query = "SELECT r FROM RegisteredUser r WHERE r.ageMax = :ageMax"),
-    @NamedQuery(name = "RegisteredUser.findByRemoveFromContest", query = "SELECT r FROM RegisteredUser r WHERE r.removeFromContest = :removeFromContest")
-})
+    @NamedQuery(name = "RegisteredUser.findByAgeMax", query = "SELECT r FROM RegisteredUser r WHERE r.ageMax = :ageMax")})
 public class RegisteredUser implements Serializable {
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "remove_from_contest", nullable = false)
+    private boolean removeFromContest;
+    @JoinColumn(name = "contest_id", referencedColumnName = "id", nullable = false)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    private Contest contest;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "registeredUser", fetch = FetchType.EAGER)
+    private List<Registration> registrationList;
+    @OneToMany(mappedBy = "referal", fetch = FetchType.EAGER)
+    private List<Registration> referalList;
+    @OneToMany(mappedBy = "winner", fetch = FetchType.EAGER)
+    private List<Prize> prizeList;
     private static final long serialVersionUID = 1L;
+    
     @Id
     @NotNull
-    @GeneratedValue //(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     @Basic(optional = false)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     private Integer id;
+    
+    @Column(name = "age_min")
+    private Integer ageMin;
+    @Column(name = "age_max")
+    private Integer ageMax;
     @Pattern(regexp = "[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+"  //meno
             + "(?:\\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*"  //subdomena
             + "@(?:[a-zA-Z0-9]+\\.)+"  //domena
@@ -65,38 +78,21 @@ public class RegisteredUser implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
-    @Column(name = "email", nullable = false, length = 50)
+    @Column(name = "email")
     private String email;
     @Size(min = 5, max = 30)
-    @Column(name = "name", length = 30)
+    @Column(name = "name")
     private String name;
     @Pattern(regexp = "[0-9 \\+]+")
     @Size(max = 16)
-    @Column(name = "telephone", length = 16)
+    @Column(name = "telephone")
     private String telephone;
     @Size(max = 20)
-    @Column(name = "locale", length = 20)
+    @Column(name = "locale")
     private String locale;
     @Size(max = 40)
-    @Column(name = "country", length = 40)
+    @Column(name = "country")
     private String country;
-    @Column(name = "age_min")
-    private Integer ageMin;
-    @Column(name = "age_max")
-    private Integer ageMax;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "remove_from_contest", nullable = false)
-    private boolean removeFromContest;
-    @JoinColumn(name = "contest_id", referencedColumnName = "id", nullable = false)
-    @ManyToOne(optional = false)
-    private Contest contest;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "registeredUser")
-    private List<Registration> registrationList;
-    @OneToMany(mappedBy = "referal")
-    private List<Registration> registrationList1;
-    @OneToMany(mappedBy = "registeredUser")
-    private List<Prize> prizeList;
 
     public RegisteredUser() {
     }
@@ -105,10 +101,9 @@ public class RegisteredUser implements Serializable {
         this.id = id;
     }
 
-    public RegisteredUser(Integer id, String email, boolean removeFromContest) {
+    public RegisteredUser(Integer id, String email) {
         this.id = id;
         this.email = email;
-        this.removeFromContest = removeFromContest;
     }
 
     public Integer getId() {
@@ -175,6 +170,27 @@ public class RegisteredUser implements Serializable {
         this.ageMax = ageMax;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (!(object instanceof RegisteredUser)) {
+            return false;
+        }
+        RegisteredUser other = (RegisteredUser) object;
+        return this.id.equals(other.id);
+    }
+
+    @Override
+    public String toString() {
+        return "com.flowyk.fb.entity.RegisteredUser[ id=" + id + " ]";
+    }
+
     public boolean getRemoveFromContest() {
         return removeFromContest;
     }
@@ -191,7 +207,6 @@ public class RegisteredUser implements Serializable {
         this.contest = contest;
     }
 
-    @XmlTransient
     public List<Registration> getRegistrationList() {
         return registrationList;
     }
@@ -200,47 +215,20 @@ public class RegisteredUser implements Serializable {
         this.registrationList = registrationList;
     }
 
-    @XmlTransient
-    public List<Registration> getRegistrationList1() {
-        return registrationList1;
+    public List<Registration> getReferalList() {
+        return referalList;
     }
 
-    public void setRegistrationList1(List<Registration> registrationList1) {
-        this.registrationList1 = registrationList1;
+    public void setReferalList(List<Registration> referalList) {
+        this.referalList = referalList;
     }
 
-    @XmlTransient
     public List<Prize> getPrizeList() {
         return prizeList;
     }
 
     public void setPrizeList(List<Prize> prizeList) {
         this.prizeList = prizeList;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof RegisteredUser)) {
-            return false;
-        }
-        RegisteredUser other = (RegisteredUser) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "com.flowyk.fb.entity.RegisteredUser[ id=" + id + " ]";
     }
     
 }

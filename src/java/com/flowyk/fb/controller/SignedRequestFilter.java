@@ -38,7 +38,7 @@ public class SignedRequestFilter implements Filter {
     private SignedRequest signedRequest;
 
     @Inject
-    Login login;
+    private Login login;
 
     /**
      *
@@ -69,6 +69,9 @@ public class SignedRequestFilter implements Filter {
                 res.sendError(HttpServletResponse.SC_FORBIDDEN, "Malformed header");
                 return;
             }
+        } else if (!signedRequest.isSigned()) {
+            res.sendError(HttpServletResponse.SC_FORBIDDEN, "Can not access this page outside facebook");
+            return;
         }
 
         String ipAddress = req.getHeader("X-FORWARDED-FOR");
@@ -85,8 +88,9 @@ public class SignedRequestFilter implements Filter {
 
     /**
      * DEBUG
+     *
      * @param req
-     * @return 
+     * @return
      */
     private String getHeaderText(HttpServletRequest req) {
         StringBuilder sb = new StringBuilder("HEADER:\n");

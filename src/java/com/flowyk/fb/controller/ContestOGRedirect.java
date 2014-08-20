@@ -5,14 +5,8 @@
  */
 package com.flowyk.fb.controller;
 
-import com.flowyk.fb.model.external.OpenGraphBean;
-import com.flowyk.fb.model.Login;
-import com.flowyk.fb.model.signedrequest.AppData;
-import com.flowyk.fb.model.signedrequest.SignedRequest;
 import java.io.IOException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.inject.Inject;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -27,17 +21,12 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Lukas
  */
-@WebFilter(filterName = "ContestFilter")
-public class ContestFilter implements Filter {
+@WebFilter(filterName = "ContestOGRedirect")
+public class ContestOGRedirect implements Filter {
 
-    private static final Logger LOG = Logger.getLogger(ContestFilter.class.getName());
+    private static final Logger LOG = Logger.getLogger(ContestOGRedirect.class.getName());
 
-    @Inject
-    private SignedRequest signedRequest;
-
-    @Inject
-    private Login login;
-
+    
     /**
      *
      * @param request The servlet request we are processing
@@ -53,21 +42,18 @@ public class ContestFilter implements Filter {
             throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
-        if (signedRequest.isSigned()) {
-            if (signedRequest.getPage().isLiked()) {
-                if (login.getUser().getId() != null) {
-                    res.sendRedirect(req.getContextPath() + "/contest/returning.xhtml");
-                } else {
-                    res.sendRedirect(req.getContextPath() + "/contest/register.xhtml");
-                }
-            } else {
-                res.sendRedirect(req.getContextPath() + "/contest/presslike.xhtml");
-            }
+        
+        String userAgent = req.getHeader("user-agent");
+        //facebook bot - redirect to open graph
+        if (userAgent != null && userAgent.contains("facebookexternalhit")) {
+            System.out.println("Context path: " + req.getContextPath());
+            String redirectUrl = req.getContextPath() + "/opengraph.xhtml?";
+            redirectUrl += req.getQueryString();
+            System.out.println("redirecting to: " + redirectUrl);
+            res.sendRedirect(redirectUrl);
         } else {
-            LOG.log(Level.INFO, "Unauthorized access: {0} {1}", new Object[]{login.getIpAddress(), login.getUserAgent()});
-            ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "This page is accessible only through facebook");
+            chain.doFilter(request, response);
         }
-
     }
 
     @Override

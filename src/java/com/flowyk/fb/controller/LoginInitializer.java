@@ -111,7 +111,8 @@ public class LoginInitializer implements Filter {
             ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
             ec.responseSendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Can not create directory in file system for page, please try again later");
         }
-        RegisteredPage p = new RegisteredPage(pageId, new Date());
+        RegisteredPage p = new RegisteredPage(pageId);
+        p.setActiveFrom(new Date());
         registeredPageFacade.create(p);
         return p;
     }

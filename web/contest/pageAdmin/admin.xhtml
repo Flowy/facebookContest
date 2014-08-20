@@ -13,17 +13,28 @@
         <h:form>
             <h:commandButton value="#{Loc['admin.createNewContest']}" action="#{pageAdminBean.createNewContest}" />
         </h:form>
-        <h:form>
-            <h:dataTable value="#{pageAdminBean.contests}" var="contest">
-                <f:facet name="header">
-                </f:facet>
-                <h:column>
-                    <f:facet name="header">#{Loc['admin.contestList']}</f:facet>
+        <h:dataTable value="#{pageAdminBean.contests}" var="contest">
+            <f:facet name="header">#{Loc['admin.contestList']}</f:facet>
+            <h:column>
+                <f:facet name="header">#{Loc['admin.contestName']}</f:facet>
+                <h:form>
                     <h:commandLink value="#{contest.name}" action="contest-edit">
                         <f:setPropertyActionListener target="#{contestEditBean.selectedContest}" value="#{contest}" />
                     </h:commandLink>
-                </h:column>
-            </h:dataTable>
-        </h:form>
+                </h:form>
+            </h:column>
+
+            <h:column>
+                <f:facet name="header">#{Loc['admin.userCount']}</f:facet>
+                <h:link outcome="user-list">
+                    <f:param name="contestId" value="#{contest.id}" />
+                    <h:outputText value="#{contestAdminBean.getContestUserCount(contest)}" />
+                </h:link>
+            </h:column>
+            <h:column>
+                <f:facet name="header">#{Loc['admin.ticketsCount']}</f:facet>
+                <h:outputText value="#{contestAdminBean.getContestTicketsCount(contest)}" />
+            </h:column>
+        </h:dataTable>
     </h:body>
 </html>
