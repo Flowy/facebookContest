@@ -8,9 +8,12 @@ package com.flowyk.fb.model.pageadmin;
 import com.flowyk.fb.base.Constants;
 import com.flowyk.fb.entity.Contest;
 import com.flowyk.fb.entity.Prize;
+import com.flowyk.fb.entity.RegisteredUser;
 import com.flowyk.fb.entity.facade.ContestFacade;
 import com.flowyk.fb.entity.facade.ContestLayoutFacade;
+import com.flowyk.fb.entity.facade.PrizeFacade;
 import com.flowyk.fb.entity.facade.RegisteredPageFacade;
+import com.flowyk.fb.entity.facade.RegisteredUserFacade;
 import com.flowyk.fb.model.signedrequest.SignedRequest;
 import java.io.IOException;
 import java.io.Serializable;
@@ -18,14 +21,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
+import javax.ejb.EJBException;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.validation.ConstraintViolationException;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 
@@ -45,6 +51,12 @@ public class ContestEditBean implements Serializable {
 
     @EJB
     RegisteredPageFacade registeredPageFacade;
+    
+    @EJB
+    RegisteredUserFacade registeredUserFacade;
+    
+    @EJB
+    PrizeFacade prizeFacade;
 
     @EJB
     ContestLayoutFacade contestLayoutFacade;
@@ -71,11 +83,25 @@ public class ContestEditBean implements Serializable {
     public void createNewPrize() {
         Prize prize = new Prize();
         prize.setContest(selectedContest);
+        try {
+        prizeFacade.create(prize);
+        } catch (EJBException e) {
+            Constants.printConstraintViolation((ConstraintViolationException) e.getCausedByException());
+        }
         selectedContest.getPrizeList().add(prize);
     }
 
     public void rollWinnerFor(Prize prize) {
-//TODO: roll for winner
+        List<RegisteredUser> users = registeredUserFacade.findByContest(prize.getContest());
+        prize.setWinner(selectWinner(users));
+        prizeFacade.edit(prize);
+    }
+    
+    private RegisteredUser selectWinner(List<RegisteredUser> users) {
+        ArrayList<RegisteredUser> arrayUsers = new ArrayList<>(users);
+        java.util.Random rnd = new java.util.Random();
+        int selected = rnd.nextInt(arrayUsers.size());
+        return arrayUsers.get(selected);
     }
 
     public void uploadFiles(FileUploadEvent event) {

@@ -23,21 +23,22 @@ public class ShareUrlBean {
     @Inject
     Login login;
 
-    public String getFBShareUrl(RegisteredUser user) {
-//        if (user != null) {
-//            AppData appData = new AppData();
-//            appData.setReference(user.getId());
-//            StringBuilder sb;
-//            sb = new StringBuilder("https://www.facebook.com/")
-//                    .append(user.getContest().getRegisteredPage().getPageId())
-//                    .append("?sk=app_")
-//                    .append(Constants.API_KEY)
-//                    .append("&app_data=")
-//                    .append(appData.getAsJson().toString());
-//            return sb.toString();
-//        } else {
-        return "https://apps.facebook.com/flowykcontests";
-//        }
+    public String getFBShareUrl() {
+        RegisteredUser user = login.getUser();
+        if (user != null) {
+            AppData appData = new AppData();
+            appData.setReference(user.getId());
+            StringBuilder sb;
+            sb = new StringBuilder("https://www.facebook.com/")
+                    .append(user.getContest().getRegisteredPage().getPageId())
+                    .append("?sk=app_")
+                    .append(Constants.API_KEY)
+                    .append("&app_data=")
+                    .append(appData.getAsHeader());
+            return sb.toString();
+        } else {
+            return "https://apps.facebook.com/flowykcontests";
+        }
     }
 
     public String getShareUrl() {

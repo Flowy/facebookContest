@@ -6,14 +6,20 @@
 package com.flowyk.fb.email;
 
 import com.flowyk.fb.entity.Registration;
+import com.flowyk.fb.model.Login;
 import com.flowyk.fb.model.ShareUrlBean;
 import java.io.UnsupportedEncodingException;
+import java.text.MessageFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Resource;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -38,9 +44,12 @@ public class NoReplyEmailSession {
     @Inject
     ShareUrlBean shareUrl;
     
+    @Inject
+    Login login;
+    
     @Resource(lookup = "noReplyCmcMail")
     private Session mailSession;
-
+    
     private static final String[] languages = {"sk"};
 
     public void sendEmail(String sender, InternetAddress to, String subject, String body) {
@@ -67,6 +76,7 @@ public class NoReplyEmailSession {
 //            multipart.addBodyPart(textPart);
 //            multipart.addBodyPart(htmlPart);
 //            message.setContent(multipart);
+            
             Transport.send(message);
 
         } catch (MessagingException ex) {
@@ -79,14 +89,31 @@ public class NoReplyEmailSession {
     public void sendRegistrationCompleteEmail(Registration reg) {
         MimeMessage message = new MimeMessage(mailSession);
         try {
-            String title = "Zapojil si sa do súťaže";
-            String link = shareUrl.getFBShareUrl(reg.getRegisteredUser());
-            String regComplete = "Tvoja registrácia prebehla úspešne.";
-            String comeAgain = String.format("Aby toho nebolo málo, máme pre teba prichystaný ďalší lístok. Stačí ak navštíviš našu facebookovú súťaž opäť %1$s a zadáš svoju emailovú adresu.", "date");
-            String shareTheLink = "Svoju šancu na výhru môžes zvýšiť ak sa zaregistruje niekto ďalší cez tento link:";
-            String endsCome = String.format("Losovanie výhercu prebehne %1$s  a meno výhercu bude uvdené na Facebook stránke. O prípadnej výhre ťa budeme informovať na tejto emailovej adrese.", "date");
-            String holdsYourThumbs = "Držíme Ti palce!";
-            String dontReply = "Táto správa bola vygenerovaná automaticky. Na túto správu prosím neodpovedajte.";
+            
+            Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+            ResourceBundle bundle = ResourceBundle.getBundle("com.flowyk.fb.i18n.Bundle", locale);
+            
+            String title = bundle.getString("email.title");
+            String regComplete = bundle.getString("email.regComplete");
+            String link = shareUrl.getFBShareUrl();
+            String pageLinkText = bundle.getString("email.facebookPageLink");
+            String comeAgainString = bundle.getString("email.comeAgain");
+            String shareTheLink = bundle.getString("email.shareTheLink");
+            String endsComeString = bundle.getString("email.endsCome");
+            String endsCome = MessageFormat.format(endsComeString, login.getContest().getContestEnd());
+            String holdsYourThumbs = bundle.getString("email.holdsYourThumbs");
+            String dontReply = bundle.getString("email.dontReply");
+            
+            int delay = (int) login.getContest().getTimeBetweenTickets().getTime();
+            Calendar calendar = Calendar.getInstance();
+            int hoursDelay = (int) delay / (1000*60*60);
+            delay -= hoursDelay;
+            int minuteDelay = (int) delay / (1000*60);
+            System.out.println("hours delay: " + hoursDelay + " minuteDelay: " + minuteDelay);
+            
+            calendar.add(Calendar.HOUR_OF_DAY, hoursDelay);
+            calendar.add(Calendar.MINUTE, minuteDelay);
+            Date comeAgainTime = calendar.getTime();
             
             InternetAddress from = new InternetAddress(mailSession.getProperty("mail.from"));
             from.setPersonal(reg.getRegisteredUser().getContest().getName(), "UTF-8");
@@ -104,7 +131,7 @@ public class NoReplyEmailSession {
             StringBuilder textSb = new StringBuilder();
             textSb
                     .append(regComplete).append("\r\n")
-                    .append(comeAgain).append("\r\n\r\n")
+                    .append(MessageFormat.format(comeAgainString, pageLinkText, comeAgainTime)).append("\r\n\r\n")
                     .append(shareTheLink).append("\r\n")
                     .append(link).append("\r\n\r\n")
                     .append(endsCome).append("\r\n\r\n")
@@ -125,13 +152,16 @@ public class NoReplyEmailSession {
                     .append("<title>").append(title).append("</title>")
                     .append("<head><body>")
                     .append("<p>").append(regComplete).append("<br />")
-                    .append(comeAgain).append("</p>")
+                    .append(MessageFormat.format(comeAgainString, "<a href=\"" + link + "\" target=\"_blank\">" + pageLinkText + "</a>", comeAgainTime)).append("</p>")
                     .append("<p>").append(shareTheLink).append("<br />")
                     .append(link).append("</p>")
                     .append("<p>").append(endsCome).append("</p>")
                     .append("<p>").append(holdsYourThumbs).append("</p>")
                     .append("<p>").append(dontReply).append("</p>")
                     .append("</body></html>");
+            
+//            System.out.println(htmlSb.toString());
+            
             htmlPart.setContent(htmlSb.toString(), "text/html; charset=UTF-8");
             multipart.addBodyPart(textPart);
             multipart.addBodyPart(htmlPart);

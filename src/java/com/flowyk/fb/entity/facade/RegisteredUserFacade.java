@@ -6,6 +6,7 @@
 package com.flowyk.fb.entity.facade;
 
 import com.flowyk.fb.entity.Contest;
+import com.flowyk.fb.entity.RegisteredPage;
 import com.flowyk.fb.entity.RegisteredUser;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -46,6 +47,11 @@ public class RegisteredUserFacade extends AbstractFacade<RegisteredUser> {
     
     public List<RegisteredUser> findByContest(Contest contest) {
         List<RegisteredUser> list = em.createNamedQuery("RegisteredUser.findByContest").setParameter("contest", contest).getResultList();
+        return list;
+    }
+    
+    public List<RegisteredUser> findByRegisteredPage(RegisteredPage page) {
+        List<RegisteredUser> list = em.createNamedQuery("RegisteredUser.findByRegisteredPage").setParameter("registeredPage", page).getResultList();
         return list;
     }
 }

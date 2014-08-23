@@ -11,7 +11,6 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -35,8 +34,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Prize.findById", query = "SELECT p FROM Prize p WHERE p.id = :id")})
 public class Prize implements Serializable {
     private static final long serialVersionUID = 1L;
-    @Basic(optional = false)
-    @NotNull
+    @Basic(optional = true)
     @Size(min = 1, max = 250)
     @Column(name = "name", nullable = false, length = 250)
     private String name;
@@ -50,7 +48,7 @@ public class Prize implements Serializable {
     private Contest contest;
     @JoinColumn(name = "winner_id", referencedColumnName = "id")
     @ManyToOne
-    private RegisteredUser registeredUser;
+    private RegisteredUser winner;
 
     public Prize() {
     }
@@ -88,12 +86,12 @@ public class Prize implements Serializable {
         this.contest = contest;
     }
 
-    public RegisteredUser getRegisteredUser() {
-        return registeredUser;
+    public RegisteredUser getWinner() {
+        return winner;
     }
 
-    public void setRegisteredUser(RegisteredUser registeredUser) {
-        this.registeredUser = registeredUser;
+    public void setWinner(RegisteredUser winner) {
+        this.winner = winner;
     }
 
     @Override

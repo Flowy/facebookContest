@@ -13,7 +13,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -25,8 +24,11 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -36,6 +38,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "registered_user", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"email", "contest_id"})})
 @XmlRootElement
+@XmlType(propOrder = {"contest", "id", "email", "name", "telephone", "country", "ageMin", "ageMax", "removeFromContest"})
+@XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "RegisteredUser.findAll", query = "SELECT r FROM RegisteredUser r"),
     @NamedQuery(name = "RegisteredUser.findById", query = "SELECT r FROM RegisteredUser r WHERE r.id = :id"),
@@ -48,7 +52,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "RegisteredUser.findByCountry", query = "SELECT r FROM RegisteredUser r WHERE r.country = :country"),
     @NamedQuery(name = "RegisteredUser.findByAgeMin", query = "SELECT r FROM RegisteredUser r WHERE r.ageMin = :ageMin"),
     @NamedQuery(name = "RegisteredUser.findByAgeMax", query = "SELECT r FROM RegisteredUser r WHERE r.ageMax = :ageMax"),
-    @NamedQuery(name = "RegisteredUser.findByRemoveFromContest", query = "SELECT r FROM RegisteredUser r WHERE r.removeFromContest = :removeFromContest")
+    @NamedQuery(name = "RegisteredUser.findByRemoveFromContest", query = "SELECT r FROM RegisteredUser r WHERE r.removeFromContest = :removeFromContest"),
+    @NamedQuery(name = "RegisteredUser.findByRegisteredPage", query = "SELECT r FROM RegisteredUser r WHERE r.contest.registeredPage = :registeredPage")
 })
 public class RegisteredUser implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -76,6 +81,7 @@ public class RegisteredUser implements Serializable {
     private String telephone;
     @Size(max = 20)
     @Column(name = "locale", length = 20)
+    @XmlTransient
     private String locale;
     @Size(max = 40)
     @Column(name = "country", length = 40)
@@ -92,10 +98,13 @@ public class RegisteredUser implements Serializable {
     @ManyToOne(optional = false)
     private Contest contest;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "registeredUser")
+    @XmlTransient
     private List<Registration> registrationList;
     @OneToMany(mappedBy = "referal")
-    private List<Registration> registrationList1;
-    @OneToMany(mappedBy = "registeredUser")
+    @XmlTransient
+    private List<Registration> referalToList;
+    @OneToMany(mappedBy = "winner")
+    @XmlTransient
     private List<Prize> prizeList;
 
     public RegisteredUser() {
@@ -201,12 +210,12 @@ public class RegisteredUser implements Serializable {
     }
 
     @XmlTransient
-    public List<Registration> getRegistrationList1() {
-        return registrationList1;
+    public List<Registration> getReferalList() {
+        return referalToList;
     }
 
-    public void setRegistrationList1(List<Registration> registrationList1) {
-        this.registrationList1 = registrationList1;
+    public void setReferalList(List<Registration> referalList) {
+        this.referalToList = referalList;
     }
 
     @XmlTransient
@@ -240,7 +249,7 @@ public class RegisteredUser implements Serializable {
 
     @Override
     public String toString() {
-        return "com.flowyk.fb.entity.RegisteredUser[ id=" + id + " ]";
+        return "name: " + name + " email: " + email + " tel: " + telephone;
     }
     
 }

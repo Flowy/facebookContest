@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.flowyk.fb.entity;
 
 import java.io.Serializable;
@@ -14,7 +13,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
@@ -27,8 +25,11 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -37,6 +38,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "contest")
 @XmlRootElement
+@XmlType(propOrder = {"id"})
+@XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "Contest.findAll", query = "SELECT c FROM Contest c"),
     @NamedQuery(name = "Contest.findById", query = "SELECT c FROM Contest c WHERE c.id = :id"),
@@ -47,7 +50,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Contest.findByDescription", query = "SELECT c FROM Contest c WHERE c.description = :description"),
     @NamedQuery(name = "Contest.findByExternalInfoUrl", query = "SELECT c FROM Contest c WHERE c.externalInfoUrl = :externalInfoUrl"),
     @NamedQuery(name = "Contest.findByTimeBetweenTickets", query = "SELECT c FROM Contest c WHERE c.timeBetweenTickets = :timeBetweenTickets")})
-public class Contest implements Serializable {
+public class Contest implements Serializable, Comparable<Contest> {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue //(strategy = GenerationType.IDENTITY)
@@ -59,45 +63,56 @@ public class Contest implements Serializable {
     @NotNull
     @Size(min = 1, max = 150)
     @Column(name = "name", nullable = false, length = 150)
+    @XmlTransient
     private String name;
     @Basic(optional = false)
     @NotNull
     @Column(name = "contest_start", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
+    @XmlTransient
     private Date contestStart;
     @Basic(optional = false)
     @NotNull
     @Column(name = "contest_end", nullable = false)
+    @XmlTransient
     @Temporal(TemporalType.TIMESTAMP)
     private Date contestEnd;
     @Size(max = 150)
     @Column(name = "description", length = 150)
+    @XmlTransient
     private String description;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 250)
     @Column(name = "external_info_url", nullable = false, length = 250)
+    @XmlTransient
     private String externalInfoUrl;
     @Basic(optional = false)
     @NotNull
     @Lob
     @Size(min = 1, max = 65535)
     @Column(name = "rules", nullable = false, length = 65535)
+    @XmlTransient
     private String rules;
     @Basic(optional = false)
     @NotNull
     @Column(name = "time_between_tickets", nullable = false)
     @Temporal(TemporalType.TIME)
-    private Date timeBetweenTickets = new Date((long) 1000*60*60*2);
+    @XmlTransient
+    private Date timeBetweenTickets = new Date((long) 1000 * 60 * 60 * 2);
     @JoinColumn(name = "contest_layout_name", referencedColumnName = "name", nullable = false)
     @ManyToOne(optional = false)
+    @XmlTransient
     private ContestLayout contestLayout;
     @JoinColumn(name = "registered_page_id", referencedColumnName = "page_id", nullable = false)
     @ManyToOne(optional = false)
+    @XmlTransient
     private RegisteredPage registeredPage;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "contest")
+    @XmlTransient
     private List<RegisteredUser> registeredUserList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "contest")
+    @XmlTransient
     private List<Prize> prizeList;
 
     public Contest() {
@@ -239,5 +254,16 @@ public class Contest implements Serializable {
     public String toString() {
         return "com.flowyk.fb.entity.Contest[ id=" + id + " ]";
     }
-    
+
+    @Override
+    public int compareTo(Contest o) {
+        int compareEnd;
+        int compareStart = 0;
+        compareEnd = this.contestEnd.compareTo(o.contestEnd);
+        if (compareEnd == 0) {
+            compareStart = this.contestStart.compareTo(o.contestStart);
+        }
+        return compareEnd != 0 ? compareEnd : compareStart;
+    }
+
 }

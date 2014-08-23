@@ -10,11 +10,13 @@ import com.flowyk.fb.entity.RegisteredUser;
 import com.flowyk.fb.entity.facade.ContestFacade;
 import com.flowyk.fb.entity.facade.RegisteredUserFacade;
 import com.flowyk.fb.jaxb.ContestUsers;
+import com.flowyk.fb.model.Login;
 import com.flowyk.fb.model.signedrequest.SignedRequest;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,6 +26,7 @@ import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -43,6 +46,9 @@ public class UsersAdminBean implements Serializable {
     @Inject
     SignedRequest signedRequest;
 
+    @Inject
+    Login login;
+    
     @EJB
     ContestFacade contestService;
 
@@ -76,7 +82,11 @@ public class UsersAdminBean implements Serializable {
     }
 
     public void redirectInvalidContest() {
-
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().responseSendError(HttpServletResponse.SC_FORBIDDEN, "Invalid Contest");
+        } catch (IOException e) {
+            LOG.log(Level.SEVERE, null, e);
+        }
     }
 
     public void addRemovedMessage(RegisteredUser user) {
@@ -93,30 +103,6 @@ public class UsersAdminBean implements Serializable {
 
     public List<RegisteredUser> getRegisteredUsers() {
         return users;
-    }
-
-    public String getTest() throws JAXBException {
-        JAXBContext jc = JAXBContext.newInstance(RegisteredUser.class, ContestUsers.class);
-        
-        ContestUsers contestUsers = new ContestUsers(users);
-//        RegisteredUser user = users.get(0);
-        
-        Marshaller m = jc.createMarshaller();
-        m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-        m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        m.marshal(contestUsers, outputStream);
-        String output = new String(outputStream.toByteArray(), StandardCharsets.UTF_8);
-        return output;
-        
-    }
-
-    public StreamedContent getXMLExport() throws JAXBException {
-        InputStream inputStream = null;
-        String name = "name.xml";
-        String mime = "application/xml";
-        StreamedContent stream = new DefaultStreamedContent(inputStream, mime, name);
-        return stream;
     }
 
     // Setters -----------------------------------------------------------------------------------
